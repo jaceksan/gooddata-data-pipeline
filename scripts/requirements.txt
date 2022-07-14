@@ -1,0 +1,13 @@
+attrs==21.4.0
+cattrs==22.1.0
+exceptiongroup==1.0.0rc8
+gooddata-afm-client==1.0.0
+gooddata-metadata-client==1.0.0
+gooddata-scan-client==1.0.0
+gooddata-sdk==1.0.0
+importlib-metadata==4.12.0
+python-dateutil==2.8.2
+PyYAML==6.0
+six==1.16.0
+urllib3==1.26.10
+zipp==3.8.1

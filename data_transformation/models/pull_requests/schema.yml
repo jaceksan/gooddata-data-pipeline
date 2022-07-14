@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: pull_requests
+    columns:
+      - name: pull_request_id
+        tests:
+          - dbt_constraints.primary_key
+      - name: user_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('users')
+              pk_column_name: user_id

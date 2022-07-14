@@ -1,0 +1,37 @@
+stages:
+  - fetch
+  - dbt
+  - gooddata
+
+services:
+  - docker:dind
+  
+before_script:
+  - docker version
+  - docker-compose version
+
+fetch:
+  stage: fetch
+  image: docker/compose:latest
+  script:
+    - echo "test"
+
+dbt:
+  stage: dbt
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/data_transformation"
+    - pip install dbt-postgres
+    - dbt deps
+    - dbt run --profiles-dir profile --target dev
+    - dbt test --profiles-dir profile --target dev
+
+gooddata:
+  stage: gooddata
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/scripts"
+    - pip install -r requirements.txt
+    - python gooddata_upload_notification.py
+    - python gooddata_tests.py
+    - python gooddata_provisioning.py
