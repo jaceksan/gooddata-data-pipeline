@@ -5,15 +5,13 @@ stages:
 
 services:
   - docker:dind
-  
-before_script:
-  - docker version
-  - docker-compose version
 
 fetch:
   stage: fetch
   image: docker/compose:latest
   script:
+    - docker version
+    - docker-compose version
     - echo "test"
 
 dbt:
