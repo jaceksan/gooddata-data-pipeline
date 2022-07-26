@@ -1,18 +1,11 @@
 stages:
-  - fetch
+  # - fetch
   - dbt
   - gooddata
 
-services:
-  - docker:dind
 
-fetch:
-  stage: fetch
-  image: docker/compose:latest
-  script:
-    - docker version
-    - docker-compose version
-    - echo "test"
+# fetch:
+
 
 dbt:
   stage: dbt
