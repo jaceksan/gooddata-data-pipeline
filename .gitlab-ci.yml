@@ -1,14 +1,27 @@
 stages:
-  # - fetch
-  - dbt
-  - gooddata
+  - extract
+  - load
+  - transform
+  - analytics
 
+extract:
+  stage: extract
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/extract_load"
+    - pip install -r requirements.txt
+    - ./extract.py
 
-# fetch:
-
+load:
+  stage: load
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/extract_load"
+    - pip install -r requirements.txt
+    - ./load.py
 
 dbt:
-  stage: dbt
+  stage: transform
   image: python:latest
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
@@ -18,11 +31,22 @@ dbt:
     - dbt test --profiles-dir profile --target dev
 
 gooddata:
-  stage: gooddata
+  stage: analytics
   image: python:latest
   script:
     - cd "$CI_PROJECT_DIR/scripts"
     - pip install -r requirements.txt
+
+    # Deliver into staging workspace
+    # TODO - run these 2 steps only if the DS definition or metadata definitions have changed
+    # This is hard, because DS properties are stored only in pipeline variables
+    # All operations are idempotent(declarative APIs), so we can run it always now
+    - python gooddata_register_data_source.py
+    - python gooddata_load_metadata.py
+    # Notify GoodData that data has been changed by ETL
     - python gooddata_upload_notification.py
+    # Test that all insights are still executable
     - python gooddata_tests.py
+
+    # If everything succeeded, deliver metadata into production workspace
     - python gooddata_provisioning.py
