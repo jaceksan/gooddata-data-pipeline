@@ -1,23 +1,15 @@
 stages:
-  - extract
-  - load
+  - extract_load
   - transform
   - analytics
 
-extract:
-  stage: extract
+extract_load:
+  stage: extract_load
   image: python:latest
   script:
     - cd "$CI_PROJECT_DIR/extract_load"
     - pip install -r requirements.txt
     - ./extract.py
-
-load:
-  stage: load
-  image: python:latest
-  script:
-    - cd "$CI_PROJECT_DIR/extract_load"
-    - pip install -r requirements.txt
     - ./load.py
 
 dbt:
