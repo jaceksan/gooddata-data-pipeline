@@ -34,7 +34,7 @@ gooddata:
   stage: analytics
   image: python:latest
   script:
-    - cd "$CI_PROJECT_DIR/scripts"
+    - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
 
     # Deliver into staging workspace
