@@ -8,3 +8,5 @@ data_source_id = os.environ["GOODDATA_DATA_SOURCE_ID"]
 sdk = GoodDataSdk.create(host, token)
 
 sdk.catalog_data_source.register_upload_notification(data_source_id)
+
+print("done")
