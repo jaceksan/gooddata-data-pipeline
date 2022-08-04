@@ -1,0 +1,53 @@
+attributes:
+- description: Pull request id
+  id: pull_request_id
+  labels:
+  - description: ''
+    id: pull_request_id.pullrequesturl
+    sourceColumn: pull_request_url
+    tags:
+    - Pull requests
+    title: Pull request url
+    valueType: HYPERLINK
+  sourceColumn: pull_request_id
+  tags:
+  - Pull requests
+  title: Pull request id
+dataSourceTableId:
+  dataSourceId: cicd
+  id: pull_requests
+  type: dataSource
+description: Pull requests
+facts:
+- description: Hours to solve
+  id: hours_to_solve
+  sourceColumn: hours_to_solve
+  tags:
+  - Pull requests
+  title: Hours to solve
+grain:
+- id: pull_request_id
+  type: attribute
+id: pull_requests
+references:
+- identifier:
+    id: created_at
+    type: dataset
+  multivalue: false
+  sourceColumns:
+  - created_at
+- identifier:
+    id: merged_at
+    type: dataset
+  multivalue: false
+  sourceColumns:
+  - merged_at
+- identifier:
+    id: users
+    type: dataset
+  multivalue: false
+  sourceColumns:
+  - user_id
+tags:
+- Pull requests
+title: Pull requests
