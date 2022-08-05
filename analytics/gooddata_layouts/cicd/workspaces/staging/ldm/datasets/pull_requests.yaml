@@ -13,6 +13,13 @@ attributes:
   tags:
   - Pull requests
   title: Pull request id
+- description: ''
+  id: pullrequesttitle
+  labels: []
+  sourceColumn: pull_request_title
+  tags:
+  - Pull requests
+  title: Pull request title
 dataSourceTableId:
   dataSourceId: cicd
   id: pull_requests

@@ -13,6 +13,13 @@ attributes:
   tags:
   - Commits
   title: Commit id
+- description: ''
+  id: committitle
+  labels: []
+  sourceColumn: commit_title
+  tags:
+  - Commits
+  title: Commit title
 dataSourceTableId:
   dataSourceId: cicd
   id: commits
