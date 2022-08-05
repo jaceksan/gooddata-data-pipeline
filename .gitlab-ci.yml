@@ -1,14 +1,32 @@
 stages:
-  # - fetch
-  - dbt
-  - gooddata
+  # pre-merge
+  - extract_load
+  - transform
+  - analytics_staging
+  # post-merge
+  - analytics_prod
 
-
-# fetch:
-
+#############
+# Pre-merge
+#############
+extract_load:
+  stage: extract_load
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/extract_load"
+    - pip install -r requirements.txt
+    - ./extract.py
+    - ./load.py
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - extract_load/**/*
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
 
 dbt:
-  stage: dbt
+  stage: transform
   image: python:latest
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
@@ -16,13 +34,53 @@ dbt:
     - dbt deps
     - dbt run --profiles-dir profile --target dev
     - dbt test --profiles-dir profile --target dev
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - extract_load/**/*
+        - data_transformation/**/*
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
 
-gooddata:
-  stage: gooddata
+gooddata_staging:
+  stage: analytics_staging
   image: python:latest
   script:
-    - cd "$CI_PROJECT_DIR/scripts"
+    - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
+
+    # Deliver into staging workspace
+    # TODO - run these 2 steps only if the DS definition or metadata definitions have changed
+    # This is hard, because DS properties are stored only in pipeline variables
+    # All operations are idempotent(declarative APIs), so we can run it always now
+    - python gooddata_register_data_source.py
+    - python gooddata_load_metadata.py
+    # Notify GoodData that data has been changed by ETL
     - python gooddata_upload_notification.py
+    # Test that all insights are still executable
     - python gooddata_tests.py
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - analytics/**/*
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
+#############
+# Post-merge
+#############
+gooddata_prod:
+  stage: analytics_prod
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/analytics"
+    - pip install -r requirements.txt
+    # If everything succeeded, deliver metadata into production workspace in post-merge phase
     - python gooddata_provisioning.py
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - analytics/**/*
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual

@@ -1,0 +1,16 @@
+organizations:
+  - name: gooddata
+    repos:
+      - gooddata-python-sdk
+
+tables:
+  - name: users
+    endpoint: "orgs/{org}/members"
+  - name: commits
+    endpoint: "repos/{org}/{repo}/commits"
+    date_col: "updated"
+  - name: pulls
+    endpoint: "repos/{org}/{repo}/pulls"
+    date_col: "updated"
+    custom_params:
+      state: all

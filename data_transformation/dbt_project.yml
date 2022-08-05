@@ -32,5 +32,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   data_transformation:
-      +schema: cicd_output_stage
-      +materialized: table
+    +schema: "{{ env_var('POSTGRES_OUTPUT_SCHEMA') }}"
+    +materialized: table
+
+vars:
+  timezone: "Europe/Prague"
+  github_date_format: "YYYY-MM-DD\"T\"HH24:MI:SS\"Z\""

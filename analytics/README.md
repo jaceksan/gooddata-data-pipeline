@@ -36,3 +36,4 @@ export GOODDATA_HOST=https://cicd.anywhere.gooddata.com
 export GOODDATA_TOKEN=<gooddata-api-token>
 export STAGING_WORKSPACE_ID=staging
 export PRODUCTION_WORKSPACE_ID=production
+export GOODDATA_DATA_SOURCE_ID="cicd"
