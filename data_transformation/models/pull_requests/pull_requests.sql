@@ -10,6 +10,7 @@ extract_pulls as (
     select
       CAST(json_extract_path_text(item_json, 'id') as INT) as pull_request_id,
       CAST(json_extract_path_text(item_json, 'html_url') as TEXT) as pull_request_url,
+      CAST(json_extract_path_text(item_json, 'title') as TEXT) as pull_request_title,
       CAST(json_extract_path_text(item_json, 'user', 'id') as INT) as user_id,
       to_timestamp(
         CAST(json_extract_path_text(item_json, 'created_at') as TEXT),
@@ -26,6 +27,7 @@ final as (
     select
       extract_pulls.pull_request_id,
       extract_pulls.pull_request_url,
+      extract_pulls.pull_request_title,
       extract_pulls.user_id,
       extract_pulls.created_at,
       extract_pulls.merged_at,

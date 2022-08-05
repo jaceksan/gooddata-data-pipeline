@@ -7,7 +7,13 @@ staging_workspace_id = os.environ["STAGING_WORKSPACE_ID"]
 
 sdk = GoodDataSdk.create(host, token)
 
-sdk.catalog_workspace_content.load_declarative_ldm(staging_workspace_id)
-sdk.catalog_workspace_content.load_declarative_analytics_model(staging_workspace_id)
+sdk.catalog_workspace_content.put_declarative_ldm(
+    staging_workspace_id,
+    sdk.catalog_workspace_content.load_declarative_ldm(staging_workspace_id)
+)
+sdk.catalog_workspace_content.put_declarative_analytics_model(
+    staging_workspace_id,
+    sdk.catalog_workspace_content.load_declarative_analytics_model(staging_workspace_id)
+)
 
 print("done")

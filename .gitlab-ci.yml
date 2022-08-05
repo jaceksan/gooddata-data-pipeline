@@ -51,9 +51,8 @@ gooddata_staging:
     - pip install -r requirements.txt
 
     # Deliver into staging workspace
-    # TODO - run these 2 steps only if the DS definition or metadata definitions have changed
-    # This is hard, because DS properties are stored only in pipeline variables
-    # All operations are idempotent(declarative APIs), so we can run it always now
+    # Data source properties are stored in Gitlab ENV vars
+    # If admin changes them, he has to run this job manually (RUN_ALL_JOBS=true) to deliver new DS definition
     - python gooddata_register_data_source.py
     - python gooddata_load_metadata.py
     # Notify GoodData that data has been changed by ETL

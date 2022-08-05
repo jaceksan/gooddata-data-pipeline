@@ -24,9 +24,15 @@ content:
     - attribute:
         displayForm:
           identifier:
+            id: pullrequesttitle
+            type: label
+        localIdentifier: 6d99e3d9d3cc4cb9aecde79fcba79996
+    - attribute:
+        displayForm:
+          identifier:
             id: user_id.login
             type: label
-        localIdentifier: 24470934836e45819af6cd10328e0da4
+        localIdentifier: d1df8bf7ebcd4bcaad71220c853208bb
     localIdentifier: attribute
   filters:
   - rankingFilter:

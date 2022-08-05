@@ -3,7 +3,7 @@
 import argparse
 
 from databases.postgres import Postgres
-from config import Config, CSV_FILE_PATH_TMPL
+from config import Config, CSV_FILE_PATH_TMPL, Table
 from libs.logger import get_logger
 
 
@@ -27,18 +27,21 @@ class Load:
                             help='Increase logging level to DEBUG')
         return parser.parse_args()
 
+    def store_data(self, table: Table):
+        self.logger.info(f'Load table {table.name}')
+        # TODO - incremental load
+        sql = f"DROP TABLE IF EXISTS {table.name} CASCADE"
+        self.db.execute_query(sql)
+
+        sql = f"CREATE TABLE {table.name}(item jsonb)"
+        self.db.create_table_if_not_exists(sql, table.name)
+
+        self.db.load_json_file(table.name, CSV_FILE_PATH_TMPL.format(table_name=table.name))
+
     def main(self):
         config = Config(self.args.config)
         for table in config.tables:
-            self.logger.info(f'Load table {table.name}')
-            # TODO - incremental load
-            sql = f"DROP TABLE IF EXISTS {table.name} CASCADE"
-            self.db.execute_query(sql)
-
-            sql = f"CREATE TABLE {table.name}(item jsonb)"
-            self.db.create_table_if_not_exists(sql, table.name)
-
-            self.db.load_json_file(table.name, CSV_FILE_PATH_TMPL.format(table_name=table.name))
+            self.store_data(table)
 
 
 if __name__ == "__main__":
