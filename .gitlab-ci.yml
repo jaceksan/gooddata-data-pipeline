@@ -1,8 +1,14 @@
 stages:
+  # pre-merge
   - extract_load
   - transform
-  - analytics
+  - analytics_staging
+  # post-merge
+  - analytics_prod
 
+#############
+# Pre-merge
+#############
 extract_load:
   stage: extract_load
   image: python:latest
@@ -11,6 +17,13 @@ extract_load:
     - pip install -r requirements.txt
     - ./extract.py
     - ./load.py
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - extract_load/**/*
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
 
 dbt:
   stage: transform
@@ -21,9 +34,17 @@ dbt:
     - dbt deps
     - dbt run --profiles-dir profile --target dev
     - dbt test --profiles-dir profile --target dev
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - extract_load/**/*
+        - data_transformation/**/*
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
 
-gooddata:
-  stage: analytics
+gooddata_staging:
+  stage: analytics_staging
   image: python:latest
   script:
     - cd "$CI_PROJECT_DIR/analytics"
@@ -39,6 +60,27 @@ gooddata:
     - python gooddata_upload_notification.py
     # Test that all insights are still executable
     - python gooddata_tests.py
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - analytics/**/*
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
 
-    # If everything succeeded, deliver metadata into production workspace
+#############
+# Post-merge
+#############
+gooddata_prod:
+  stage: analytics_prod
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/analytics"
+    - pip install -r requirements.txt
+    # If everything succeeded, deliver metadata into production workspace in post-merge phase
     - python gooddata_provisioning.py
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - analytics/**/*
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
