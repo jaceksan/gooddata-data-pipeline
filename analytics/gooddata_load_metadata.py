@@ -1,6 +1,8 @@
 from gooddata_sdk import GoodDataSdk
 import os
 
+# Comment to demonstrate the run of gooddata_staging and gooddata_production stages.
+
 host = os.environ["GOODDATA_HOST"]
 token = os.environ["GOODDATA_TOKEN"]
 staging_workspace_id = os.environ["STAGING_WORKSPACE_ID"]

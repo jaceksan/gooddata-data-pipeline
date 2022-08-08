@@ -2,6 +2,8 @@ with commits as (
     select to_json("item") as item_json from cicd_input_stage.commits
 ),
 
+-- Comment to demonstrate the run of transform stage.
+
 users as (
     select * from {{ ref('users') }}
 ),
