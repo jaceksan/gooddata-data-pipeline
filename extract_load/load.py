@@ -6,6 +6,7 @@ from databases.postgres import Postgres
 from config import Config, CSV_FILE_PATH_TMPL, Table
 from libs.logger import get_logger
 
+# Comment to demonstrate the run of extract_load stage.
 
 class Load:
     def __init__(self):
