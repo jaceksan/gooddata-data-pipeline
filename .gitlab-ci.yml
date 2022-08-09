@@ -66,6 +66,17 @@ gooddata_staging:
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
+gooddata_staging_upload_notification:
+  stage: analytics_staging
+  image: python:latest
+  script:
+    - cd "$CI_PROJECT_DIR/analytics"
+    - pip install -r requirements.txt
+    # Notify GoodData that data has been changed by ETL
+    - python gooddata_upload_notification.py
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+
 #############
 # Post-merge
 #############
