@@ -5,8 +5,9 @@ import yaml
 
 
 OUTPUT_FOLDER = "/tmp"
-CSV_FILE_PATH_TMPL = OUTPUT_FOLDER + "/{table_name}.csv"
-DEFAULT_DATE_FROM = "2021-01-01T00:00:00"
+CSV_FILE_PATH_TMPL_ORG = OUTPUT_FOLDER + "/{org_name}_{table_name}.csv"
+CSV_FILE_PATH_TMPL_REPO = OUTPUT_FOLDER + "/{org_name}_{repo_name}_{table_name}.csv"
+DEFAULT_DATE_FROM = "2020-01-01T00:00:00"
 
 
 @attr.s(auto_attribs=True, kw_only=True)
@@ -15,6 +16,7 @@ class Table:
     endpoint: str
     date_col: str = None
     custom_params: dict = {}
+    org_level: bool
 
 
 @attr.s(auto_attribs=True, kw_only=True)
@@ -42,6 +44,7 @@ class Config:
                     endpoint=table['endpoint'],
                     date_col=table.get('date_col'),
                     custom_params=table.get('custom_params'),
+                    org_level=table.get('org_level')
                 )
             )
         return tables

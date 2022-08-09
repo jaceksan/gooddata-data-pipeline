@@ -6,6 +6,7 @@ organizations:
 tables:
   - name: users
     endpoint: "orgs/{org}/members"
+    org_level: true
   - name: commits
     endpoint: "repos/{org}/{repo}/commits"
     date_col: "updated"

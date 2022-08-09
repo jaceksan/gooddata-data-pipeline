@@ -4,7 +4,7 @@ import argparse
 import os
 import json
 
-from config import Table, Config, CSV_FILE_PATH_TMPL, DEFAULT_DATE_FROM
+from config import Table, Config, CSV_FILE_PATH_TMPL_ORG, CSV_FILE_PATH_TMPL_REPO, DEFAULT_DATE_FROM
 from libs.logger import get_logger
 from libs.rest_api import RestApi
 
@@ -46,13 +46,13 @@ class Extract:
         return parser.parse_args()
 
     @staticmethod
-    def write_json(table_name, data):
-        with open(CSV_FILE_PATH_TMPL.format(table_name=table_name), 'w') as fp:
+    def write_json(file_name: str, data):
+        with open(file_name, 'w') as fp:
             for row in data:
                 fp.write(json.dumps(row) + '\n')
 
     @staticmethod
-    def get_endpoint(org: str, repo: str, table: Table):
+    def get_endpoint(table: Table, org: str, repo: str):
         return table.endpoint.format(org=org, repo=repo)
 
     def get_params(self, page: int, table: Table):
@@ -65,8 +65,8 @@ class Extract:
             params = params | table.custom_params
         return params
 
-    def get_pages(self, org: str, repo: str, table: Table):
-        endpoint = self.get_endpoint(org, repo, table)
+    def get_pages(self, table: Table, org: str, repo: str = None):
+        endpoint = self.get_endpoint(table, org, repo)
         self.logger.info(f'get_pages endpoint={endpoint}')
         page = 1
         params = self.get_params(page, table)
@@ -84,10 +84,19 @@ class Extract:
     def main(self):
         config = Config(self.args.config)
         for org in config.organizations:
-            for repo in org.repos:
-                for table in config.tables:
-                    data = self.get_pages(org.name, repo, table)
-                    self.write_json(table.name, data)
+            for table in config.tables:
+                if table.org_level:
+                    # Some endpoints are organization-level, e.g. users exist in organization, not in each repo
+                    data = self.get_pages(table, org.name)
+                    file_name = CSV_FILE_PATH_TMPL_ORG.format(table_name=table.name, org_name=org.name)
+                    self.write_json(file_name, data)
+                else:
+                    for repo in org.repos:
+                        data = self.get_pages(table, org.name, repo)
+                        file_name = CSV_FILE_PATH_TMPL_REPO.format(
+                            table_name=table.name, org_name=org.name, repo_name=repo
+                        )
+                        self.write_json(file_name, data)
 
 
 if __name__ == "__main__":
