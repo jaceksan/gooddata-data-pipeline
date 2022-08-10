@@ -66,12 +66,14 @@ gooddata_staging:
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
-gooddata_staging_upload_notification:
+gooddata_staging_update_database:
   stage: analytics_staging
   image: python:latest
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
+    # Data source properties are stored in Gitlab ENV vars
+    - python gooddata_register_data_source.py
     # Notify GoodData that data has been changed by ETL
     - python gooddata_upload_notification.py
   rules:
