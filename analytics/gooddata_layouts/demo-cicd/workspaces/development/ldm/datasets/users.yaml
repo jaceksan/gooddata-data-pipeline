@@ -1,23 +1,20 @@
 attributes:
-- defaultView:
-    id: user_id.login
-    type: label
-  description: User id
+- description: Login
+  id: login
+  labels: []
+  sourceColumn: login
+  tags:
+  - Users
+  title: Login
+- description: User id
   id: user_id
   labels:
   - description: ''
-    id: user_id.login
-    sourceColumn: login
+    id: user_id.userurl
+    sourceColumn: user_url
     tags:
     - Users
-    title: Login
-    valueType: TEXT
-  - description: ''
-    id: user_id.url
-    sourceColumn: url
-    tags:
-    - Users
-    title: Url
+    title: User url
     valueType: HYPERLINK
   sourceColumn: user_id
   tags:

@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: repos
+    columns:
+      - name: repo_id
+        tests:
+          - dbt_constraints.primary_key

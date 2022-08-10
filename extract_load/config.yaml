@@ -2,8 +2,12 @@ organizations:
   - name: gooddata
     repos:
       - gooddata-python-sdk
+      - gooddata-ui-sdk
 
 tables:
+  - name: repos
+    endpoint: "orgs/{org}/repos"
+    org_level: true
   - name: users
     endpoint: "orgs/{org}/members"
     org_level: true

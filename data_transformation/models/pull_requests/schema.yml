@@ -11,3 +11,8 @@ models:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('users')
               pk_column_name: user_id
+      - name: repo_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('repos')
+              pk_column_name: repo_id

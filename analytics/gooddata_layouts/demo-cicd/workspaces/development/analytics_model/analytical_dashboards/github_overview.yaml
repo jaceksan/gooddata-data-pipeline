@@ -24,11 +24,11 @@ content:
             target:
               displayForm:
                 identifier:
-                  id: user_id.login
+                  id: login
                   type: label
               hyperlinkDisplayForm:
                 identifier:
-                  id: user_id.url
+                  id: user_id.userurl
                   type: label
             transition: new-window
             type: drillToAttributeUrl

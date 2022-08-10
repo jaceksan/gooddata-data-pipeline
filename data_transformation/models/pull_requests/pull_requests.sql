@@ -1,41 +1,34 @@
 with pull_requests as (
-    select to_json("item") as item_json from cicd_input_stage.pulls
+    select * from {{ ref('pull_requests_extract_json') }}
 ),
 
 users as (
     select * from {{ ref('users') }}
 ),
 
-extract_pulls as (
-    select
-      CAST(json_extract_path_text(item_json, 'id') as INT) as pull_request_id,
-      CAST(json_extract_path_text(item_json, 'html_url') as TEXT) as pull_request_url,
-      CAST(json_extract_path_text(item_json, 'title') as TEXT) as pull_request_title,
-      CAST(json_extract_path_text(item_json, 'user', 'id') as INT) as user_id,
-      to_timestamp(
-        CAST(json_extract_path_text(item_json, 'created_at') as TEXT),
-        '{{ var("github_date_format") }}'
-      ) at time zone '{{ var("timezone") }}' as created_at,
-      to_timestamp(
-        CAST(json_extract_path_text(item_json, 'merged_at') as TEXT),
-        '{{ var("github_date_format") }}'
-      ) at time zone '{{ var("timezone") }}' as merged_at
-    from pull_requests
+repos as (
+    select * from {{ ref('repos') }}
 ),
 
 final as (
     select
-      extract_pulls.pull_request_id,
-      extract_pulls.pull_request_url,
-      extract_pulls.pull_request_title,
-      extract_pulls.user_id,
-      extract_pulls.created_at,
-      extract_pulls.merged_at,
-      (extract(epoch from extract_pulls.merged_at) - extract(epoch from extract_pulls.created_at)) / 3600 as hours_to_solve
-    from extract_pulls
+      pull_requests.pull_request_id,
+      pull_requests.pull_request_url,
+      pull_requests.pull_request_title,
+      pull_requests.user_id,
+      pull_requests.created_at,
+      pull_requests.merged_at,
+      pull_requests.closed_at,
+      repos.repo_id,
+      (
+        -- Either merged_at, or closed_at(closed without merged) or now(not yet merged or closed)
+        extract(epoch from coalesce(pull_requests.merged_at, pull_requests.closed_at, now()))
+          - extract(epoch from pull_requests.created_at)
+      ) / 3600 / 24 as days_to_solve
+    from pull_requests
     -- Filter out commits without responsible user (data cleansing)
-    join users on extract_pulls.user_id = users.user_id
-    where extract_pulls.user_id is not null and users.login is not null and extract_pulls.merged_at is not null
+    join users on pull_requests.user_id = users.user_id
+    join repos on pull_requests.pull_request_url like repos.repo_url || '/%'
 )
 
 select * from final

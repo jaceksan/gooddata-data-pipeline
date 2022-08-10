@@ -8,11 +8,11 @@ content:
             filters: []
             item:
               identifier:
-                id: hours_to_solve
+                id: days_to_solve
                 type: fact
         format: '#,##0.00'
         localIdentifier: aa8b63d76eef4136969b969b1511bfa2
-        title: Sum of Hours to solve
+        title: Sum of Days to solve
     localIdentifier: measures
   - items:
     - attribute:
@@ -24,15 +24,33 @@ content:
     - attribute:
         displayForm:
           identifier:
-            id: pullrequesttitle
+            id: pull_request_title
             type: label
         localIdentifier: 6d99e3d9d3cc4cb9aecde79fcba79996
     - attribute:
         displayForm:
           identifier:
-            id: user_id.login
+            id: login
             type: label
         localIdentifier: d1df8bf7ebcd4bcaad71220c853208bb
+    - attribute:
+        displayForm:
+          identifier:
+            id: created_at.day
+            type: label
+        localIdentifier: 664fb4ad49144cff82c128579955641a
+    - attribute:
+        displayForm:
+          identifier:
+            id: merged_at.day
+            type: label
+        localIdentifier: 0c7c30911e4846228bfa1c8c868f010d
+    - attribute:
+        displayForm:
+          identifier:
+            id: closed_at.day
+            type: label
+        localIdentifier: 93d78c1d6c974d72bf0ee5ff50bba63c
     localIdentifier: attribute
   filters:
   - rankingFilter:

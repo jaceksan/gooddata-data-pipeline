@@ -13,8 +13,8 @@ attributes:
   tags:
   - Commits
   title: Commit id
-- description: ''
-  id: committitle
+- description: Commit title
+  id: commit_title
   labels: []
   sourceColumn: commit_title
   tags:
@@ -37,6 +37,12 @@ references:
   multivalue: false
   sourceColumns:
   - created_at
+- identifier:
+    id: repos
+    type: dataset
+  multivalue: false
+  sourceColumns:
+  - repo_id
 - identifier:
     id: users
     type: dataset
