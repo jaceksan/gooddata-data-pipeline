@@ -64,6 +64,7 @@ gooddata_staging:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
+        - data_transformation/**/*
         - analytics/**/*
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
