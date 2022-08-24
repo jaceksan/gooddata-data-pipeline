@@ -20,13 +20,10 @@ sdk.catalog_workspace.create_or_update(
 )
 
 # Deploy logical and analytics model into staging workspace
-sdk.catalog_workspace_content.put_declarative_ldm(
-    staging_workspace_id,
-    sdk.catalog_workspace_content.load_declarative_ldm(staging_workspace_id)
-)
-sdk.catalog_workspace_content.put_declarative_analytics_model(
-    staging_workspace_id,
-    sdk.catalog_workspace_content.load_declarative_analytics_model(staging_workspace_id)
-)
+ldm = sdk.catalog_workspace_content.load_declarative_ldm(staging_workspace_id)
+adm = sdk.catalog_workspace_content.load_declarative_analytics_model(staging_workspace_id)
+
+sdk.catalog_workspace_content.put_declarative_ldm(staging_workspace_id, ldm)
+sdk.catalog_workspace_content.put_declarative_analytics_model(staging_workspace_id, adm)
 
 print("done")
