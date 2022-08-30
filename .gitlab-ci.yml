@@ -1,50 +1,28 @@
 stages:
-  ###########
-  # pre-merge
-  ###########
-  - extract_load_dev
-  - transform_dev
-  - analytics_dev
-  ###########
-  # post-merge
-  ###########
-  # main branch
-  - extract_load_staging
-  - transform_staging
-  - analytics_staging
-  # prod branch
-  - extract_load_prod
-  - transform_prod
-  - analytics_prod
+  - extract_load
+  - transform
+  - analytics
 
-#############
-# Pre-merge
-#############
-extract_load_dev:
-  stage: extract_load_dev
+##########################
+# Job templates
+##########################
+.extract_load:
+  stage: extract_load
   image: python:3.10-alpine
-  variables:
-    POSTGRES_DBNAME: cicd_dev
   script:
     - cd "$CI_PROJECT_DIR/extract_load"
     - pip install -r requirements.txt
     - ./extract.py
     - ./load.py
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes:
-        - extract_load/**/*
-        - .gitlab-ci.yml
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
-dbt_dev:
-  stage: transform_dev
+.dbt:
+  stage: transform
   image: python:3.10-alpine
   variables:
     POSTGRES_DBNAME: cicd_dev
-    GOODDATA_DATA_SOURCE_ID: cicd_dev
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install dbt-postgres
@@ -52,21 +30,12 @@ dbt_dev:
     - dbt run --profiles-dir profile --target dev
     - dbt test --profiles-dir profile --target dev
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes:
-        - extract_load/**/*
-        - data_transformation/**/*
-        - .gitlab-ci.yml
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
-gooddata_dev:
-  stage: analytics_dev
+.gooddata:
+  stage: analytics
   image: python:3.10-alpine
-  variables:
-    POSTGRES_DBNAME: cicd_dev
-    GOODDATA_DATA_SOURCE_ID: cicd_dev
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
@@ -79,163 +48,148 @@ gooddata_dev:
     - python gooddata_upload_notification.py
     # It takes the metadata of analytics saved in folder structure and put it in the staging workspace.
     # It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
-    - python gooddata_load_metadata.py -w development
+    - python gooddata_load_metadata.py -w $WORKSPACE
     # Test that all insights are still executable
-    - python gooddata_tests.py -w development
+    - python gooddata_tests.py -w $WORKSPACE
+  rules:
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
+
+#############
+# Pre-merge
+#############
+extract_load_dev:
+  extends:
+    - .extract_load
+  variables:
+    POSTGRES_DBNAME: cicd_dev
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - extract_load/**/*
+        - .gitlab-ci.yml
+
+dbt_dev:
+  extends:
+    - .dbt
+  variables:
+    POSTGRES_DBNAME: cicd_dev
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - extract_load/**/*
+        - data_transformation/**/*
+        - .gitlab-ci.yml
+
+gooddata_dev:
+  extends:
+    - .gooddata
+  variables:
+    POSTGRES_DBNAME: cicd_dev
+    GOODDATA_DATA_SOURCE_ID: cicd_dev
+    WORKSPACE: development
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
         - data_transformation/**/*
         - analytics/**/*
         - .gitlab-ci.yml
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
 
 #############
 # Post-merge
 #############
 
 extract_load_staging:
-  stage: extract_load_staging
-  image: python:3.10-alpine
+  extends:
+    - .extract_load
   variables:
     POSTGRES_DBNAME: cicd_staging
-  script:
-    - cd "$CI_PROJECT_DIR/extract_load"
-    - pip install -r requirements.txt
-    - ./extract.py
-    - ./load.py
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - extract_load/**/*
         - .gitlab-ci.yml
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
 
 dbt_staging:
-  stage: transform_staging
-  image: python:3.10-alpine
+  extends:
+    - .dbt
   variables:
     POSTGRES_DBNAME: cicd_staging
-    GOODDATA_DATA_SOURCE_ID: cicd_staging
-  script:
-    - cd "$CI_PROJECT_DIR/data_transformation"
-    - pip install dbt-postgres
-    - dbt deps
-    - dbt run --profiles-dir profile --target dev
-    - dbt test --profiles-dir profile --target dev
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - extract_load/**/*
         - data_transformation/**/*
         - .gitlab-ci.yml
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
 
 gooddata_staging:
-  stage: analytics_staging
-  image: python:3.10-alpine
+  extends:
+    - .gooddata
   variables:
     POSTGRES_DBNAME: cicd_staging
     GOODDATA_DATA_SOURCE_ID: cicd_staging
-  script:
-    - cd "$CI_PROJECT_DIR/analytics"
-    - pip install -r requirements.txt
-
-    - python gooddata_register_data_source.py
-    - python gooddata_upload_notification.py
-    - python gooddata_load_metadata.py -w staging
-    - python gooddata_tests.py -w staging
+    WORKSPACE: staging
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - data_transformation/**/*
         - analytics/**/*
         - .gitlab-ci.yml
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
 
 ##########################
 # Post-merge - PROD
 ##########################
-
 extract_load_prod:
-  stage: extract_load_prod
-  image: python:3.10-alpine
+  extends:
+    - .extract_load
   variables:
     POSTGRES_DBNAME: cicd_prod
-  script:
-    - cd "$CI_PROJECT_DIR/extract_load"
-    - pip install -r requirements.txt
-    - ./extract.py
-    - ./load.py
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - extract_load/**/*
         - .gitlab-ci.yml
+    # The pipeline scheduler triggers only PROD jobs
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
 
 dbt_prod:
-  stage: transform_prod
-  image: python:3.10-alpine
+  extends:
+    - .dbt
   variables:
     POSTGRES_DBNAME: cicd_prod
-    GOODDATA_DATA_SOURCE_ID: cicd_prod
-  script:
-    - cd "$CI_PROJECT_DIR/data_transformation"
-    - pip install dbt-postgres
-    - dbt deps
-    - dbt run --profiles-dir profile --target dev
-    - dbt test --profiles-dir profile --target dev
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - extract_load/**/*
         - data_transformation/**/*
         - .gitlab-ci.yml
+    # The pipeline scheduler triggers only PROD jobs
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
 
 gooddata_prod:
-  stage: analytics_prod
-  image: python:3.10-alpine
+  extends:
+    - .gooddata
   variables:
     POSTGRES_DBNAME: cicd_prod
     GOODDATA_DATA_SOURCE_ID: cicd_prod
-  script:
-    - cd "$CI_PROJECT_DIR/analytics"
-    - pip install -r requirements.txt
-
-    - python gooddata_load_metadata.py -w production
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - analytics/**/*
         - .gitlab-ci.yml
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
 
 ###############################
 # Triggered only from scheduler
 ###############################
-
+# We need to notify GoodData that extract/load/transform delivered new data
 gooddata_staging_update_database:
-  stage: analytics_staging
-  image: python:latest
+  stage: analytics
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
-    # Data source properties are stored in Gitlab ENV vars
-    - python gooddata_register_data_source.py
-    # Notify GoodData that data has been changed by ETL
+
     - python gooddata_upload_notification.py
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
