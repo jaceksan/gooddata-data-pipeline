@@ -95,7 +95,7 @@ gooddata_staging:
     - python gooddata_load_metadata.py -w staging
     - python gooddata_tests.py -w staging
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" && $CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - data_transformation/**/*
         - analytics/**/*
