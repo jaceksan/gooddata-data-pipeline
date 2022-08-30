@@ -54,13 +54,13 @@ gooddata_staging:
     # Data source properties are stored in Gitlab ENV vars
     # If admin changes them, he has to run this job manually (RUN_ALL_JOBS=true) to deliver new DS definition
     - python gooddata_register_data_source.py
-    # It takes the metadata of analytics saved in folder structure and put it in the staging workspace. 
-    # It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
-    - python gooddata_load_metadata.py
     # Notify GoodData that data has been changed by ETL
     - python gooddata_upload_notification.py
+    # It takes the metadata of analytics saved in folder structure and put it in the staging workspace.
+    # It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
+    - python gooddata_load_metadata.py -w staging
     # Test that all insights are still executable
-    - python gooddata_tests.py
+    - python gooddata_tests.py -w staging
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -92,7 +92,7 @@ gooddata_prod:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
     # If everything succeeded, deliver metadata into production workspace in post-merge phase
-    - python gooddata_provisioning.py
+    - python gooddata_load_metadata.py -w production
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
