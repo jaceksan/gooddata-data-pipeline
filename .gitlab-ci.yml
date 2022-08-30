@@ -1,9 +1,16 @@
 stages:
+  ###########
   # pre-merge
+  ###########
   - extract_load
   - transform
-  - analytics_staging
+  - analytics_dev
+  ###########
   # post-merge
+  ###########
+  # main branch
+  - analytics_staging
+  # prod branch
   - analytics_prod
 
 #############
@@ -11,7 +18,7 @@ stages:
 #############
 extract_load:
   stage: extract_load
-  image: python:latest
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/extract_load"
     - pip install -r requirements.txt
@@ -21,13 +28,14 @@ extract_load:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
         - extract_load/**/*
+        - .gitlab-ci.yml
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
 dbt:
   stage: transform
-  image: python:latest
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install dbt-postgres
@@ -39,35 +47,81 @@ dbt:
       changes:
         - extract_load/**/*
         - data_transformation/**/*
+        - .gitlab-ci.yml
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
-gooddata_staging:
-  stage: analytics_staging
-  image: python:latest
+gooddata_dev:
+  stage: analytics_dev
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
 
-    # Deliver into staging workspace
+    # Deliver into dev workspace
     # Data source properties are stored in Gitlab ENV vars
     # If admin changes them, he has to run this job manually (RUN_ALL_JOBS=true) to deliver new DS definition
     - python gooddata_register_data_source.py
-    # It takes the metadata of analytics saved in folder structure and put it in the staging workspace. 
-    # It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
-    - python gooddata_load_metadata.py
     # Notify GoodData that data has been changed by ETL
     - python gooddata_upload_notification.py
+    # It takes the metadata of analytics saved in folder structure and put it in the staging workspace.
+    # It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
+    - python gooddata_load_metadata.py -w development
     # Test that all insights are still executable
-    - python gooddata_tests.py
+    - python gooddata_tests.py -w development
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
         - data_transformation/**/*
         - analytics/**/*
+        - .gitlab-ci.yml
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
+
+#############
+# Post-merge
+#############
+
+gooddata_staging:
+  stage: analytics_staging
+  image: python:3.10-alpine
+  script:
+    - cd "$CI_PROJECT_DIR/analytics"
+    - pip install -r requirements.txt
+
+    - python gooddata_register_data_source.py
+    - python gooddata_upload_notification.py
+    - python gooddata_load_metadata.py -w staging
+    - python gooddata_tests.py -w staging
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - data_transformation/**/*
+        - analytics/**/*
+        - .gitlab-ci.yml
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
+gooddata_prod:
+  stage: analytics_prod
+  image: python:3.10-alpine
+  script:
+    - cd "$CI_PROJECT_DIR/analytics"
+    - pip install -r requirements.txt
+
+    - python gooddata_load_metadata.py -w production
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - analytics/**/*
+        - .gitlab-ci.yml
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
+###############################
+# Triggered only from scheduler
+###############################
 
 gooddata_staging_update_database:
   stage: analytics_staging
@@ -81,21 +135,3 @@ gooddata_staging_update_database:
     - python gooddata_upload_notification.py
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
-
-#############
-# Post-merge
-#############
-gooddata_prod:
-  stage: analytics_prod
-  image: python:latest
-  script:
-    - cd "$CI_PROJECT_DIR/analytics"
-    - pip install -r requirements.txt
-    # If everything succeeded, deliver metadata into production workspace in post-merge phase
-    - python gooddata_provisioning.py
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - analytics/**/*
-    - if: '$RUN_ALL_JOBS == "true"'
-      when: manual
