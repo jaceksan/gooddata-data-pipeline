@@ -28,6 +28,7 @@ extract_load:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
         - extract_load/**/*
+        - .gitlab-ci.yml
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
@@ -46,6 +47,7 @@ dbt:
       changes:
         - extract_load/**/*
         - data_transformation/**/*
+        - .gitlab-ci.yml
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
@@ -73,6 +75,7 @@ gooddata_dev:
       changes:
         - data_transformation/**/*
         - analytics/**/*
+        - .gitlab-ci.yml
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
@@ -96,6 +99,7 @@ gooddata_staging:
       changes:
         - data_transformation/**/*
         - analytics/**/*
+        - .gitlab-ci.yml
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
@@ -111,6 +115,7 @@ gooddata_prod:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - analytics/**/*
+        - .gitlab-ci.yml
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
