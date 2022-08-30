@@ -1,0 +1,7 @@
+workspaces:
+  - id: development
+    name: Development
+  - id: staging
+    name: Staging
+  - id: production
+    name: Production

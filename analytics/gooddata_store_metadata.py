@@ -1,13 +1,17 @@
-from gooddata_sdk import GoodDataSdk
 import os
+from gooddata_sdk import GoodDataSdk
+from args import parse_arguments
+from config import Config
 
 host = os.environ["GOODDATA_HOST"]
 token = os.environ["GOODDATA_TOKEN"]
-staging_workspace_id = os.environ["STAGING_WORKSPACE_ID"]
+args = parse_arguments()
+config = Config(args.config)
+workspace = config.get_workspace(args.workspace_id)
 
 sdk = GoodDataSdk.create(host, token)
 
-sdk.catalog_workspace_content.store_declarative_ldm(staging_workspace_id)
-sdk.catalog_workspace_content.store_declarative_analytics_model(staging_workspace_id)
+sdk.catalog_workspace_content.store_declarative_ldm(workspace.id)
+sdk.catalog_workspace_content.store_declarative_analytics_model(workspace.id)
 
 print("done")
