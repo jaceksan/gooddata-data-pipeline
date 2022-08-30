@@ -2,23 +2,29 @@ stages:
   ###########
   # pre-merge
   ###########
-  - extract_load
-  - transform
+  - extract_load_dev
+  - transform_dev
   - analytics_dev
   ###########
   # post-merge
   ###########
   # main branch
+  - extract_load_staging
+  - transform_staging
   - analytics_staging
   # prod branch
+  - extract_load_prod
+  - transform_prod
   - analytics_prod
 
 #############
 # Pre-merge
 #############
-extract_load:
-  stage: extract_load
+extract_load_dev:
+  stage: extract_load_dev
   image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_dev
   script:
     - cd "$CI_PROJECT_DIR/extract_load"
     - pip install -r requirements.txt
@@ -33,9 +39,12 @@ extract_load:
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
-dbt:
-  stage: transform
+dbt_dev:
+  stage: transform_dev
   image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_dev
+    GOODDATA_DATA_SOURCE_ID: cicd_dev
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install dbt-postgres
@@ -55,6 +64,9 @@ dbt:
 gooddata_dev:
   stage: analytics_dev
   image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_dev
+    GOODDATA_DATA_SOURCE_ID: cicd_dev
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
@@ -83,9 +95,53 @@ gooddata_dev:
 # Post-merge
 #############
 
+extract_load_staging:
+  stage: extract_load_staging
+  image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_staging
+  script:
+    - cd "$CI_PROJECT_DIR/extract_load"
+    - pip install -r requirements.txt
+    - ./extract.py
+    - ./load.py
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - extract_load/**/*
+        - .gitlab-ci.yml
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
+dbt_staging:
+  stage: transform_staging
+  image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_staging
+    GOODDATA_DATA_SOURCE_ID: cicd_staging
+  script:
+    - cd "$CI_PROJECT_DIR/data_transformation"
+    - pip install dbt-postgres
+    - dbt deps
+    - dbt run --profiles-dir profile --target dev
+    - dbt test --profiles-dir profile --target dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - extract_load/**/*
+        - data_transformation/**/*
+        - .gitlab-ci.yml
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
 gooddata_staging:
   stage: analytics_staging
   image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_staging
+    GOODDATA_DATA_SOURCE_ID: cicd_staging
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
@@ -103,9 +159,57 @@ gooddata_staging:
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
+##########################
+# Post-merge - PROD
+##########################
+
+extract_load_prod:
+  stage: extract_load_prod
+  image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_prod
+  script:
+    - cd "$CI_PROJECT_DIR/extract_load"
+    - pip install -r requirements.txt
+    - ./extract.py
+    - ./load.py
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - extract_load/**/*
+        - .gitlab-ci.yml
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
+dbt_prod:
+  stage: transform_prod
+  image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_prod
+    GOODDATA_DATA_SOURCE_ID: cicd_prod
+  script:
+    - cd "$CI_PROJECT_DIR/data_transformation"
+    - pip install dbt-postgres
+    - dbt deps
+    - dbt run --profiles-dir profile --target dev
+    - dbt test --profiles-dir profile --target dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - extract_load/**/*
+        - data_transformation/**/*
+        - .gitlab-ci.yml
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - if: '$RUN_ALL_JOBS == "true"'
+      when: manual
+
 gooddata_prod:
   stage: analytics_prod
   image: python:3.10-alpine
+  variables:
+    POSTGRES_DBNAME: cicd_prod
+    GOODDATA_DATA_SOURCE_ID: cicd_prod
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
