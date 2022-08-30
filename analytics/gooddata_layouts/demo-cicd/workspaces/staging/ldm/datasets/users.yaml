@@ -24,7 +24,7 @@ attributes:
   - Users
   title: User id
 dataSourceTableId:
-  dataSourceId: cicd
+  dataSourceId: cicd_staging
   id: users
   type: dataSource
 description: Users
