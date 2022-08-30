@@ -11,7 +11,7 @@ stages:
 #############
 extract_load:
   stage: extract_load
-  image: python:latest
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/extract_load"
     - pip install -r requirements.txt
@@ -27,7 +27,7 @@ extract_load:
 
 dbt:
   stage: transform
-  image: python:latest
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install dbt-postgres
@@ -45,7 +45,7 @@ dbt:
 
 gooddata_staging:
   stage: analytics_staging
-  image: python:latest
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
@@ -87,7 +87,7 @@ gooddata_staging_update_database:
 #############
 gooddata_prod:
   stage: analytics_prod
-  image: python:latest
+  image: python:3.10-alpine
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
