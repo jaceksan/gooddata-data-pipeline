@@ -21,7 +21,7 @@ attributes:
   - Commits
   title: Commit title
 dataSourceTableId:
-  dataSourceId: cicd_staging
+  dataSourceId: cicd_prod
   id: commits
   type: dataSource
 description: Commits

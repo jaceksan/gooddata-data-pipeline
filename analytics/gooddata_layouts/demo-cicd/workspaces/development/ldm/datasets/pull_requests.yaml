@@ -21,7 +21,7 @@ attributes:
   - Pull requests
   title: Pull request title
 dataSourceTableId:
-  dataSourceId: cicd_staging
+  dataSourceId: cicd_dev
   id: pull_requests
   type: dataSource
 description: Pull requests

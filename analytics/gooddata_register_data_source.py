@@ -4,6 +4,7 @@ import os
 host = os.environ["GOODDATA_HOST"]
 token = os.environ["GOODDATA_TOKEN"]
 data_source_id = os.getenv('GOODDATA_DATA_SOURCE_ID')
+print(f"Registering data source {data_source_id}")
 
 sdk = GoodDataSdk.create(host, token)
 
