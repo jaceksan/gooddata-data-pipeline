@@ -182,7 +182,7 @@ gooddata_prod:
 # Triggered only from scheduler
 ###############################
 # We need to notify GoodData that extract/load/transform delivered new data
-gooddata_staging_update_database:
+gooddata_prod_notify_data_changed:
   extends:
     - .base
   stage: analytics
@@ -191,6 +191,7 @@ gooddata_staging_update_database:
     GOODDATA_DATA_SOURCE_ID: cicd_prod
   script:
     - cd "$CI_PROJECT_DIR/analytics"
+    - pip install -r requirements.txt
     - python gooddata_upload_notification.py
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
