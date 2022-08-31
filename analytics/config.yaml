@@ -1,7 +1,18 @@
 workspaces:
   - id: development
     name: Development
+    data_source_id: cicd_dev
   - id: staging
     name: Staging
+    data_source_id: cicd_staging
   - id: production
     name: Production
+    data_source_id: cicd_prod
+
+# Only single layout is stored for all workspaces, in this folder
+layout_workspace_folder_name: development
+
+# Data source ID stored in gooddata layouts (in LDM, mapping to PDM)
+# When delivering to staging and prod, we need to replace this ID with the target ID,
+# if it is different (defined above for each workspace)
+layout_data_source_id: cicd_dev
