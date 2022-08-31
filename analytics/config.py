@@ -8,6 +8,7 @@ import yaml
 class Workspace:
     id: str
     name: str
+    data_source_id: str
 
 
 class Config:
@@ -27,9 +28,18 @@ class Config:
                 Workspace(
                     id=workspace['id'],
                     name=workspace['name'],
+                    data_source_id=workspace['data_source_id']
                 )
             )
         return workspaces
+
+    @property
+    def layout_data_source_id(self) -> str:
+        return self.config['layout_data_source_id']
+
+    @property
+    def layout_workspace_folder_name(self) -> str:
+        return self.config['layout_workspace_folder_name']
 
     def get_workspace(self, workspace_id: str) -> Workspace:
         for workspace in self.workspaces:
