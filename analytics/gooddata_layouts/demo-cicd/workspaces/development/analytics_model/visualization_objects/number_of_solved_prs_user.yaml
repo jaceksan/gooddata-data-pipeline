@@ -8,25 +8,28 @@ content:
             filters: []
             item:
               identifier:
-                id: commit_id
+                id: pull_request_id
                 type: attribute
         format: '#,##0'
-        localIdentifier: de0b8bcf2bca4aa09c9dffbb237f884a
-        title: Count of Commit id
+        localIdentifier: 09dc5bdae0f34379a0e6b29142ea6c7d
+        title: Count of Pull request id
     localIdentifier: measures
   - items:
     - attribute:
         displayForm:
           identifier:
-            id: created_at.month
+            id: user_id.login
             type: label
-        localIdentifier: c392046f791142cc929ca2b15ea54f62
+        localIdentifier: c9f213f0d432408097f7fd521592d205
     localIdentifier: view
   filters: []
-  properties: {}
+  properties:
+    controls:
+      dataLabels:
+        visible: auto
   sorts: []
   version: '2'
-  visualizationUrl: local:column
-description: Created commits / Month
-id: f1a6987e-9733-4717-994a-5bc030e4fcff
-title: Created commits / Month
+  visualizationUrl: local:pie
+description: Number of solved PRs / User
+id: number_of_solved_prs_user
+title: Number of solved PRs / User

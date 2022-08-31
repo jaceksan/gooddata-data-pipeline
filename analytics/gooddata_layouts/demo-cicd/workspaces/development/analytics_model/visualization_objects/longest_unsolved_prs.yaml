@@ -50,5 +50,5 @@ content:
   version: '2'
   visualizationUrl: local:table
 description: Longest unsolved PRs
-id: 1b906b4f-ae69-4093-9181-6b9548007e9f
+id: longest_unsolved_prs
 title: Longest unsolved PRs

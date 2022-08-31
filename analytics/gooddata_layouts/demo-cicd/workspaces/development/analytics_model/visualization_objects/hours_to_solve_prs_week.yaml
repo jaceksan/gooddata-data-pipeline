@@ -29,5 +29,5 @@ content:
   version: '2'
   visualizationUrl: local:line
 description: Hours to solve PRs / Week
-id: bdc253be-41b7-429f-8fd6-df7e5962a968
+id: hours_to_solve_prs_week
 title: Hours to solve PRs / Week
