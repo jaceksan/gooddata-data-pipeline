@@ -1,8 +1,9 @@
 from pathlib import Path
+from typing import Optional
 
 import attr
+import cattr
 import yaml
-
 
 OUTPUT_FOLDER = "/tmp"
 CSV_FILE_PATH_TMPL_ORG = OUTPUT_FOLDER + "/{org_name}_{table_name}.csv"
@@ -14,15 +15,15 @@ DEFAULT_DATE_FROM = "2020-01-01T00:00:00"
 class Table:
     name: str
     endpoint: str
-    date_col: str = None
-    custom_params: dict = {}
-    org_level: bool
+    date_col: Optional[str] = None
+    custom_params: dict = attr.field(factory=dict)
+    org_level: Optional[bool] = None
 
 
 @attr.s(auto_attribs=True, kw_only=True)
 class Organization:
     name: str
-    repos: list[str]
+    repos: list[str] = attr.field(factory=list)
 
 
 class Config:
@@ -36,23 +37,8 @@ class Config:
 
     @property
     def tables(self) -> list[Table]:
-        tables = []
-        for table in self.config['tables']:
-            tables.append(
-                Table(
-                    name=table['name'],
-                    endpoint=table['endpoint'],
-                    date_col=table.get('date_col'),
-                    custom_params=table.get('custom_params'),
-                    org_level=table.get('org_level')
-                )
-            )
-        return tables
+        return cattr.structure(self.config['tables'], list[Table])
 
     @property
     def organizations(self) -> list[Organization]:
-        orgs = []
-        for org in self.config['organizations']:
-            orgs.append(Organization(name=org['name'], repos=org['repos']))
-        return orgs
-
+        return cattr.structure(self.config['organizations'], list[Organization])
