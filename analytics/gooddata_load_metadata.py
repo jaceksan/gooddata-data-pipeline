@@ -1,13 +1,13 @@
 import os
 from gooddata_sdk import GoodDataSdk, CatalogWorkspace
-from args import parse_arguments
+from args import parse_arguments_ws
 from config import Config
 
 
 host = os.environ["GOODDATA_HOST"]
 token = os.environ["GOODDATA_TOKEN"]
 target_data_source_id = os.environ['GOODDATA_DATA_SOURCE_ID']
-args = parse_arguments()
+args = parse_arguments_ws("Load metadata into GoodData")
 config = Config(args.config)
 workspace = config.get_workspace(args.workspace_id)
 

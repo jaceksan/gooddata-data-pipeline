@@ -11,6 +11,12 @@ class Workspace:
     data_source_id: str
 
 
+@attr.s(auto_attribs=True, kw_only=True)
+class DataSource:
+    id: str
+    name: str
+
+
 class Config:
     def __init__(self, config_file: str):
         self.config_file = Path(config_file)
@@ -34,6 +40,18 @@ class Config:
         return workspaces
 
     @property
+    def data_sources(self) -> list[DataSource]:
+        data_sources = []
+        for data_source in self.config['data_sources']:
+            data_sources.append(
+                DataSource(
+                    id=data_source['id'],
+                    name=data_source['name'],
+                )
+            )
+        return data_sources
+
+    @property
     def layout_data_source_id(self) -> str:
         return self.config['layout_data_source_id']
 
@@ -46,3 +64,9 @@ class Config:
             if workspace.id == workspace_id:
                 return workspace
         raise Exception(f"Workspace {workspace_id} not found in the config.yaml file")
+
+    def get_data_source(self, data_source_id: str) -> DataSource:
+        for data_source in self.data_sources:
+            if data_source.id == data_source_id:
+                return data_source
+        raise Exception(f"Data source {data_source_id} not found in the config.yaml file")
