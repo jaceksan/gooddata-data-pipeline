@@ -1,16 +1,17 @@
-from gooddata_sdk import GoodDataSdk, CatalogDataSourcePostgres, PostgresAttributes, BasicCredentials
-from config import Config
-from args import parse_arguments
 import os
 
-host = os.environ["GOODDATA_HOST"]
-token = os.environ["GOODDATA_TOKEN"]
+from gooddata_sdk import (BasicCredentials, CatalogDataSourcePostgres,
+                          PostgresAttributes)
+
+from args import parse_arguments
+from config import Config, GoodDataSdkWrapper
+
 data_source_id = os.getenv('GOODDATA_DATA_SOURCE_ID')
 args = parse_arguments("Register data source, amd scan and store PDM (metadata about tables)")
 config = Config(args.config)
 data_source = config.get_data_source(data_source_id)
 
-sdk = GoodDataSdk.create(host, token)
+sdk = GoodDataSdkWrapper.sdk
 
 sdk.catalog_data_source.create_or_update_data_source(
     CatalogDataSourcePostgres(
@@ -28,8 +29,8 @@ sdk.catalog_data_source.create_or_update_data_source(
     )
 )
 
-# Scan data source for tables and store the metadata into GoodData
-# GoodData caches the metadata to reduce querying them (costly) in runtime
+# Scan data source for tables and store the metadata into GoodData.
+# GoodData caches the metadata to reduce querying them (costly) in runtime.
 sdk.catalog_data_source.scan_and_put_pdm(data_source_id)
 
 print("done")
