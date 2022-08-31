@@ -16,3 +16,14 @@ layout_workspace_folder_name: development
 # When delivering to staging and prod, we need to replace this ID with the target ID,
 # if it is different (defined above for each workspace)
 layout_data_source_id: cicd_dev
+
+data_sources:
+  - id: cicd_dev
+    name: "CI/CD dev"
+    db_name: cicd_dev
+  - id: cicd_staging
+    name: "CI/CD staging"
+    db_name: cicd_staging
+  - id: cicd_dev
+    name: "CI/CD prod"
+    db_name: cicd_prod
