@@ -1,16 +1,13 @@
-import os
 import sys
-from gooddata_sdk import GoodDataSdk
-from args import parse_arguments_ws
-from config import Config
 
-host = os.environ["GOODDATA_HOST"]
-token = os.environ["GOODDATA_TOKEN"]
+from args import parse_arguments_ws
+from config import Config, GoodDataSdkWrapper
+
 args = parse_arguments_ws("Test all insights in requested workspace")
 config = Config(args.config)
 workspace = config.get_workspace(args.workspace_id)
 
-sdk = GoodDataSdk.create(host, token)
+sdk = GoodDataSdkWrapper.sdk
 
 insights = sdk.insights.get_insights(workspace.id)
 

@@ -1,7 +1,7 @@
 content:
   filterContextRef:
     identifier:
-      id: af11cf1d-4931-4488-b4ed-9eda6a7ecb2c
+      id: simple_filter_context
       type: filterContext
   layout:
     sections:
@@ -35,7 +35,7 @@ content:
           ignoreDashboardFilters: []
           insight:
             identifier:
-              id: 747e2159-9725-484a-a72c-cb787a16ab00
+              id: number_of_solved_prs_user
               type: visualizationObject
           properties: {}
           title: Number of solved PRs / User
@@ -54,7 +54,7 @@ content:
           ignoreDashboardFilters: []
           insight:
             identifier:
-              id: 2869d6a8-05dd-4b2b-97f5-082583917eb4
+              id: merged_prs_month
               type: visualizationObject
           properties: {}
           title: Merged PRs / Month
@@ -73,7 +73,7 @@ content:
           ignoreDashboardFilters: []
           insight:
             identifier:
-              id: f1a6987e-9733-4717-994a-5bc030e4fcff
+              id: created_commits_month
               type: visualizationObject
           properties: {}
           title: Created commits / Month
@@ -92,7 +92,7 @@ content:
           ignoreDashboardFilters: []
           insight:
             identifier:
-              id: bdc253be-41b7-429f-8fd6-df7e5962a968
+              id: hours_to_solve_prs_week
               type: visualizationObject
           properties: {}
           title: Hours to solve PRs / Week
@@ -128,7 +128,7 @@ content:
           ignoreDashboardFilters: []
           insight:
             identifier:
-              id: 1b906b4f-ae69-4093-9181-6b9548007e9f
+              id: longest_unsolved_prs
               type: visualizationObject
           properties: {}
           title: Longest unsolved PRs
@@ -137,5 +137,5 @@ content:
     type: IDashboardLayout
   version: '2'
 description: ''
-id: e1024d50-e218-4cae-8ac7-490118700a96
+id: github_overview
 title: GitHub Overview

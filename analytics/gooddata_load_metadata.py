@@ -1,22 +1,20 @@
 import os
-from gooddata_sdk import GoodDataSdk, CatalogWorkspace
+
+from gooddata_sdk import CatalogWorkspace
+
 from args import parse_arguments_ws
-from config import Config
+from config import Config, GoodDataSdkWrapper
 
-
-host = os.environ["GOODDATA_HOST"]
-token = os.environ["GOODDATA_TOKEN"]
 target_data_source_id = os.environ['GOODDATA_DATA_SOURCE_ID']
 args = parse_arguments_ws("Load metadata into GoodData")
 config = Config(args.config)
 workspace = config.get_workspace(args.workspace_id)
 
-sdk = GoodDataSdk.create(host, token)
+sdk = GoodDataSdkWrapper.sdk
 
 # Create workspaces, if they do not exist yet, otherwise update them
-sdk.catalog_workspace.create_or_update(
-    CatalogWorkspace(workspace_id=workspace.id, name=workspace.name)
-)
+workspace = CatalogWorkspace(workspace_id=workspace.id, name=workspace.name)
+sdk.catalog_workspace.create_or_update(workspace=workspace)
 
 # Load layouts from disk from the configured folder.
 # Single folder serves all workspaces in this demo (dev->staging->prod)
