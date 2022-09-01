@@ -1,7 +1,11 @@
+import os
 from pathlib import Path
+from typing import Any
 
 import attr
+import cattr
 import yaml
+from gooddata_sdk import GoodDataSdk
 
 
 @attr.s(auto_attribs=True, kw_only=True)
@@ -15,6 +19,7 @@ class Workspace:
 class DataSource:
     id: str
     name: str
+    db_name: str
 
 
 class Config:
@@ -22,34 +27,17 @@ class Config:
         self.config_file = Path(config_file)
 
     @property
-    def config(self):
+    def config(self) -> dict[str, Any]:
         with open(Path(self.config_file)) as fp:
             return yaml.safe_load(fp)
 
     @property
     def workspaces(self) -> list[Workspace]:
-        workspaces = []
-        for workspace in self.config['workspaces']:
-            workspaces.append(
-                Workspace(
-                    id=workspace['id'],
-                    name=workspace['name'],
-                    data_source_id=workspace['data_source_id']
-                )
-            )
-        return workspaces
+        return cattr.structure(self.config['workspaces'], list[Workspace])
 
     @property
     def data_sources(self) -> list[DataSource]:
-        data_sources = []
-        for data_source in self.config['data_sources']:
-            data_sources.append(
-                DataSource(
-                    id=data_source['id'],
-                    name=data_source['name'],
-                )
-            )
-        return data_sources
+        return cattr.structure(self.config['data_sources'], list[DataSource])
 
     @property
     def layout_data_source_id(self) -> str:
@@ -70,3 +58,7 @@ class Config:
             if data_source.id == data_source_id:
                 return data_source
         raise Exception(f"Data source {data_source_id} not found in the config.yaml file")
+
+
+class GoodDataSdkWrapper:
+    sdk: GoodDataSdk = GoodDataSdk.create(host_=os.environ["GOODDATA_HOST"], token_=os.environ["GOODDATA_TOKEN"])

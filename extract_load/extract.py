@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
-import os
 import json
+import os
 
-from config import Table, Config, CSV_FILE_PATH_TMPL_ORG, CSV_FILE_PATH_TMPL_REPO, DEFAULT_DATE_FROM
+from config import (CSV_FILE_PATH_TMPL_ORG, CSV_FILE_PATH_TMPL_REPO,
+                    DEFAULT_DATE_FROM, Config, Table)
 from libs.logger import get_logger
 from libs.rest_api import RestApi
 

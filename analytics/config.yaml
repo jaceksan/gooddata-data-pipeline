@@ -24,6 +24,6 @@ data_sources:
   - id: cicd_staging
     name: "CI/CD staging"
     db_name: cicd_staging
-  - id: cicd_dev
+  - id: cicd_prod
     name: "CI/CD prod"
     db_name: cicd_prod
