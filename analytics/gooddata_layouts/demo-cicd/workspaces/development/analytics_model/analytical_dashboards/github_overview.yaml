@@ -92,10 +92,10 @@ content:
           ignoreDashboardFilters: []
           insight:
             identifier:
-              id: hours_to_solve_prs_week
+              id: days_to_solve_prs_week
               type: visualizationObject
           properties: {}
-          title: Hours to solve PRs / Week
+          title: Days to solve PRs / Week
           type: insight
       type: IDashboardLayoutSection
     - items:

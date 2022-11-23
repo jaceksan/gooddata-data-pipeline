@@ -18,11 +18,16 @@ content:
     - attribute:
         displayForm:
           identifier:
-            id: user_id.login
+            id: login
             type: label
         localIdentifier: c9f213f0d432408097f7fd521592d205
     localIdentifier: view
-  filters: []
+  filters:
+  - rankingFilter:
+      measure:
+        localIdentifier: 09dc5bdae0f34379a0e6b29142ea6c7d
+      operator: TOP
+      value: 10
   properties:
     controls:
       dataLabels:
