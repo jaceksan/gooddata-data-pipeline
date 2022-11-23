@@ -2,8 +2,10 @@ version: 2
 
 models:
   - name: commits
+    description: "Commits"
     columns:
       - name: commit_id
+        description: "Commit ID"
         tests:
           - dbt_constraints.primary_key
       - name: user_id
@@ -16,3 +18,9 @@ models:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('repos')
               pk_column_name: repo_id
+      - name: commit_url
+        description: "Commit URL"
+      - name: commit_title
+        description: "Commit title"
+      - name: created_at
+        description: "Created at"

@@ -137,3 +137,12 @@ The script [gooddata_provisioning.py](analytics/gooddata_provisioning.py) loads 
 If you want to learn more about the stack described in the document, do not hesitate to contact us.
 
 If you find a bug, please [create a merge request](https://gitlab.com/patrikbraborec/gooddata-data-pipeline/-/merge_requests/new), or [create an issue](https://gitlab.com/patrikbraborec/gooddata-data-pipeline/-/issues/new).
+
+### Generate all columns into schema.yml files
+
+E.g.:
+```shell
+dbt --profiles-dir ./profile \
+  run-operation generate_source \
+  --args "{\"schema_name\": \"$POSTGRES_OUTPUT_SCHEMA\", \"generate_columns\": true, \"include_descriptions\": true}"
+```

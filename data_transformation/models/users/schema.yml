@@ -2,7 +2,13 @@ version: 2
 
 models:
   - name: users
+    description: "Users"
     columns:
       - name: user_id
+        description: "User ID"
         tests:
           - dbt_constraints.primary_key
+      - name: url
+        description: "User URL"
+      - name: login
+        description: "User login"

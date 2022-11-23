@@ -2,8 +2,10 @@ version: 2
 
 models:
   - name: pull_requests
+    description: "Pull requests"
     columns:
       - name: pull_request_id
+        description: "Pull request ID"
         tests:
           - dbt_constraints.primary_key
       - name: user_id
@@ -16,3 +18,13 @@ models:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('repos')
               pk_column_name: repo_id
+      - name: pull_request_url
+        description: "Pull request URL"
+      - name: pull_request_title
+        description: "Pull request title"
+      - name: created_at
+        description: "Created at"
+      - name: merged_at
+        description: "Merged at"
+      - name: hours_to_solve
+        description: "Hours to solve"
