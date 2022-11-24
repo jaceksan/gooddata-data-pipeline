@@ -7,7 +7,7 @@ args = parse_arguments_ws("Test all insights in requested workspace")
 config = Config(args.config)
 workspace = config.get_workspace(args.workspace_id)
 
-sdk = GoodDataSdkWrapper.sdk
+sdk = GoodDataSdkWrapper().sdk
 
 insights = sdk.insights.get_insights(workspace.id)
 

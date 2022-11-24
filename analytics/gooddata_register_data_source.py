@@ -11,7 +11,7 @@ args = parse_arguments("Register data source, amd scan and store PDM (metadata a
 config = Config(args.config)
 data_source = config.get_data_source(data_source_id)
 
-sdk = GoodDataSdkWrapper.sdk
+sdk = GoodDataSdkWrapper().sdk
 
 sdk.catalog_data_source.create_or_update_data_source(
     CatalogDataSourcePostgres(

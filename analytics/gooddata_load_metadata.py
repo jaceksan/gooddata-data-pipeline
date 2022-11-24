@@ -10,7 +10,7 @@ args = parse_arguments_ws("Load metadata into GoodData")
 config = Config(args.config)
 workspace = config.get_workspace(args.workspace_id)
 
-sdk = GoodDataSdkWrapper.sdk
+sdk = GoodDataSdkWrapper().sdk
 
 # Create workspaces, if they do not exist yet, otherwise update them
 workspace = CatalogWorkspace(workspace_id=workspace.id, name=workspace.name)
