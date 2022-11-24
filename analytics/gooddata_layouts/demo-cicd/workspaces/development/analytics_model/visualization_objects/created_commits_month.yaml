@@ -20,6 +20,7 @@ content:
           identifier:
             id: created_at.month
             type: label
+        localIdentifier: c392046f791142cc929ca2b15ea54f62
     localIdentifier: view
   filters: []
   properties: {}
