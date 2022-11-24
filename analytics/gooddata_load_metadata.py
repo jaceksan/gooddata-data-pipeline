@@ -1,7 +1,8 @@
 import os
 
-from gooddata_sdk import CatalogWorkspace
+from gooddata_sdk import CatalogWorkspace, CatalogDeclarativeModel
 
+from dbt.model import DbtTables
 from args import parse_arguments_ws
 from config import Config, GoodDataSdkWrapper
 
@@ -16,17 +17,14 @@ sdk = GoodDataSdkWrapper().sdk
 workspace = CatalogWorkspace(workspace_id=workspace.id, name=workspace.name)
 sdk.catalog_workspace.create_or_update(workspace=workspace)
 
+# Construct GoodData LDM from dbt models
+dbt_tables = DbtTables()
+declarative_datasets = dbt_tables.make_declarative_datasets(target_data_source_id)
+ldm = CatalogDeclarativeModel.from_dict({"ldm": declarative_datasets}, camel_case=False)
+
 # Load layouts from disk from the configured folder.
 # Single folder serves all workspaces in this demo (dev->staging->prod)
-ldm = sdk.catalog_workspace_content.load_declarative_ldm(config.layout_workspace_folder_name)
 adm = sdk.catalog_workspace_content.load_declarative_analytics_model(config.layout_workspace_folder_name)
-
-# Stored layouts(LDM) contain a data source ID
-# Target workspace can be connected to different workspace
-# We have to modify data source ID in LDM in this case
-if config.layout_data_source_id != target_data_source_id:
-    data_source_mapping = {config.layout_data_source_id: target_data_source_id}
-    ldm.modify_mapped_data_source(data_source_mapping)
 
 # Deploy logical and analytics model into target workspace
 sdk.catalog_workspace_content.put_declarative_ldm(workspace.id, ldm)

@@ -1,13 +1,15 @@
 import os
 
-from gooddata_sdk import (BasicCredentials, CatalogDataSourcePostgres,
-                          PostgresAttributes)
+from gooddata_sdk import (
+    BasicCredentials, CatalogDataSourcePostgres, PostgresAttributes, CatalogDeclarativeTables
+)
 
-from args import parse_arguments
+from dbt.model import DbtTables
+from args import parse_arguments_ds
 from config import Config, GoodDataSdkWrapper
 
 data_source_id = os.getenv('GOODDATA_DATA_SOURCE_ID')
-args = parse_arguments("Register data source, amd scan and store PDM (metadata about tables)")
+args = parse_arguments_ds("Register data source, amd scan and store PDM (metadata about tables)")
 config = Config(args.config)
 data_source = config.get_data_source(data_source_id)
 
@@ -29,8 +31,13 @@ sdk.catalog_data_source.create_or_update_data_source(
     )
 )
 
+# Construct GoodData PDM from dbt models
+dbt_tables = DbtTables()
+pdm = dbt_tables.make_pdm()
+declarative_tables = CatalogDeclarativeTables.from_dict(pdm, camel_case=False)
+
 # Scan data source for tables and store the metadata into GoodData.
 # GoodData caches the metadata to reduce querying them (costly) in runtime.
-sdk.catalog_data_source.scan_and_put_pdm(data_source_id)
+sdk.catalog_data_source.put_declarative_pdm(data_source_id, declarative_tables)
 
 print("done")

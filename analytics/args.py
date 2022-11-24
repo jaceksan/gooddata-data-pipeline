@@ -28,7 +28,7 @@ def parse_arguments_ws(description: str):
     return parser.parse_args()
 
 
-def parse_arguments(description: str):
+def parse_arguments_ds(description: str):
     parser = get_parser(description)
     set_config_arg(parser)
     return parser.parse_args()

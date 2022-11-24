@@ -3,28 +3,77 @@ version: 2
 models:
   - name: pull_requests
     description: "Pull requests"
+    meta:
+      gooddata:
+        model_id: github
     columns:
       - name: pull_request_id
+        data_type: "INT"
         description: "Pull request ID"
         tests:
           - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
       - name: user_id
+        data_type: "INT"
         tests:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('users')
               pk_column_name: user_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: users
+            # TODO is this needed? We do not support multi-column grains/references yet
+            # referenced_column_name: user_id
       - name: repo_id
+        data_type: "INT"
         tests:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('repos')
               pk_column_name: repo_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: repos
+            # TODO is this needed? We do not support multi-column grains/references yet
+            # referenced_column_name: repo_id
       - name: pull_request_url
+        data_type: "STRING"
         description: "Pull request URL"
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: HYPERLINK
+            attribute_column: pull_request_id
       - name: pull_request_title
+        data_type: "STRING"
         description: "Pull request title"
+        meta:
+          gooddata:
+            ldm_type: attribute
       - name: created_at
+        data_type: "TIMESTAMP"
         description: "Created at"
+        meta:
+          gooddata:
+            ldm_type: date
       - name: merged_at
+        data_type: "TIMESTAMP"
         description: "Merged at"
-      - name: hours_to_solve
-        description: "Hours to solve"
+        meta:
+          gooddata:
+            ldm_type: date
+      - name: closed_at
+        data_type: "TIMESTAMP"
+        description: "Closed at"
+        meta:
+          gooddata:
+            ldm_type: date
+      - name: days_to_solve
+        data_type: "NUMERIC"
+        description: "Days to solve"
+        meta:
+          gooddata:
+            ldm_type: fact
