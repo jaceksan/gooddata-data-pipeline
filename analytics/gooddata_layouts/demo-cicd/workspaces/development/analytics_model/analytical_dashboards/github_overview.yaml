@@ -136,6 +136,6 @@ content:
       type: IDashboardLayoutSection
     type: IDashboardLayout
   version: '2'
-description: ''
+description: GitHub Overview
 id: github_overview
 title: GitHub Overview

@@ -29,4 +29,4 @@ content:
   visualizationUrl: local:column
 description: Created commits / Month
 id: created_commits_month
-title: Created commits / Month
+title: New commits / Month
