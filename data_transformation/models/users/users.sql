@@ -5,7 +5,7 @@
 ) }}
 
 with users as (
-  select to_json("item") as item_json from cicd_input_stage.users
+  select to_json("item") as item_json from {{ var("input_schema") }}.users
 ),
 
 final as (

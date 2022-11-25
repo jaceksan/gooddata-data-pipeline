@@ -9,7 +9,7 @@
 -- Helper step, materialize extracted JSON fields first and then JOIN it with other tables
 
 with commits as (
-    select to_json("item") as item_json from cicd_input_stage.commits
+    select to_json("item") as item_json from {{ var("input_schema") }}.commits
 ),
 
 final as (
