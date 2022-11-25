@@ -28,7 +28,7 @@ content:
                   type: label
               hyperlinkDisplayForm:
                 identifier:
-                  id: user_id.userurl
+                  id: user_url
                   type: label
             transition: new-window
             type: drillToAttributeUrl
@@ -121,7 +121,7 @@ content:
                   type: label
               hyperlinkDisplayForm:
                 identifier:
-                  id: pull_request_id.pullrequesturl
+                  id: pull_request_id.pull_request_url
                   type: label
             transition: new-window
             type: drillToAttributeUrl
