@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from gooddata_sdk import CatalogWorkspace, CatalogDeclarativeModel
 
@@ -24,7 +25,7 @@ ldm = CatalogDeclarativeModel.from_dict({"ldm": declarative_datasets}, camel_cas
 
 # Load layouts from disk from the configured folder.
 # Single folder serves all workspaces in this demo (dev->staging->prod)
-adm = sdk.catalog_workspace_content.load_declarative_analytics_model(config.layout_workspace_folder_name)
+adm = sdk.catalog_workspace_content.load_analytics_model_from_disk(Path("gooddata_layouts"))
 
 # Deploy logical and analytics model into target workspace
 sdk.catalog_workspace_content.put_declarative_ldm(workspace.id, ldm)
