@@ -1,4 +1,5 @@
 {{ config(
+  schema=var('input_schema'),
   indexes=[
     {'columns': ['repo_id'], 'unique': true}
   ]
