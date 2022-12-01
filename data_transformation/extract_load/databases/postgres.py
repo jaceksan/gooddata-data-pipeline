@@ -3,21 +3,21 @@ from __future__ import annotations
 from logging import Logger
 from typing import Any
 from pathlib import Path
-import os
 import psycopg2
+from dbt_gooddata.dbt.profiles import DbtOutput
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2 import errors, errorcodes
 
 
 class Postgres:
-    def __init__(self, logger: Logger):
+    def __init__(self, logger: Logger, dbt_output: DbtOutput):
         self.logger = logger
-        self.host = os.getenv('POSTGRES_HOST', 'localhost')
-        self.port = os.getenv('POSTGRES_PORT', 5432)
-        self.user = os.getenv('POSTGRES_USER', 'postgres')
-        self.password = os.getenv('POSTGRES_PASS')
-        self.name = os.getenv('POSTGRES_DBNAME')
-        self.schema = os.getenv('POSTGRES_INPUT_SCHEMA', 'public')
+        self.host = dbt_output.host
+        self.port = dbt_output.port
+        self.user = dbt_output.user
+        self.password = dbt_output.password
+        self.name = dbt_output.dbname
+        self.schema = dbt_output.schema
         self._conn = self.get_connection()
         self._cur = self._conn.cursor()
         self.execute_query(f'SET SEARCH_PATH TO {self.schema}')

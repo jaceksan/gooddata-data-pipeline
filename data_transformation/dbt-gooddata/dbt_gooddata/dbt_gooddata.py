@@ -81,7 +81,7 @@ def upload_notification(logger, sdk: GoodDataSdk, data_source_id: str):
 
 
 def main():
-    args = parse_arguments()
+    args = parse_arguments("dbt-gooddata plugin for models management and invalidating caches(upload notification)")
     logger = get_logger("dbt-gooddata", args.debug)
     logger.info("Start")
     dbt_target = DbtProfiles(args).target

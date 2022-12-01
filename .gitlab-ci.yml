@@ -17,15 +17,20 @@ stages:
     - .base
   stage: extract_load
   script:
-    - cd "$CI_PROJECT_DIR/extract_load"
+    - cd "$CI_PROJECT_DIR/data_transformation"
+    # Use dbt profiles parser from dbt-gooddata to get connection properties to the current target database
+    - cd dbt-gooddata && python setup.py install && cd ..
+    - cd "extract_load"
     - pip install -r requirements.txt
     - ./extract.py
-    - ./load.py
+    - ./load.py --profile-dir ../profile --target $TARGET
 
 .dbt:
   extends:
     - .base
   stage: transform
+  variables:
+    GOODDATA_MODEL_ID: "github"
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install -r requirements.txt
@@ -34,7 +39,7 @@ stages:
     - dbt deps
     - dbt run --profiles-dir profile --target $TARGET
     - dbt test --profiles-dir profile --target $TARGET
-    - dbt-gooddata --profile-dir profile --target $TARGET deploy_models --model-id github
+    - dbt-gooddata --profile-dir profile --target $TARGET deploy_models
     - dbt-gooddata --profile-dir profile --target $TARGET upload_notification
 
 .gooddata:
@@ -57,7 +62,7 @@ extract_load_dev:
   extends:
     - .extract_load
   variables:
-    POSTGRES_DBNAME: cicd_dev
+    TARGET: dev
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -69,6 +74,8 @@ dbt_dev:
     - .dbt
   variables:
     TARGET: dev
+    GOODDATA_WORKSPACE_ID: "development"
+    GOODDATA_WORKSPACE_TITLE: "Development"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -96,7 +103,7 @@ extract_load_staging:
   extends:
     - .extract_load
   variables:
-    POSTGRES_DBNAME: cicd_staging
+    TARGET: staging
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -108,6 +115,8 @@ dbt_staging:
     - .dbt
   variables:
     TARGET: staging
+    GOODDATA_WORKSPACE_ID: "staging"
+    GOODDATA_WORKSPACE_TITLE: "Staging"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -134,7 +143,7 @@ extract_load_prod:
   extends:
     - .extract_load
   variables:
-    POSTGRES_DBNAME: cicd_prod
+    TARGET: prod
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -148,6 +157,8 @@ dbt_prod:
     - .dbt
   variables:
     TARGET: prod
+    GOODDATA_WORKSPACE_ID: "production"
+    GOODDATA_WORKSPACE_TITLE: "Production"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:

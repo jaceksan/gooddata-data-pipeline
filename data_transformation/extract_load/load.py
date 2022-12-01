@@ -5,29 +5,31 @@ from pathlib import Path
 
 from databases.postgres import Postgres
 from config import Config, CSV_FILE_PATH_TMPL_REPO, CSV_FILE_PATH_TMPL_ORG, Table
+from dbt_gooddata.args import set_dbt_args
 from libs.logger import get_logger
-
-# Comment to demonstrate the run of extract_load stage.
+from dbt_gooddata.dbt.profiles import DbtProfiles
 
 
 class Load:
     def __init__(self):
         self.args = self.parse_arguments()
         self.logger = get_logger(Load.__name__, self.args.debug)
-        self.db = Postgres(self.logger)
+        dbt_output = DbtProfiles(self.args).target
+        self.db = Postgres(self.logger, dbt_output)
 
     @staticmethod
     def parse_arguments():
         # noinspection PyTypeChecker
         parser = argparse.ArgumentParser(
             conflict_handler="resolve",
-            description="Extracts data from github",
+            description="Load github data into database",
             formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
         parser.add_argument('-c', '--config', default='config.yaml',
-                            help='Config file defining, what should be crawled')
+                            help='Config file defining, what tables should be loaded')
         parser.add_argument('--debug', action='store_true', default=False,
                             help='Increase logging level to DEBUG')
+        set_dbt_args(parser)
         return parser.parse_args()
 
     def recreate_table(self, table: Table):

@@ -2,10 +2,10 @@ import argparse
 import os
 
 
-def get_parser() -> argparse.ArgumentParser:
+def get_parser(description: str) -> argparse.ArgumentParser:
     return argparse.ArgumentParser(
         conflict_handler="resolve",
-        description="Generate GoodData models from dbt models and deploy them to requested environment",
+        description=description,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
@@ -47,8 +47,8 @@ def set_dbt_args(parser: argparse.ArgumentParser):
                         default="dev_local")
 
 
-def parse_arguments():
-    parser = get_parser()
+def parse_arguments(description: str):
+    parser = get_parser(description)
     parser.add_argument('--debug', action='store_true', default=False,
                         help='Increase logging level to DEBUG')
     subparsers = parser.add_subparsers(help='actions')
@@ -59,4 +59,12 @@ def parse_arguments():
     set_gooddata_deploy_models_args(deploy_models)
     deploy_models.set_defaults(method='deploy_models')
     upload_notification.set_defaults(method='upload_notification')
+    return parser.parse_args()
+
+
+def parse_dbt_arguments(description: str):
+    parser = get_parser(description)
+    parser.add_argument('--debug', action='store_true', default=False,
+                        help='Increase logging level to DEBUG')
+    set_dbt_args(parser)
     return parser.parse_args()
