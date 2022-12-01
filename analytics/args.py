@@ -1,4 +1,5 @@
 import argparse
+import os
 
 
 def get_parser(description: str) -> argparse.ArgumentParser:
@@ -9,26 +10,25 @@ def get_parser(description: str) -> argparse.ArgumentParser:
     )
 
 
-def set_config_arg(parser):
-    parser.add_argument('-c', '--config', default='config.yaml',
-                        help='Config file defining, what should be crawled')
-
-
-def set_workspace_arg(parser):
-    parser.add_argument('-c', '--config', default='config.yaml',
-                        help='Config file defining, what should be crawled')
-    parser.add_argument('-w', '--workspace-id',
-                        help='Workspace ID, where we want to load metadata')
+def set_gooddata_args(parser: argparse.ArgumentParser):
+    parser.add_argument("-gh", "--gooddata-host",
+                        help="Hostname(DNS) where GoodData is running",
+                        default=os.getenv("GOODDATA_HOST", "http://localhost:3000"))
+    parser.add_argument("-gt", "--gooddata-token",
+                        help="GoodData API token for authentication",
+                        default=os.getenv("GOODDATA_TOKEN", "YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"))
+    parser.add_argument("-go", "--gooddata-override-host",
+                        help="Override hostname, if necessary. "
+                             "When you connect to different hostname than where GoodData is running(proxies)",
+                        default=os.getenv("GOODDATA_OVERRIDE_HOST"))
+    parser.add_argument("-gw", "--gooddata-workspace-id",
+                        help="Workspace ID, where we want to load metadata",
+                        default=os.getenv("GOODDATA_WORKSPACE_ID"))
 
 
 def parse_arguments_ws(description: str):
     parser = get_parser(description)
-    set_config_arg(parser)
-    set_workspace_arg(parser)
-    return parser.parse_args()
-
-
-def parse_arguments_ds(description: str):
-    parser = get_parser(description)
-    set_config_arg(parser)
+    parser.add_argument('--debug', action='store_true', default=False,
+                        help='Increase logging level to DEBUG')
+    set_gooddata_args(parser)
     return parser.parse_args()

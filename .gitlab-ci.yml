@@ -26,14 +26,16 @@ stages:
   extends:
     - .base
   stage: transform
-  variables:
-    POSTGRES_DBNAME: cicd_dev
   script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install -r requirements.txt
+    # TODO - publish to pip
+    - cd dbt-gooddata && python setup.py install && cd ..
     - dbt deps
-    - dbt run --profiles-dir profile --target dev
-    - dbt test --profiles-dir profile --target dev
+    - dbt run --profiles-dir profile --target $TARGET
+    - dbt test --profiles-dir profile --target $TARGET
+    - dbt-gooddata --profile-dir profile --target $TARGET deploy_models --model-id github
+    - dbt-gooddata --profile-dir profile --target $TARGET upload_notification
 
 .gooddata:
   extends:
@@ -42,13 +44,7 @@ stages:
   script:
     - cd "$CI_PROJECT_DIR/analytics"
     - pip install -r requirements.txt
-    # Deliver into dev workspace
-    # Data source properties are stored in Gitlab ENV vars
-    # If admin changes them, he has to run this job manually (RUN_ALL_JOBS=true) to deliver new DS definition
-    - python gooddata_register_data_source.py
-    # Notify GoodData that data has been changed by ETL
-    - python gooddata_upload_notification.py
-    # It takes the metadata of analytics saved in folder structure and put it in the staging workspace.
+    # It takes the metadata of analytics saved in folder structure and put it in a workspace.
     # It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
     - python gooddata_load_metadata.py -w $WORKSPACE
     # Test that all insights are still executable
@@ -72,7 +68,7 @@ dbt_dev:
   extends:
     - .dbt
   variables:
-    POSTGRES_DBNAME: cicd_dev
+    TARGET: dev
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -84,8 +80,6 @@ gooddata_dev:
   extends:
     - .gooddata
   variables:
-    POSTGRES_DBNAME: cicd_dev
-    GOODDATA_DATA_SOURCE_ID: cicd_dev
     WORKSPACE: development
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
@@ -113,7 +107,7 @@ dbt_staging:
   extends:
     - .dbt
   variables:
-    POSTGRES_DBNAME: cicd_staging
+    TARGET: staging
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -125,8 +119,6 @@ gooddata_staging:
   extends:
     - .gooddata
   variables:
-    POSTGRES_DBNAME: cicd_staging
-    GOODDATA_DATA_SOURCE_ID: cicd_staging
     WORKSPACE: staging
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
@@ -155,7 +147,7 @@ dbt_prod:
   extends:
     - .dbt
   variables:
-    POSTGRES_DBNAME: cicd_prod
+    TARGET: prod
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -169,29 +161,9 @@ gooddata_prod:
   extends:
     - .gooddata
   variables:
-    POSTGRES_DBNAME: cicd_prod
-    GOODDATA_DATA_SOURCE_ID: cicd_prod
     WORKSPACE: production
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - analytics/**/*
         - .gitlab-ci.yml
-
-###############################
-# Triggered only from scheduler
-###############################
-# We need to notify GoodData that extract/load/transform delivered new data
-gooddata_prod_notify_data_changed:
-  extends:
-    - .base
-  stage: analytics
-  variables:
-    POSTGRES_DBNAME: cicd_prod
-    GOODDATA_DATA_SOURCE_ID: cicd_prod
-  script:
-    - cd "$CI_PROJECT_DIR/analytics"
-    - pip install -r requirements.txt
-    - python gooddata_upload_notification.py
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'

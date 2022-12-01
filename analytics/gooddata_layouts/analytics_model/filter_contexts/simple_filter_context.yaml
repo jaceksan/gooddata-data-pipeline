@@ -1,0 +1,17 @@
+content:
+  filters:
+    - attributeFilter:
+        attributeElements:
+          uris:
+            - gooddata-ui-sdk
+        displayForm:
+          identifier:
+            id: repo_name
+            type: label
+        filterElementsBy: []
+        localIdentifier: 78cb8454e8eb4074a71203aa8bd5cabf
+        negativeSelection: false
+  version: '2'
+description: ''
+id: simple_filter_context
+title: filterContext

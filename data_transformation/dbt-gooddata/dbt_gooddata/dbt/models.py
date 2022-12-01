@@ -1,124 +1,90 @@
 import json
 from typing import Optional
+import attrs
+
+from dbt_gooddata.dbt.base import Base, DATE_GRANULARITIES, TIMESTAMP_GRANULARITIES, GoodDataLdmTypes
 
 
-META_GOODDATA_KEY = "gooddata"
-DATE_GRANULARITIES = [
-    "DAY",
-    "WEEK",
-    "MONTH",
-    "QUARTER",
-    "YEAR",
-    "DAY_OF_WEEK",
-    "DAY_OF_MONTH",
-    "DAY_OF_YEAR",
-    "WEEK_OF_YEAR",
-    "MONTH_OF_YEAR",
-    "QUARTER_OF_YEAR",
-]
-TIMESTAMP_GRANULARITIES = [
-    "MINUTE",
-    "HOUR",
-    "MINUTE_OF_HOUR",
-    "HOUR_OF_DAY",
-]
+@attrs.define(auto_attribs=True, kw_only=True)
+class DbtModelMetaGoodDataTableProps(Base):
+    model_id: Optional[str] = None
 
 
-class DbtBase:
-    def __init__(self, model_def: dict) -> None:
-        self.model_def = model_def
-
-    @property
-    def name(self) -> str:
-        return self.model_def["name"]
-
-    @property
-    def description(self) -> str:
-        return self.model_def["description"]
-
-    @property
-    def tags(self) -> list[str]:
-        return self.model_def["tags"]
-
-    @property
-    def meta(self) -> dict:
-        return self.model_def["meta"]
-
-    @property
-    def gooddata(self) -> Optional[dict]:
-        return self.meta.get(META_GOODDATA_KEY)
-
-    def get_if_gooddata(self, property_name: str):
-        if self.gooddata is not None:
-            return self.gooddata.get(property_name)
-        return None
+@attrs.define(auto_attribs=True, kw_only=True)
+class DbtModelMetaGoodDataColumnProps(Base):
+    ldm_type: Optional[str] = None
+    referenced_table: Optional[str] = None
+    referenced_column_name: Optional[str] = None
+    label_type: Optional[str] = None
+    attribute_column: Optional[str] = None
 
 
-class DbtColumn(DbtBase):
-    @property
-    def data_type(self) -> str:
-        return self.model_def["data_type"]
-
-    @property
-    def ldm_type(self) -> Optional[str]:
-        return self.get_if_gooddata("ldm_type")
-
-    @property
-    def referenced_table(self) -> Optional[str]:
-        return self.get_if_gooddata("referenced_table")
-
-    @property
-    def referenced_column_name(self) -> Optional[str]:
-        return self.get_if_gooddata("referenced_column_name")
-
-    @property
-    def label_type(self) -> Optional[str]:
-        return self.get_if_gooddata("label_type")
-
-    @property
-    def attribute_column(self) -> Optional[str]:
-        return self.get_if_gooddata("attribute_column")
+@attrs.define(auto_attribs=True, kw_only=True)
+class DbtModelMetaGoodDataTable(Base):
+    gooddata: Optional[DbtModelMetaGoodDataTableProps] = None
 
 
-class DbtTable(DbtBase):
-    @property
-    def schema(self) -> str:
-        return self.model_def["schema"]
-
-    @property
-    def columns(self) -> list[DbtColumn]:
-        return [DbtColumn(c) for c in self.model_def['columns'].values()]
-
-    @property
-    def model_id(self) -> Optional[str]:
-        return self.get_if_gooddata("model_id")
+@attrs.define(auto_attribs=True, kw_only=True)
+class DbtModelMetaGoodDataColumn(Base):
+    gooddata: Optional[DbtModelMetaGoodDataColumnProps] = None
 
 
-class DbtTables:
-    def __init__(self):
-        with open("../data_transformation/target/manifest.json") as fp:
+@attrs.define(auto_attribs=True, kw_only=True)
+class DbtModelBase(Base):
+    name: str
+    description: str
+    tags: list[str]
+
+
+@attrs.define(auto_attribs=True, kw_only=True)
+class DbtModelColumn(DbtModelBase):
+    data_type: Optional[str]
+    meta: DbtModelMetaGoodDataColumn
+
+
+@attrs.define(auto_attribs=True, kw_only=True)
+class DbtModelTable(DbtModelBase):
+    schema: str
+    columns: dict[str, DbtModelColumn]
+    meta: DbtModelMetaGoodDataTable
+
+
+class DbtModelTables:
+    def __init__(self, model_id: str) -> None:
+        self.model_id = model_id
+        with open("target/manifest.json") as fp:
             self.dbt_catalog = json.load(fp)
 
     @property
-    def tables(self) -> list[DbtTable]:
+    def tables(self) -> list[DbtModelTable]:
         result = []
         for model_name, model_def in self.dbt_catalog["nodes"].items():
-            result.append(DbtTable(model_def))
-        # Return only gooddata labelled tables
-        # TODO - enable other filters by args (e.g. meta.model_id, list of dbt models, tags, ...)
-        return [r for r in result if r.gooddata is not None]
+            result.append(DbtModelTable.from_dict(model_def))
+        # Return only gooddata labelled tables marked by model_id (if requested in args)
+        return [
+            r for r in result
+            if r.meta.gooddata is not None and (not self.model_id or r.meta.gooddata.model_id == self.model_id)
+        ]
+
+    @property
+    def schema_name(self):
+        schemas = set([t.schema for t in self.tables if t.schema])
+        if len(schemas) != 1:
+            raise Exception("Unsupported feature: GoodData does not support multiple schemas.")
+        else:
+            return next(iter(schemas))
 
     def make_pdm(self):
         result = {"tables": []}
         for table in self.tables:
             columns = []
-            for column in table.columns:
+            for column in table.columns.values():
                 columns.append({
                     "name": column.name,
                     "data_type": column.data_type
                 })
             result["tables"].append({
-                "id": table.name,  # TODO - may not be unique
+                "id": table.name,
                 "path": [table.schema, table.name],
                 "type": "TABLE",
                 "columns": columns,
@@ -126,21 +92,21 @@ class DbtTables:
         return result
 
     @staticmethod
-    def make_grain(table: DbtTable) -> list[dict]:
+    def make_grain(table: DbtModelTable) -> list[dict]:
         grain = []
-        for column in table.columns:
-            if column.ldm_type == "primary_key":
+        for column in table.columns.values():
+            if column.meta.gooddata.ldm_type == GoodDataLdmTypes.PRIMARY_KEY.value:
                 grain.append({"id": column.name, "type": "attribute"})
         return grain
 
     @staticmethod
-    def make_references(table: DbtTable) -> list[dict]:
+    def make_references(table: DbtModelTable) -> list[dict]:
         references = []
-        for column in table.columns:
+        for column in table.columns.values():
             referenced_object_id = None
-            if column.ldm_type == "reference":
-                referenced_object_id = column.referenced_table
-            elif column.ldm_type == "date":
+            if column.meta.gooddata.ldm_type == GoodDataLdmTypes.REFERENCE.value:
+                referenced_object_id = column.meta.gooddata.referenced_table
+            elif column.meta.gooddata.ldm_type == GoodDataLdmTypes.DATE.value:
                 referenced_object_id = column.name
             if referenced_object_id is not None:
                 references.append({
@@ -151,10 +117,10 @@ class DbtTables:
         return references
 
     @staticmethod
-    def make_facts(table: DbtTable) -> list[dict]:
+    def make_facts(table: DbtModelTable) -> list[dict]:
         facts = []
-        for column in table.columns:
-            if column.ldm_type == "fact":
+        for column in table.columns.values():
+            if column.meta.gooddata.ldm_type == GoodDataLdmTypes.FACT.value:
                 facts.append({
                     "id": column.name,
                     # TODO - all titles filled from dbt descriptions, incorrect! No title in dbt models.
@@ -166,25 +132,26 @@ class DbtTables:
         return facts
 
     @staticmethod
-    def make_labels(table: DbtTable, attribute_column: DbtColumn) -> list[dict]:
+    def make_labels(table: DbtModelTable, attribute_column: DbtModelColumn) -> list[dict]:
         labels = []
-        for column in table.columns:
-            if column.ldm_type == "label" and attribute_column.name == column.attribute_column:
+        for column in table.columns.values():
+            if column.meta.gooddata.ldm_type == GoodDataLdmTypes.LABEL.value \
+                    and attribute_column.name == column.meta.gooddata.attribute_column:
                 labels.append({
                     "id": column.name,
                     # TODO - all titles filled from dbt descriptions, incorrect! No title in dbt models.
                     "title": column.description,
                     "description": column.description,
                     "source_column": column.name,
-                    "value_type": column.label_type,
+                    "value_type": column.meta.gooddata.label_type,
                     "tags": [table.description] + column.tags,
                 })
         return labels
 
-    def make_attributes(self, table: DbtTable) -> list[dict]:
+    def make_attributes(self, table: DbtModelTable) -> list[dict]:
         attributes = []
-        for column in table.columns:
-            if column.ldm_type in ["attribute", "primary_key"]:
+        for column in table.columns.values():
+            if column.meta.gooddata.ldm_type in [GoodDataLdmTypes.ATTRIBUTE.value, GoodDataLdmTypes.PRIMARY_KEY.value]:
                 attributes.append({
                     "id": column.name,
                     # TODO - all titles filled from dbt descriptions, incorrect! No title in dbt models.
@@ -197,11 +164,11 @@ class DbtTables:
         return attributes
 
     @staticmethod
-    def make_date_datasets(table: DbtTable, existing_date_datasets: list[dict]) -> list[dict]:
+    def make_date_datasets(table: DbtModelTable, existing_date_datasets: list[dict]) -> list[dict]:
         date_datasets = []
-        for column in table.columns:
+        for column in table.columns.values():
             existing_dataset_ids = [d["id"] for d in existing_date_datasets]
-            if column.ldm_type == "date" and column.name not in existing_dataset_ids:
+            if column.meta.gooddata.ldm_type == "date" and column.name not in existing_dataset_ids:
                 if column.data_type in ["TIMESTAMP", "TIMESTAMPTZ"]:
                     granularities = DATE_GRANULARITIES + TIMESTAMP_GRANULARITIES
                 else:

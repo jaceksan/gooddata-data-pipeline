@@ -1,0 +1,32 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: count
+                filters: []
+                item:
+                  identifier:
+                    id: commit_id
+                    type: attribute
+            format: '#,##0'
+            localIdentifier: de0b8bcf2bca4aa09c9dffbb237f884a
+            title: Count of Commit id
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: created_at.month
+                type: label
+            localIdentifier: c392046f791142cc929ca2b15ea54f62
+      localIdentifier: view
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:column
+description: Created commits / Month
+id: created_commits_month
+title: Created commits / Month

@@ -1,1 +1,2 @@
 gooddata-sdk==1.2.0
+pyyaml>=5.1

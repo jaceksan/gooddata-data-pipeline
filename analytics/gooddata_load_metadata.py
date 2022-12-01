@@ -1,34 +1,22 @@
-import os
 from pathlib import Path
 
-from gooddata_sdk import CatalogWorkspace, CatalogDeclarativeModel
-
-from dbt.model import DbtTables
+from logger import get_logger
 from args import parse_arguments_ws
-from config import Config, GoodDataSdkWrapper
+from sdk_wrapper import GoodDataSdkWrapper
 
-target_data_source_id = os.environ['GOODDATA_DATA_SOURCE_ID']
-args = parse_arguments_ws("Load metadata into GoodData")
-config = Config(args.config)
-workspace = config.get_workspace(args.workspace_id)
+args = parse_arguments_ws("Load analytics metadata into GoodData")
+logger = get_logger("gooddata_load_metadata", args.debug)
+logger.info("Start")
 
-sdk = GoodDataSdkWrapper().sdk
+sdk = GoodDataSdkWrapper(args, logger).sdk
 
-# Create workspaces, if they do not exist yet, otherwise update them
-workspace = CatalogWorkspace(workspace_id=workspace.id, name=workspace.name)
-sdk.catalog_workspace.create_or_update(workspace=workspace)
-
-# Construct GoodData LDM from dbt models
-dbt_tables = DbtTables()
-declarative_datasets = dbt_tables.make_declarative_datasets(target_data_source_id)
-ldm = CatalogDeclarativeModel.from_dict({"ldm": declarative_datasets}, camel_case=False)
-
-# Load layouts from disk from the configured folder.
+# Load analytics layouts from disk from the configured folder.
 # Single folder serves all workspaces in this demo (dev->staging->prod)
+logger.info("Read analytics model from disk")
 adm = sdk.catalog_workspace_content.load_analytics_model_from_disk(Path("gooddata_layouts"))
 
-# Deploy logical and analytics model into target workspace
-sdk.catalog_workspace_content.put_declarative_ldm(workspace.id, ldm)
-sdk.catalog_workspace_content.put_declarative_analytics_model(workspace.id, adm)
+# Deploy analytics model into target workspace
+logger.info("Load analytics model into GoodData")
+sdk.catalog_workspace_content.put_declarative_analytics_model(args.gooddata_workspace_id, adm)
 
-print("done")
+logger.info("Done")
