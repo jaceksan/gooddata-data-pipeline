@@ -5,9 +5,10 @@ from pathlib import Path
 
 from databases.postgres import Postgres
 from config import Config, CSV_FILE_PATH_TMPL_REPO, CSV_FILE_PATH_TMPL_ORG, Table
-from dbt_gooddata.args import set_dbt_args
 from libs.logger import get_logger
+from dbt_gooddata.args import set_dbt_args
 from dbt_gooddata.dbt.profiles import DbtProfiles
+from args import set_shared_args, validate_args_repos
 
 
 class Load:
@@ -25,10 +26,7 @@ class Load:
             description="Load github data into database",
             formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
-        parser.add_argument('-c', '--config', default='config.yaml',
-                            help='Config file defining, what tables should be loaded')
-        parser.add_argument('--debug', action='store_true', default=False,
-                            help='Increase logging level to DEBUG')
+        set_shared_args(parser)
         set_dbt_args(parser)
         return parser.parse_args()
 
@@ -47,19 +45,27 @@ class Load:
 
     def main(self):
         config = Config(self.args.config)
+        valid_orgs = validate_args_repos(config, self.args.repositories)
         for table in config.tables:
             self.recreate_table(table)
             for org in config.organizations:
-                if table.org_level:
-                    # Some endpoints are organization-level, e.g. users exist in organization, not in each repo
-                    file_name = CSV_FILE_PATH_TMPL_ORG.format(table_name=table.name, org_name=org.name)
-                    self.store_data(table, file_name)
-                else:
-                    for repo in org.repos:
-                        file_name = CSV_FILE_PATH_TMPL_REPO.format(
-                            table_name=table.name, org_name=org.name, repo_name=repo
-                        )
+                if not self.args.repositories or org.name in valid_orgs.keys():
+                    if table.org_level:
+                        # Some endpoints are organization-level, e.g. users exist in organization, not in each repo
+                        file_name = CSV_FILE_PATH_TMPL_ORG.format(table_name=table.name, org_name=org.name)
                         self.store_data(table, file_name)
+                    else:
+                        for repo in org.repos:
+                            if not self.args.repositories or repo in valid_orgs[org.name]:
+                                file_name = CSV_FILE_PATH_TMPL_REPO.format(
+                                    table_name=table.name, org_name=org.name, repo_name=repo
+                                )
+                                self.store_data(table, file_name)
+                            else:
+                                self.logger.info(f"Repo {org.name}/{repo} skipped")
+
+                else:
+                    self.logger.info(f"Organization {org.name} skipped")
 
 
 if __name__ == "__main__":

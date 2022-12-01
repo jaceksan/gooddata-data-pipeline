@@ -22,8 +22,8 @@ stages:
     - cd dbt-gooddata && python setup.py install && cd ..
     - cd "extract_load"
     - pip install -r requirements.txt
-    - ./extract.py
-    - ./load.py --profile-dir ../profile --target $TARGET
+    - ./extract.py $TABLES
+    - ./load.py --profile-dir ../profile --target $TARGET $REPOSITORIES
 
 .dbt:
   extends:
@@ -63,6 +63,8 @@ extract_load_dev:
     - .extract_load
   variables:
     TARGET: dev
+    # Load only 1 repo to speed up testing (dev only)
+    REPOSITORIES: "--repositories gooddata/gooddata-python-sdk"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:

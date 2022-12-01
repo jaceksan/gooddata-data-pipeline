@@ -2,9 +2,7 @@ organizations:
   - name: gooddata
     repos:
       - gooddata-python-sdk
-      # TODO - uncomment once the pipeline is stable
-      #     consider to configure this list per target env, crawl less in dev, speed-up testing in the pipeline
-      # - gooddata-ui-sdk
+      - gooddata-ui-sdk
 
 tables:
   - name: repos

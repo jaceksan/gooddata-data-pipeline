@@ -6,6 +6,7 @@ import os
 
 from config import (CSV_FILE_PATH_TMPL_ORG, CSV_FILE_PATH_TMPL_REPO,
                     DEFAULT_DATE_FROM, Config, Table)
+from args import set_shared_args, validate_args_repos
 from libs.logger import get_logger
 from libs.rest_api import RestApi
 
@@ -38,12 +39,9 @@ class Extract:
             description="Extracts data from github",
             formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
+        set_shared_args(parser)
         parser.add_argument('-e', '--endpoint', default='https://api.github.com',
                             help='Github endpoint URL')
-        parser.add_argument('-c', '--config', default='config.yaml',
-                            help='Config file defining, what should be crawled')
-        parser.add_argument('--debug', action='store_true', default=False,
-                            help='Increase logging level to DEBUG')
         return parser.parse_args()
 
     @staticmethod
@@ -84,20 +82,27 @@ class Extract:
 
     def main(self):
         config = Config(self.args.config)
+        valid_orgs = validate_args_repos(config, self.args.repositories)
         for org in config.organizations:
-            for table in config.tables:
-                if table.org_level:
-                    # Some endpoints are organization-level, e.g. users exist in organization, not in each repo
-                    data = self.get_pages(table, org.name)
-                    file_name = CSV_FILE_PATH_TMPL_ORG.format(table_name=table.name, org_name=org.name)
-                    self.write_json(file_name, data)
-                else:
-                    for repo in org.repos:
-                        data = self.get_pages(table, org.name, repo)
-                        file_name = CSV_FILE_PATH_TMPL_REPO.format(
-                            table_name=table.name, org_name=org.name, repo_name=repo
-                        )
+            if not self.args.repositories or org.name in valid_orgs.keys():
+                for table in config.tables:
+                    if table.org_level:
+                        # Some endpoints are organization-level, e.g. users exist in organization, not in each repo
+                        data = self.get_pages(table, org.name)
+                        file_name = CSV_FILE_PATH_TMPL_ORG.format(table_name=table.name, org_name=org.name)
                         self.write_json(file_name, data)
+                    else:
+                        for repo in org.repos:
+                            if not self.args.repositories or repo in valid_orgs[org.name]:
+                                data = self.get_pages(table, org.name, repo)
+                                file_name = CSV_FILE_PATH_TMPL_REPO.format(
+                                    table_name=table.name, org_name=org.name, repo_name=repo
+                                )
+                                self.write_json(file_name, data)
+                            else:
+                                self.logger.info(f"Repo {org.name}/{repo} skipped")
+            else:
+                self.logger.info(f"Organization {org.name} skipped")
 
 
 if __name__ == "__main__":
