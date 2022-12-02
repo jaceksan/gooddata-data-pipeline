@@ -28,7 +28,7 @@ class GoodDataSdkWrapper:
         kwargs = {}
         if self.override_host:
             kwargs["Host"] = self.override_host
-        masked_token = len(self.token[:-4])*"#"+self.token[-4:]
+        masked_token = f"{len(self.token[:-4])*'#'}{self.token[-4:]}"
         self.logger.info(
             f"Connecting to GoodData host={self.host} token={masked_token} override_host={self.override_host}"
         )
