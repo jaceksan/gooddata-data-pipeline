@@ -77,3 +77,55 @@ models:
         meta:
           gooddata:
             ldm_type: fact
+
+metrics:
+  - name: count_pull_requests
+    label: Count of pull requests
+    description: Count of pull requests
+    model: ref('pull_requests')
+    tags:
+      - "Metrics dbt"
+    meta:
+      gooddata:
+        model_id: github
+        format: "#,##0"
+
+    calculation_method: count_distinct
+    expression: pull_request_id
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]
+
+  - name: sum_days_to_solve
+    label: Sum days to solve
+    description: Sum of days it took to solve pull requests
+    model: ref('pull_requests')
+    tags:
+      - "Metrics dbt"
+    meta:
+      gooddata:
+        model_id: github
+        format: "#,##0"
+
+    calculation_method: sum
+    expression: days_to_solve
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]
+
+  - name: avg_days_to_solve
+    label: Average days to solve
+    description: Average days it took to solve pull requests
+    model: ref('pull_requests')
+    tags:
+      - "Metrics dbt"
+    meta:
+      gooddata:
+        model_id: github
+        format: "#,##0"
+
+    calculation_method: average
+    expression: days_to_solve
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]

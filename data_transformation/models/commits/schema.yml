@@ -59,3 +59,21 @@ models:
         meta:
           gooddata:
             ldm_type: date
+
+metrics:
+  - name: count_commits
+    label: Count of commits
+    description: Count of commits
+    model: ref('commits')
+    tags:
+      - "Metrics dbt"
+    meta:
+      gooddata:
+        model_id: github
+        format: "#,##0"
+
+    calculation_method: count_distinct
+    expression: commit_id
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]

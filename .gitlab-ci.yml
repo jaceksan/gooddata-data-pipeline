@@ -4,6 +4,13 @@ stages:
   - analytics
 
 ##########################
+# Global variables
+variables:
+  DBT_PROFILE_DIR: "profile"
+  DBT_PROFILE: "default"
+  GOODDATA_MODEL_ID: "github"
+
+##########################
 # Job templates
 ##########################
 .base:
@@ -16,44 +23,47 @@ stages:
   extends:
     - .base
   stage: extract_load
-  script:
+  before_script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     # Use dbt profiles parser from dbt-gooddata to get connection properties to the current target database
     - cd dbt-gooddata && python setup.py install && cd ..
     - cd "extract_load"
     - pip install -r requirements.txt
+  script:
     - ./extract.py $REPOSITORIES
-    - ./load.py --profile-dir ../profile --target $TARGET $REPOSITORIES
+    - ./load.py --profile-dir ../$DBT_PROFILE_DIR --target $DBT_TARGET $REPOSITORIES
 
 .dbt:
   extends:
     - .base
   stage: transform
-  variables:
-    GOODDATA_MODEL_ID: "github"
-  script:
+  before_script:
     - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install -r requirements.txt
     # TODO - publish to pip
     - cd dbt-gooddata && python setup.py install && cd ..
     - dbt deps
-    - dbt run --profiles-dir profile --target $TARGET
-    - dbt test --profiles-dir profile --target $TARGET
-    - dbt-gooddata --profile-dir profile --target $TARGET deploy_models
-    - dbt-gooddata --profile-dir profile --target $TARGET upload_notification
+  script:
+    - dbt run --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $DBT_TARGET
+    - dbt test --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $DBT_TARGET
+    - dbt-gooddata deploy_models
+    - dbt-gooddata upload_notification
 
 .gooddata:
   extends:
     - .base
   stage: analytics
-  script:
-    - cd "$CI_PROJECT_DIR/analytics"
+  before_script:
+    - cd "$CI_PROJECT_DIR/data_transformation"
     - pip install -r requirements.txt
-    # It takes the metadata of analytics saved in folder structure and put it in a workspace.
-    # It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
-    - python gooddata_load_metadata.py
-    # Test that all insights are still executable
-    - python gooddata_tests.py
+    # TODO - publish to pip
+    - cd dbt-gooddata && python setup.py install && cd ..
+    - dbt deps
+  script:
+    # Compile to generate manifest.json, which is parsed by dbt-gooddata module
+    - dbt compile --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $DBT_TARGET
+    - dbt-gooddata deploy_analytics
+    - dbt-gooddata test_insights
 
 #############
 # Pre-merge
@@ -62,7 +72,7 @@ extract_load_dev:
   extends:
     - .extract_load
   variables:
-    TARGET: dev
+    DBT_TARGET: dev
     # Load only 1 repo to speed up testing (dev only)
     REPOSITORIES: "--repositories gooddata/gooddata-python-sdk"
   rules:
@@ -75,7 +85,7 @@ dbt_dev:
   extends:
     - .dbt
   variables:
-    TARGET: dev
+    DBT_TARGET: dev
     GOODDATA_WORKSPACE_ID: "development"
     GOODDATA_WORKSPACE_TITLE: "Development"
   rules:
@@ -89,7 +99,8 @@ gooddata_dev:
   extends:
     - .gooddata
   variables:
-    GOODDATA_WORKSPACE_ID: development
+    DBT_TARGET: dev
+    GOODDATA_WORKSPACE_ID: "development"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -105,7 +116,7 @@ extract_load_staging:
   extends:
     - .extract_load
   variables:
-    TARGET: staging
+    DBT_TARGET: staging
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -116,7 +127,7 @@ dbt_staging:
   extends:
     - .dbt
   variables:
-    TARGET: staging
+    DBT_TARGET: staging
     GOODDATA_WORKSPACE_ID: "staging"
     GOODDATA_WORKSPACE_TITLE: "Staging"
   rules:
@@ -130,6 +141,7 @@ gooddata_staging:
   extends:
     - .gooddata
   variables:
+    DBT_TARGET: staging
     GOODDATA_WORKSPACE_ID: staging
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
@@ -145,7 +157,7 @@ extract_load_prod:
   extends:
     - .extract_load
   variables:
-    TARGET: prod
+    DBT_TARGET: prod
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -158,7 +170,7 @@ dbt_prod:
   extends:
     - .dbt
   variables:
-    TARGET: prod
+    DBT_TARGET: prod
     GOODDATA_WORKSPACE_ID: "production"
     GOODDATA_WORKSPACE_TITLE: "Production"
   rules:
@@ -174,6 +186,7 @@ gooddata_prod:
   extends:
     - .gooddata
   variables:
+    DBT_TARGET: prod
     GOODDATA_WORKSPACE_ID: production
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'

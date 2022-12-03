@@ -10,7 +10,7 @@ content:
             type: label
         filterElementsBy: []
         localIdentifier: 78cb8454e8eb4074a71203aa8bd5cabf
-        negativeSelection: false
+        negativeSelection: true
   version: '2'
 description: ''
 id: simple_filter_context

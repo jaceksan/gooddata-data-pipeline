@@ -4,16 +4,13 @@ content:
         - measure:
             definition:
               measureDefinition:
-                aggregation: avg
-                computeRatio: false
                 filters: []
                 item:
                   identifier:
-                    id: days_to_solve
-                    type: fact
-            format: '#,##0.00'
-            localIdentifier: affad4f3a0b64e7bbe386ebec5193a1a
-            title: Avg Days to solve
+                    id: avg_days_to_solve
+                    type: metric
+            localIdentifier: 0e878b609fc64cd9bfdb1ac31ded2afc
+            title: Average days to solve
       localIdentifier: measures
     - items:
         - attribute:

@@ -1,1 +1,0 @@
-gooddata-sdk==1.2.0

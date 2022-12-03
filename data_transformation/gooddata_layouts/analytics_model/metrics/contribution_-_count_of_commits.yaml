@@ -1,0 +1,9 @@
+content:
+  format: '#,##0.00%'
+  maql: "SELECT {metric/count_commits}\n  / (\n  SELECT {metric/count_commits}\n \
+    \   BY ALL OTHER)"
+description: How requested dimension contributes to overall count of commits
+id: contribution_-_count_of_commits
+title: Contribution - count of commits
+tags:
+  - "Metrics GD"

@@ -4,15 +4,13 @@ content:
         - measure:
             definition:
               measureDefinition:
-                aggregation: count
                 filters: []
                 item:
                   identifier:
-                    id: pull_request_id
-                    type: attribute
-            format: '#,##0'
-            localIdentifier: 09dc5bdae0f34379a0e6b29142ea6c7d
-            title: Count of Pull request id
+                    id: count_pull_requests
+                    type: metric
+            localIdentifier: 48fe1ff55b12405e936b4328c333406d
+            title: Count of pull requests
       localIdentifier: measures
     - items:
         - attribute:
@@ -25,7 +23,7 @@ content:
   filters:
     - rankingFilter:
         measure:
-          localIdentifier: 09dc5bdae0f34379a0e6b29142ea6c7d
+          localIdentifier: 48fe1ff55b12405e936b4328c333406d
         operator: TOP
         value: 10
   properties:

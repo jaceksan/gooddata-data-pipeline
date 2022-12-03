@@ -1,15 +1,22 @@
+import sys
+from pathlib import Path
+from time import time
+
 from gooddata_sdk import (
     GoodDataSdk,
     BasicCredentials, CatalogDataSourcePostgres, PostgresAttributes, CatalogDeclarativeTables,
     CatalogWorkspace, CatalogDeclarativeModel
 )
 
-from dbt_gooddata.dbt.models import DbtModelTables
+from dbt_gooddata.dbt.metrics import DbtModelMetrics
+from dbt_gooddata.dbt.tables import DbtModelTables
 from dbt_gooddata.dbt.profiles import DbtProfiles, DbtOutput
 from dbt_gooddata.args import parse_arguments
 from dbt_gooddata.logger import get_logger
 from dbt_gooddata.sdk_wrapper import GoodDataSdkWrapper
 
+
+GOODDATA_LAYOUTS_DIR = Path("gooddata_layouts")
 # TODO
 #   Tests, ...
 #   + try to use python-github lib.
@@ -59,7 +66,7 @@ def generate_and_put_ldm(sdk: GoodDataSdk, data_source_id: str, workspace_id: st
     sdk.catalog_workspace_content.put_declarative_ldm(workspace_id, ldm)
 
 
-def deploy_models(args, logger, sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput):
+def deploy_models(args, logger, sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput) -> None:
     logger.info("Deploy models")
     dbt_tables = DbtModelTables(args.gooddata_model_id)
     workspace_id = args.gooddata_workspace_id
@@ -75,24 +82,71 @@ def deploy_models(args, logger, sdk: GoodDataSdk, data_source_id: str, dbt_targe
     generate_and_put_ldm(sdk, data_source_id, workspace_id, dbt_tables)
 
 
-def upload_notification(logger, sdk: GoodDataSdk, data_source_id: str):
+def upload_notification(logger, sdk: GoodDataSdk, data_source_id: str) -> None:
     logger.info(f"Upload notification {data_source_id=}")
     sdk.catalog_data_source.register_upload_notification(data_source_id)
+
+
+def deploy_analytics(args, logger, sdk: GoodDataSdk) -> None:
+
+    logger.info("Read analytics model from disk")
+    adm = sdk.catalog_workspace_content.load_analytics_model_from_disk(Path("gooddata_layouts"))
+
+    logger.info("Append dbt metrics to GoodData metrics")
+    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id).make_gooddata_metrics()
+    adm.analytics.metrics = adm.analytics.metrics + dbt_gooddata_metrics
+
+    # Deploy analytics model into target workspace
+    logger.info("Load analytics model into GoodData")
+    sdk.catalog_workspace_content.put_declarative_analytics_model(args.gooddata_workspace_id, adm)
+
+
+def store_analytics(args, logger, sdk: GoodDataSdk):
+    logger.info("Store analytics model to disk")
+    sdk.catalog_workspace_content.store_analytics_model_to_disk(args.gooddata_workspace_id, GOODDATA_LAYOUTS_DIR)
+
+    # TODO - this is hack. Add corresponding functionality into Python SDK
+    logger.info("Exclude dbt metrics from stored analytics model, they are already defined in dbt models")
+    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id).make_gooddata_metrics()
+    for metric in dbt_gooddata_metrics:
+        metric_path = GOODDATA_LAYOUTS_DIR / "analytics_model" / "metrics" / f"{metric.id}.yaml"
+        metric_path.unlink()
+
+
+def test_insights(args, logger, sdk: GoodDataSdk):
+    logger.info(f"Test insights")
+    insights = sdk.insights.get_insights(args.gooddata_workspace_id)
+
+    for insight in insights:
+        try:
+            start = time()
+            sdk.tables.for_insight(args.gooddata_workspace_id, insight)
+            duration = int((time() - start) * 1000)
+            logger.info(f"Test successful insight=\"{insight.title}\" duration={duration}(ms) ...")
+        except RuntimeError:
+            sys.exit()
 
 
 def main():
     args = parse_arguments("dbt-gooddata plugin for models management and invalidating caches(upload notification)")
     logger = get_logger("dbt-gooddata", args.debug)
     logger.info("Start")
-    dbt_target = DbtProfiles(args).target
-    data_source_id = dbt_target.name
     sdk = GoodDataSdkWrapper(args, logger).sdk
 
-    if args.method == "deploy_models":
-        deploy_models(args, logger, sdk, data_source_id, dbt_target)
-    elif args.method == "upload_notification":
-        upload_notification(logger, sdk, data_source_id)
+    if args.method == "store_analytics":
+        store_analytics(args, logger, sdk)
+    elif args.method == "deploy_analytics":
+        deploy_analytics(args, logger, sdk)
+    elif args.method == "test_insights":
+        test_insights(args, logger, sdk)
     else:
-        raise Exception(f"Unsupported method requested in args: {args.method}")
+        dbt_target = DbtProfiles(args).target
+        data_source_id = dbt_target.name
+        if args.method == "deploy_models":
+            deploy_models(args, logger, sdk, data_source_id, dbt_target)
+        elif args.method == "upload_notification":
+            upload_notification(logger, sdk, data_source_id)
+        else:
+            raise Exception(f"Unsupported method requested in args: {args.method}")
 
     logger.info("End")

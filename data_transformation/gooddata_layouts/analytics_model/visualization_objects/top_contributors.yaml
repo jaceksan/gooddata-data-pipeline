@@ -1,0 +1,40 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: contribution_-_count_of_commits
+                    type: metric
+            localIdentifier: 8d26b8e7cddc497da2e9f6f9ee59220e
+            title: Contribution - count of commits
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: login
+                type: label
+            localIdentifier: 22fa72a27cee4ed799788bd03672811e
+      localIdentifier: attribute
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: 8d26b8e7cddc497da2e9f6f9ee59220e
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts:
+    - measureSortItem:
+        direction: desc
+        locators:
+          - measureLocatorItem:
+              measureIdentifier: 8d26b8e7cddc497da2e9f6f9ee59220e
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: top_contributors
+title: Top contributors

@@ -4,15 +4,13 @@ content:
         - measure:
             definition:
               measureDefinition:
-                aggregation: sum
                 filters: []
                 item:
                   identifier:
-                    id: days_to_solve
-                    type: fact
-            format: '#,##0.00'
-            localIdentifier: aa8b63d76eef4136969b969b1511bfa2
-            title: Sum of Days to solve
+                    id: sum_days_to_solve
+                    type: metric
+            localIdentifier: b9093833a513401abfaf0fca9407e606
+            title: Sum days to solve
       localIdentifier: measures
     - items:
         - attribute:
@@ -55,7 +53,7 @@ content:
   filters:
     - rankingFilter:
         measure:
-          localIdentifier: aa8b63d76eef4136969b969b1511bfa2
+          localIdentifier: b9093833a513401abfaf0fca9407e606
         operator: TOP
         value: 10
   properties: {}
@@ -64,7 +62,7 @@ content:
         direction: desc
         locators:
           - measureLocatorItem:
-              measureIdentifier: aa8b63d76eef4136969b969b1511bfa2
+              measureIdentifier: b9093833a513401abfaf0fca9407e606
   version: '2'
   visualizationUrl: local:table
 description: Longest unsolved PRs
