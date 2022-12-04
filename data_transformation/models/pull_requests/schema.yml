@@ -53,6 +53,12 @@ models:
         meta:
           gooddata:
             ldm_type: attribute
+      - name: pull_request_draft
+        data_type: "BOOLEAN"
+        description: "Pull request draft"
+        meta:
+          gooddata:
+            ldm_type: attribute
       - name: created_at
         data_type: "TIMESTAMP"
         description: "Created at"
@@ -118,6 +124,29 @@ metrics:
       - field: merged_at
         operator: "<>"
         value: "NULL"
+
+  - name: count_nodraft_pull_requests
+    label: Count of non draft pull requests
+    description: Count of pull requests where draft is False
+    model: ref('pull_requests')
+    tags:
+      - "Metrics dbt"
+    meta:
+      gooddata:
+        model_id: github
+        format: "#,##0"
+
+    calculation_method: count_distinct
+    expression: pull_request_id
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]
+
+    # TODO - is it valid if executed by dbt? Cannot find it in dbt DOC.
+    filters:
+      - field: pull_request_draft
+        operator: "<>"
+        value: '"true"'
 
   - name: sum_days_to_solve
     label: Sum days to solve

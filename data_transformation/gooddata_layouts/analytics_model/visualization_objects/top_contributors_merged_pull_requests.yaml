@@ -4,14 +4,13 @@ content:
         - measure:
             definition:
               measureDefinition:
-                computeRatio: false
                 filters: []
                 item:
                   identifier:
                     id: contribution_-_count_of_merged_pull_requests
                     type: metric
             localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
-            title: Contribution - count of pull requests
+            title: Contribution - count of merged pull requests
       localIdentifier: measures
     - items:
         - attribute:
@@ -21,7 +20,12 @@ content:
                 type: label
             localIdentifier: c9f213f0d432408097f7fd521592d205
       localIdentifier: view
-  filters: []
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
+        operator: TOP
+        value: 10
   properties:
     controls:
       dataLabels:

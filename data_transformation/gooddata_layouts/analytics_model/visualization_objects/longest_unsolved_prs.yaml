@@ -57,6 +57,14 @@ content:
             localIdentifier: 93d78c1d6c974d72bf0ee5ff50bba63c
       localIdentifier: attribute
   filters:
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: pull_request_draft
+            type: label
+        notIn:
+          values:
+            - 'true'
     - rankingFilter:
         measure:
           localIdentifier: b9093833a513401abfaf0fca9407e606

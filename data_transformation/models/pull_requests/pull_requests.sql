@@ -15,6 +15,7 @@ final as (
       pull_requests.pull_request_id,
       pull_requests.pull_request_url,
       pull_requests.pull_request_title,
+      pull_requests.pull_request_draft,
       pull_requests.user_id,
       pull_requests.created_at,
       pull_requests.merged_at,
