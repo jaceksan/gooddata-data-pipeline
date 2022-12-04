@@ -78,7 +78,8 @@ extract_load_dev:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
-        - extract_load/**/*
+        - src/extract_load/**/*
+        - src/dbt-gooddata/**/*
         - .gitlab-ci.yml
 
 dbt_dev:
@@ -91,8 +92,13 @@ dbt_dev:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
-        - extract_load/**/*
-        - data_transformation/**/*
+        - src/extract_load/**/*
+        - src/models/**/*
+        - src/profile/**/*
+        - src/dbt_project.yml
+        - src/packages.yml
+        - src/requirements.txt
+        - src/dbt-gooddata/**/*
         - .gitlab-ci.yml
 
 gooddata_dev:
@@ -104,8 +110,9 @@ gooddata_dev:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
-        - data_transformation/**/*
-        - analytics/**/*
+        - src/models/**/*
+        - src/dbt-gooddata/**/*
+        - src/gooddata_layouts/**/*
         - .gitlab-ci.yml
 
 #############
@@ -120,7 +127,8 @@ extract_load_staging:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - extract_load/**/*
+        - src/extract_load/**/*
+        - src/dbt-gooddata/**/*
         - .gitlab-ci.yml
 
 dbt_staging:
@@ -133,8 +141,13 @@ dbt_staging:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - extract_load/**/*
-        - data_transformation/**/*
+        - src/extract_load/**/*
+        - src/models/**/*
+        - src/profile/**/*
+        - src/dbt_project.yml
+        - src/packages.yml
+        - src/requirements.txt
+        - src/dbt-gooddata/**/*
         - .gitlab-ci.yml
 
 gooddata_staging:
@@ -146,8 +159,9 @@ gooddata_staging:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - data_transformation/**/*
-        - analytics/**/*
+        - src/models/**/*
+        - src/dbt-gooddata/**/*
+        - src/gooddata_layouts/**/*
         - .gitlab-ci.yml
 
 ##########################
@@ -161,7 +175,8 @@ extract_load_prod:
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - extract_load/**/*
+        - src/extract_load/**/*
+        - src/dbt-gooddata/**/*
         - .gitlab-ci.yml
     # The pipeline scheduler triggers only PROD jobs
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
@@ -176,8 +191,13 @@ dbt_prod:
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - extract_load/**/*
-        - data_transformation/**/*
+        - src/extract_load/**/*
+        - src/models/**/*
+        - src/profile/**/*
+        - src/dbt_project.yml
+        - src/packages.yml
+        - src/requirements.txt
+        - src/dbt-gooddata/**/*
         - .gitlab-ci.yml
     # The pipeline scheduler triggers only PROD jobs
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
@@ -191,5 +211,7 @@ gooddata_prod:
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - analytics/**/*
+        - src/models/**/*
+        - src/dbt-gooddata/**/*
+        - src/gooddata_layouts/**/*
         - .gitlab-ci.yml
