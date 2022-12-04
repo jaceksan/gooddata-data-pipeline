@@ -8,7 +8,7 @@ content:
                 filters: []
                 item:
                   identifier:
-                    id: contribution_-_count_of_pull_requests
+                    id: contribution_-_count_of_merged_pull_requests
                     type: metric
             localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
             title: Contribution - count of pull requests
@@ -29,6 +29,6 @@ content:
   sorts: []
   version: '2'
   visualizationUrl: local:pie
-description: Top contributors (pull requests)
-id: top_contributors_pull_requests
-title: Top contributors (pull requests)
+description: Top contributors (merged pull requests)
+id: top_contributors_merged_pull_requests
+title: Top contributors (merged pull requests)

@@ -214,3 +214,10 @@ class DbtModelTables:
             result["date_instances"] = result["date_instances"] + date_datasets
 
         return result
+
+    def get_entity_type(self, table_name: str, column_name: str):
+        for table in self.tables:
+            if table.name == table_name:
+                for column in table.columns.values():
+                    if column.name == column_name:
+                        return column.meta.gooddata.ldm_type

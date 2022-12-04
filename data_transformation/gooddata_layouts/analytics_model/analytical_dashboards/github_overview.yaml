@@ -35,10 +35,10 @@ content:
               ignoreDashboardFilters: []
               insight:
                 identifier:
-                  id: top_contributors_pull_requests
+                  id: top_contributors_merged_pull_requests
                   type: visualizationObject
               properties: {}
-              title: Top contributors (pull requests)
+              title: Top contributors (merged pull requests)
               type: insight
           - size:
               xl:
