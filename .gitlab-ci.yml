@@ -24,7 +24,7 @@ variables:
     - .base
   stage: extract_load
   before_script:
-    - cd "$CI_PROJECT_DIR/data_transformation"
+    - cd "$CI_PROJECT_DIR/src"
     # Use dbt profiles parser from dbt-gooddata to get connection properties to the current target database
     - cd dbt-gooddata && python setup.py install && cd ..
     - cd "extract_load"
@@ -38,7 +38,7 @@ variables:
     - .base
   stage: transform
   before_script:
-    - cd "$CI_PROJECT_DIR/data_transformation"
+    - cd "$CI_PROJECT_DIR/src"
     - pip install -r requirements.txt
     # TODO - publish to pip
     - cd dbt-gooddata && python setup.py install && cd ..
@@ -54,7 +54,7 @@ variables:
     - .base
   stage: analytics
   before_script:
-    - cd "$CI_PROJECT_DIR/data_transformation"
+    - cd "$CI_PROJECT_DIR/src"
     - pip install -r requirements.txt
     # TODO - publish to pip
     - cd dbt-gooddata && python setup.py install && cd ..
