@@ -16,14 +16,29 @@ content:
                   id: created_at
                   type: dataset
               description: ''
-              drills: []
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
+                    type: drillFromMeasure
+                  target:
+                    displayForm:
+                      identifier:
+                        id: login
+                        type: label
+                    hyperlinkDisplayForm:
+                      identifier:
+                        id: user_url
+                        type: label
+                  transition: new-window
+                  type: drillToAttributeUrl
               ignoreDashboardFilters: []
               insight:
                 identifier:
-                  id: number_of_solved_prs_user
+                  id: top_contributors_pull_requests
                   type: visualizationObject
               properties: {}
-              title: Number of solved PRs / User
+              title: Top contributors (pull requests)
               type: insight
           - size:
               xl:
@@ -65,26 +80,7 @@ content:
               type: insight
           - size:
               xl:
-                gridWidth: 6
-            type: IDashboardLayoutItem
-            widget:
-              dateDataSet:
-                identifier:
-                  id: created_at
-                  type: dataset
-              description: ''
-              drills: []
-              ignoreDashboardFilters: []
-              insight:
-                identifier:
-                  id: top_contributors
-                  type: visualizationObject
-              properties: {}
-              title: Top contributors
-              type: insight
-          - size:
-              xl:
-                gridWidth: 5
+                gridWidth: 12
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -113,7 +109,22 @@ content:
                   id: created_at
                   type: dataset
               description: ''
-              drills: []
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: b9093833a513401abfaf0fca9407e606
+                    type: drillFromMeasure
+                  target:
+                    displayForm:
+                      identifier:
+                        id: pull_request_id
+                        type: label
+                    hyperlinkDisplayForm:
+                      identifier:
+                        id: pull_request_url
+                        type: label
+                  transition: new-window
+                  type: drillToAttributeUrl
               ignoreDashboardFilters: []
               insight:
                 identifier:

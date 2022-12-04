@@ -4,13 +4,14 @@ content:
         - measure:
             definition:
               measureDefinition:
+                computeRatio: false
                 filters: []
                 item:
                   identifier:
-                    id: count_pull_requests
+                    id: contribution_-_count_of_pull_requests
                     type: metric
-            localIdentifier: 48fe1ff55b12405e936b4328c333406d
-            title: Count of pull requests
+            localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
+            title: Contribution - count of pull requests
       localIdentifier: measures
     - items:
         - attribute:
@@ -20,12 +21,7 @@ content:
                 type: label
             localIdentifier: c9f213f0d432408097f7fd521592d205
       localIdentifier: view
-  filters:
-    - rankingFilter:
-        measure:
-          localIdentifier: 48fe1ff55b12405e936b4328c333406d
-        operator: TOP
-        value: 10
+  filters: []
   properties:
     controls:
       dataLabels:
@@ -33,6 +29,6 @@ content:
   sorts: []
   version: '2'
   visualizationUrl: local:pie
-description: Number of solved PRs / User
-id: number_of_solved_prs_user
-title: Number of solved PRs / User
+description: Top contributors (pull requests)
+id: top_contributors_pull_requests
+title: Top contributors (pull requests)

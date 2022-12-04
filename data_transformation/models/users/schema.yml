@@ -28,4 +28,6 @@ models:
         description: "User login"
         meta:
           gooddata:
-            ldm_type: attribute
+            ldm_type: label
+            label_type: TEXT
+            attribute_column: user_id

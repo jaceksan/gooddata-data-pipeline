@@ -1,0 +1,9 @@
+content:
+  format: '#,##0.00%'
+  maql: "SELECT {metric/count_pull_requests}\n  / (\n  SELECT {metric/count_pull_requests}\n\
+    \    BY ALL OTHER)"
+description: How requested dimension contributes to overall count of pull requests
+id: contribution_-_count_of_pull_requests
+tags:
+  - Metrics GD
+title: Contribution - count of pull requests

@@ -2,8 +2,7 @@ content:
   filters:
     - attributeFilter:
         attributeElements:
-          uris:
-            - gooddata-python-sdk
+          uris: []
         displayForm:
           identifier:
             id: repo_name

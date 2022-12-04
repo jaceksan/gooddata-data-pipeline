@@ -4,6 +4,6 @@ content:
     \   BY ALL OTHER)"
 description: How requested dimension contributes to overall count of commits
 id: contribution_-_count_of_commits
-title: Contribution - count of commits
 tags:
-  - "Metrics GD"
+  - Metrics GD
+title: Contribution - count of commits

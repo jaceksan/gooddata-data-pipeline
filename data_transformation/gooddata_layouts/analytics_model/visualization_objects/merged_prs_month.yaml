@@ -20,6 +20,14 @@ content:
                 type: label
             localIdentifier: 32d9f6b989d14d818aaec3145ba8dd50
       localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: repo_name
+                type: label
+            localIdentifier: 69b4956e27264d6d9993a34b6a1b0aef
+      localIdentifier: stack
   filters: []
   properties: {}
   sorts: []

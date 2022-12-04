@@ -16,6 +16,12 @@ content:
         - attribute:
             displayForm:
               identifier:
+                id: repo_name
+                type: label
+            localIdentifier: 31c8b0ba651b4bed927068f47537e961
+        - attribute:
+            displayForm:
+              identifier:
                 id: pull_request_id
                 type: label
             localIdentifier: 70820d7f8d044454919e19533e9d9df4
