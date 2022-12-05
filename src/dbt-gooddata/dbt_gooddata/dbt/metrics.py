@@ -53,7 +53,7 @@ class DbtModelMetric(DbtModelBase):
     model: str
     calculation_method: str
     expression: str
-    filters: list[DbtModelMetricFilter] = None
+    filters: Optional[list[DbtModelMetricFilter]] = None
 
 
 class DbtModelMetrics:
@@ -99,7 +99,7 @@ class DbtModelMetrics:
                 # TODO - not sure how date dims are handled in dbt models, cannot find it in DOC
                 full_entity_name = f"{token}.day"
                 final_entity_type = "label"
-            return " {" + final_entity_type + "/" + full_entity_name + "}"
+            return f" {{{final_entity_type}/{full_entity_name}}}"
 
     def resolve_entities_in_expression(self, expression: str, table_name: str):
         re_split = re.compile(r'\s+')

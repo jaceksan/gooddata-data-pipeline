@@ -88,7 +88,6 @@ def upload_notification(logger, sdk: GoodDataSdk, data_source_id: str) -> None:
 
 
 def deploy_analytics(args, logger, sdk: GoodDataSdk) -> None:
-
     logger.info("Read analytics model from disk")
     adm = sdk.catalog_workspace_content.load_analytics_model_from_disk(Path("gooddata_layouts"))
 
@@ -101,7 +100,7 @@ def deploy_analytics(args, logger, sdk: GoodDataSdk) -> None:
     sdk.catalog_workspace_content.put_declarative_analytics_model(args.gooddata_workspace_id, adm)
 
 
-def store_analytics(args, logger, sdk: GoodDataSdk):
+def store_analytics(args, logger, sdk: GoodDataSdk) -> None:
     logger.info("Store analytics model to disk")
     sdk.catalog_workspace_content.store_analytics_model_to_disk(args.gooddata_workspace_id, GOODDATA_LAYOUTS_DIR)
 
@@ -113,8 +112,8 @@ def store_analytics(args, logger, sdk: GoodDataSdk):
         metric_path.unlink()
 
 
-def test_insights(args, logger, sdk: GoodDataSdk):
-    logger.info(f"Test insights")
+def test_insights(args, logger, sdk: GoodDataSdk) -> None:
+    logger.info("Test insights")
     insights = sdk.insights.get_insights(args.gooddata_workspace_id)
 
     for insight in insights:

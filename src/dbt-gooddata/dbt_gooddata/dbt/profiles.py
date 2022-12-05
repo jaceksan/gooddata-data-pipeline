@@ -33,7 +33,7 @@ class DbtProfiles:
             self.dbt_profiles = yaml.safe_load(fp)
 
     @staticmethod
-    def inject_password(output: DbtOutput):
+    def inject_password(output: DbtOutput) -> None:
         pwd_re = re.compile(r"env_var\('([^']+)'\)")
         if (pwd_match := pwd_re.search(output.password)) is not None:
             # print(f"DS PWD_MATCH={pwd_match.group(1)} PWD={os.getenv(pwd_match.group(1))}")
@@ -61,7 +61,7 @@ class DbtProfiles:
                 return profile
 
     @property
-    def target(self) -> DbtOutput:
+    def target(self) -> Optional[DbtOutput]:
         for output in self.profile.outputs:
             if output.name == self.args.target:
                 return output
