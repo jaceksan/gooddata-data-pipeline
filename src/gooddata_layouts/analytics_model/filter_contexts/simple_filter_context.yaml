@@ -1,0 +1,27 @@
+content:
+  filters:
+    - attributeFilter:
+        attributeElements:
+          uris: []
+        displayForm:
+          identifier:
+            id: repo_name
+            type: label
+        filterElementsBy: []
+        localIdentifier: 78cb8454e8eb4074a71203aa8bd5cabf
+        negativeSelection: true
+    - attributeFilter:
+        attributeElements:
+          uris:
+            - gdgate
+        displayForm:
+          identifier:
+            id: login
+            type: label
+        filterElementsBy: []
+        localIdentifier: 91d5dfec5802475dadd3988bb26c2a0d
+        negativeSelection: true
+  version: '2'
+description: ''
+id: simple_filter_context
+title: filterContext

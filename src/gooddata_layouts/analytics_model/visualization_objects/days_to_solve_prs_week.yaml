@@ -1,0 +1,38 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: avg_days_to_solve
+                    type: metric
+            localIdentifier: 0e878b609fc64cd9bfdb1ac31ded2afc
+            title: Average days to solve
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: merged_at.week
+                type: label
+            localIdentifier: 4eea0d9691f84676809a4f36d9e50c6f
+      localIdentifier: trend
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: repo_name
+                type: label
+            localIdentifier: 6d62077959a84c509a9e1cfc0a4b4f73
+      localIdentifier: segment
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:line
+description: Days to solve PRs / Week
+id: days_to_solve_prs_week
+title: Days to solve PRs / Week

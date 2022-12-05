@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: repos
+    description: "Repos"
+    meta:
+      gooddata:
+        model_id: github
+    columns:
+      - name: repo_id
+        description: "Repo ID"
+        data_type: "INT"
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: repo_url
+        data_type: "STRING"
+        description: "Repo URL"
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: HYPERLINK
+            attribute_column: repo_id
+      - name: repo_name
+        data_type: "STRING"
+        description: "Repo name"
+        meta:
+          gooddata:
+            ldm_type: attribute

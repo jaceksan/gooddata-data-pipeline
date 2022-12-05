@@ -1,0 +1,45 @@
+default:
+  target: dev
+  # TODO - use dbt vault for credentials shared by dbt and GoodData once GoodData supports vault for data source credentials
+  # https://dbtvault.readthedocs.io/en/latest/
+  outputs:
+    dev_local:
+      title: "CI/CD dev (local)"
+      type: postgres
+      threads: 1
+      host: "localhost"
+      port: 5432
+      user: "cicd"
+      password: "cicd123"
+      dbname: "cicd_dev"
+      schema: "cicd_input_stage"
+    dev:
+      title: "CI/CD dev"
+      type: postgres
+      threads: 1
+      host: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
+      port: 5432
+      user: "cicd"
+      password: "{{ env_var('POSTGRES_PASS') }}"
+      dbname: "cicd_dev"
+      schema: "cicd_input_stage"
+    staging:
+      title: "CI/CD staging"
+      type: postgres
+      threads: 1
+      host: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
+      port: 5432
+      user: "cicd"
+      password: "{{ env_var('POSTGRES_PASS') }}"
+      dbname: "cicd_staging"
+      schema: "cicd_input_stage"
+    prod:
+      title: "CI/CD prod"
+      type: postgres
+      threads: 1
+      host: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
+      port: 5432
+      user: "cicd"
+      password: "{{ env_var('POSTGRES_PASS') }}"
+      dbname: "cicd_prod"
+      schema: "cicd_input_stage"
