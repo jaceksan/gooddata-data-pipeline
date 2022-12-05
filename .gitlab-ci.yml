@@ -87,8 +87,8 @@ dbt_dev:
     - .dbt
   variables:
     DBT_TARGET: dev
-    GOODDATA_WORKSPACE_ID: "development"
-    GOODDATA_WORKSPACE_TITLE: "Development"
+    GOODDATA_WORKSPACE_ID: "cicd_demo_development"
+    GOODDATA_WORKSPACE_TITLE: "CICD demo (dev)"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -106,7 +106,7 @@ gooddata_dev:
     - .gooddata
   variables:
     DBT_TARGET: dev
-    GOODDATA_WORKSPACE_ID: "development"
+    GOODDATA_WORKSPACE_ID: "cicd_demo_development"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -136,8 +136,8 @@ dbt_staging:
     - .dbt
   variables:
     DBT_TARGET: staging
-    GOODDATA_WORKSPACE_ID: "staging"
-    GOODDATA_WORKSPACE_TITLE: "Staging"
+    GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
+    GOODDATA_WORKSPACE_TITLE: "CICD demo (staging)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -155,7 +155,7 @@ gooddata_staging:
     - .gooddata
   variables:
     DBT_TARGET: staging
-    GOODDATA_WORKSPACE_ID: staging
+    GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -186,8 +186,8 @@ dbt_prod:
     - .dbt
   variables:
     DBT_TARGET: prod
-    GOODDATA_WORKSPACE_ID: "production"
-    GOODDATA_WORKSPACE_TITLE: "Production"
+    GOODDATA_WORKSPACE_ID: "cicd_demo_production"
+    GOODDATA_WORKSPACE_TITLE: "CICD demo (prod)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -207,7 +207,7 @@ gooddata_prod:
     - .gooddata
   variables:
     DBT_TARGET: prod
-    GOODDATA_WORKSPACE_ID: production
+    GOODDATA_WORKSPACE_ID: "cicd_demo_production"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes:
