@@ -11,12 +11,18 @@ from gooddata_sdk.catalog.workspace.declarative_model.workspace.analytics_model.
 )
 
 
-SUPPORTED_DBT_CALCULATION_METHODS = {
+DBT_TO_GD_CALC_METHODS = {
     "count_distinct": "COUNT",
     "sum": "SUM",
     "average": "AVG",
     "min": "MIN",
     "max": "MAX",
+}
+
+DBT_TO_GD_FILTER_OPERATORS = {
+    "!=": "<>",
+    "is": "=",
+    "is not": "<>",
 }
 
 OBJECT_TO_METRIC_TYPES = {
@@ -111,11 +117,13 @@ class DbtModelMetrics:
         return " ".join(result_tokens)
 
     def make_gooddata_filter(self, table_name: str, dbt_filters: list[DbtModelMetricFilter]) -> str:
-        # TODO - very naive implementation. Enum operators, polish values
+        # TODO - Quite naive implementation
+        #    e.g. missing polishing of values (e.g. SQL vs MAQL enclosers)
         gd_maql_filters = []
         for dbt_filter in dbt_filters:
             entity_id = self.make_entity_id(table_name, dbt_filter.field)
-            gd_maql_filters.append(f"{entity_id} {dbt_filter.operator} {dbt_filter.value}")
+            operator = DBT_TO_GD_FILTER_OPERATORS.get(dbt_filter.operator, dbt_filter.operator)
+            gd_maql_filters.append(f"{entity_id} {operator} {dbt_filter.value}")
         if gd_maql_filters:
             return " WHERE " + " AND ".join(gd_maql_filters)
         else:
@@ -124,7 +132,7 @@ class DbtModelMetrics:
     def make_gooddata_metrics(self):
         gd_metrics = []
         for dbt_metric in self.metrics:
-            calculation_method = SUPPORTED_DBT_CALCULATION_METHODS.get(dbt_metric.calculation_method)
+            calculation_method = DBT_TO_GD_CALC_METHODS.get(dbt_metric.calculation_method)
             if calculation_method:
                 table_name = self.extract_table_from_model(dbt_metric.model)
                 expression = self.resolve_entities_in_expression(dbt_metric.expression, table_name)
