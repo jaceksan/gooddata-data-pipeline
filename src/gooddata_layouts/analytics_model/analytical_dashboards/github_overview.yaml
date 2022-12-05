@@ -1,0 +1,141 @@
+content:
+  filterContextRef:
+    identifier:
+      id: simple_filter_context
+      type: filterContext
+  layout:
+    sections:
+      - items:
+          - size:
+              xl:
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
+                    type: drillFromMeasure
+                  target:
+                    displayForm:
+                      identifier:
+                        id: login
+                        type: label
+                    hyperlinkDisplayForm:
+                      identifier:
+                        id: user_url
+                        type: label
+                  transition: new-window
+                  type: drillToAttributeUrl
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: top_contributors_merged_pull_requests
+                  type: visualizationObject
+              properties: {}
+              title: Top contributors (merged pull requests)
+              type: insight
+          - size:
+              xl:
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: merged_prs_month
+                  type: visualizationObject
+              properties: {}
+              title: Merged PRs / Month
+              type: insight
+          - size:
+              xl:
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: created_commits_month
+                  type: visualizationObject
+              properties: {}
+              title: Created commits / Month
+              type: insight
+          - size:
+              xl:
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: days_to_solve_prs_week
+                  type: visualizationObject
+              properties: {}
+              title: Days to solve PRs / Week
+              type: insight
+        type: IDashboardLayoutSection
+      - items:
+          - size:
+              xl:
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: b9093833a513401abfaf0fca9407e606
+                    type: drillFromMeasure
+                  target:
+                    displayForm:
+                      identifier:
+                        id: pull_request_id
+                        type: label
+                    hyperlinkDisplayForm:
+                      identifier:
+                        id: pull_request_url
+                        type: label
+                  transition: new-window
+                  type: drillToAttributeUrl
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: longest_unsolved_prs
+                  type: visualizationObject
+              properties: {}
+              title: Longest unsolved PRs
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: github_overview
+title: GitHub Overview

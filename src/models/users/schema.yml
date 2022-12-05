@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: users
+    description: "Users"
+    meta:
+      gooddata:
+        model_id: github
+    columns:
+      - name: user_id
+        data_type: "INT"
+        description: "User ID"
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: user_url
+        data_type: "STRING"
+        description: "User URL"
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: HYPERLINK
+            attribute_column: user_id
+      - name: login
+        data_type: "STRING"
+        description: "User login"
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: TEXT
+            attribute_column: user_id

@@ -7,130 +7,203 @@ Authors of the project are:
 - [Jan Soubusta](https://twitter.com/jaceksan).
 - [Patrik Braborec](https://twitter.com/patrikbraborec).
 
-You can also read the article that describes the whole flow here.
+The following articles are based on this project:
+- [How To Build a Modern Data Pipeline](https://medium.com/gooddata-developers/how-to-build-a-modern-data-pipeline-cfdd9d14fbea)
+- TODO - new article about dbt metrics
 
 # Getting Started
 
 The following paragraphs describe the setting for local development.
 
-### Setup virtual environment
+## Start GoodData
+There are two options:
+- Community edition running on your laptop
+- GoodData cloud trial
 
-Please setup the virtual environment in folders `extract_load` and `analytics` (in both folders separately). The tutorial on how to set up a virtual environment follows:
-
-**Create virtual environment**:
-
+### Community edition
+The following command start the single container deployment of GoodData on your machine:
 ```bash
-$ virtualenv venv
+docker-compose up -d
 ```
 
-**Activate virtual environment**:
+### GoodData trial
+Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
+and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
+
+## Setup virtual environment
+The tutorial on how to set up a virtual environment follows:
 
 ```bash
-$ source venv/bin/activate
+# Create virtual env
+virtualenv venv
+# Activate virtual env
+source venv/bin/activate
+#You should see a `(venv)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
+# Deactivate virtual env once you are done
+deactivate
 ```
 
-You should see a `(venv)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
+## Environment variables
 
-**Leave virtual environment run**:
+You will also need to set up `env variables` in the virtual environment.
+The following setup is valid for local (docker-compose) deployment.
+Modify `DBT_TARGET`, `GOODDATA_HOST` and `GOODDATA_TOKEN` values to run scripts against different environments.
 
+dbt [profiles.yaml](src/profile/profiles.yml) contains database properties for all targets (DB host, ...).
+Change them to redirect this demo to your database.
+
+**shared for all data pipeline phases**:
 ```bash
-$ deactivate
+export DBT_PROFILE_DIR="profile" # default is ~/.dbt
+export DBT_PROFILE="default"
+export GOODDATA_MODEL_ID="github"
+export DBT_TARGET="dev_local"
+export POSTGRES_PASS=cicd123
 ```
 
-You will also need to setup `env variables` in virtual environments:
-
-**extract_load**:
-
+**Extract/load data from Github**:
 ```bash
 export GITHUB_TOKEN=<github-token>
-export POSTGRES_DBNAME=<postgres-db-name>
-export POSTGRES_HOST=<postgres-host>
-export POSTGRES_INPUT_SCHEMA=<postgres-input-schema>
-export POSTGRES_OUTPUT_SCHEMA=<postgres-output-schema>
-export POSTGRES_PASS=<postgres-pass>
-export POSTGRES_PORT=<postgres-port>
-export POSTGRES_USER=<postgres-user>
+# If you want to extract/load only subset of repositories
+export REPOSITORIES="--repositories gooddata/gooddata-python-sdk"
 ```
 
-**analytics**:
+**Data transformation**:
+```bash
+# GoodData properties must be set to enable generation and deployment of GoodData semantic model from dbt models
+# These variables correspond to GoodData Community Edition (single container deployment)
+export GOODDATA_HOST="http://localhost:3000"
+export GOODDATA_TOKEN="YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
+export GOODDATA_WORKSPACE_ID="development"
+export GOODDATA_WORKSPACE_TITLE="Development"
+```
+
+**Analytics**:
+```bash
+export GOODDATA_HOST="http://localhost:3000"
+export GOODDATA_TOKEN="YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
+export GOODDATA_WORKSPACE_ID="development"
+```
+
+## Install dependencies 
+
+If you want to run scripts locally, please install the following dependencies:
 
 ```bash
-export GOODDATA_HOST=<gooddata-uri>
-export GOODDATA_TOKEN=<gooddata-api-token>
-export STAGING_WORKSPACE_ID=staging
-export PRODUCTION_WORKSPACE_ID=production
-export GOODDATA_DATA_SOURCE_ID="cicd"
+pip install -r src/extract_load/requirements.txt
+pip install -r src/requirements.txt
+# TODO - create a pip package for dbt-gooddata module
+cd src/dbt-gooddata
+python setup.py install
 ```
-
-### Install dependencies 
-
-If you want to run scripts locally, please install dependencies in folders `extract_load` and `analytics`:
-
-**extract_load**:
-
-```bash
-$ cd extract_load
-$ pip install -r requirements.txt
-```
-
-**analytics**:
-
-```bash
-$ cd analytics
-$ pip install -r requirements.txt
-```
-
----
 
 # Extract and Load
 
-The folder `extract_load` contains scripts ([extract.py](extract_load/extract.py), [load.py](extract_load/load.py)) to extract data from [GitHub REST API](https://docs.github.com/en/rest) and load data to [PostgreSQL](https://www.postgresql.org/) database.
+The folder `src/extract_load` contains scripts ([extract.py](extract_load/extract.py), [load.py](extract_load/load.py)) to extract data from [GitHub REST API](https://docs.github.com/en/rest) and load data to [PostgreSQL](https://www.postgresql.org/) database.
 
 The output of this stage is `cicd_input_stage` schema in the database.
 
 During implementation, we discovered that we always do a complete refresh of data and do not do incremental loading that would be more suitable for long-term use. It is possible to solve it programmatically and extend scripts, for example, to create a new table where you keep the state of your data or use other tools such as [Airbyte](https://airbyte.com/) that would solve these problems with data extracting for us.
 
+You can run it locally as well (do not forget to set up env variables!):
+```bash
+cd src
+# dbt-gooddata module helps with reading dbt profiles (single source of truth for database properties)
+cd dbt-gooddata && python setup.py install && cd ..
+cd extract_load
+./extract.py $REPOSITORIES
+./load.py --profile-dir ../$DBT_PROFILE_DIR --target $DBT_TARGET $REPOSITORIES
+```
+
 # Data transformation
 
-The folder `data_transformation` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data.
+The folder `src/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data.
 
 As described in the *Extract and Load* section, we do full refresh of tables but dbt allows you to do so-called [incremental models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/configuring-incremental-models) that would allow you transforms only the rows in your source data (in our case `cicd_input_stage`) that you tell dbt to filter for, inserting them into the target table/schema (in our case `cicd_output_stage`).
 
-### Constraints 
+You can run it locally as well (do not forget to set up env variables!):
+```bash
+cd src
+pip install -r requirements.txt
+dbt deps
+dbt run --profiles-dir $DBT_PROFILE_DIR --target $DBT_TARGET
+dbt test --profiles-dir $DBT_PROFILE_DIR --target $DBT_TARGET
+```
 
-We wanted to define database constraints. Why? [GoodData](https://www.gooddata.com/) will join automatically between tables if you have tables that have foreign keys. This is a huge benefit that saves time and also you can avoid mistakes thanks to that. 
+## Generate GoodData semantic model from dbt models
+Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing generators of GoodData semantic model objects.
+Specifically, it allows you to generate so called PDM (Physical Data Model), LDM(Logical Data Model, mapped to PDM), and metrics from dbt models.
+It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
+
+You can run it locally as well (do not forget to set up env variables!):
+```bash
+cd src
+cd dbt-gooddata && python setup.py install && cd ..
+# Run data transformation first, or at least run `dbt compile` command. dbt-gooddata relies on dbt manifest.json.
+# Generate PDM/LDM/metrics, deploy them to GoodData
+dbt-gooddata deploy_models
+# Tool for invalidating caches. Must be executed anytime data in cicd_output_stage schema are changed 
+dbt-gooddata upload_notification
+```
+
+## Constraints
+We wanted to define database constraints. Why? [GoodData](https://www.gooddata.com/) will join automatically between tables if you have tables that have foreign keys. This is a huge benefit that saves time, and also you can avoid mistakes thanks to that. 
 
 We used package [Snowflake-Labs/dbt_constraints](https://github.com/Snowflake-Labs/dbt_constraints) for defining constrains.
 
-### Schema names
-
+## Schema names
 The dbt autogenerates the schema name but you can easily change it by custom macro - see our [approach how we dealt with schema names](data_transformation/macros/generate_schema_name.sql).
 
+## Generate all columns into schema.yml files
+This can help you to bootstrap schema.yaml files programmatically. Then, you can extend them by additional properties.
+
+Example:
+```bash
+dbt --profiles-dir ./profile \
+  run-operation generate_source \
+  --args "{\"schema_name\": \"$POSTGRES_OUTPUT_SCHEMA\", \"generate_columns\": true, \"include_descriptions\": true}"
+```
+
 # Analytics
+Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing tools for loading/storing GoodData analytics model (metrics, insights, dashboards).
+It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 
-The folder `analytics` contains bunch of scripts to manage [GoodData](https://www.gooddata.com/) with [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
+## Load analytics model to GoodData
+Analytics model is stored in [gooddata_layouts](src/gooddata_layouts) folder.
+The following command reads the layout, and load it into the GooData instance (based on environment variables):
 
-### Connect data to GoodData
+```bash
+dbt-gooddata deploy_analytics
+```
 
-The script [gooddata_register_data_source.py](analytics/gooddata_register_data_source.py) connects new data source to GoodData. A data source is a logical object in GoodData that represents the database where your source data is stored. When you create a data source for your database, GoodData scans the database, transforms its metadata to a declarative definition of the physical data model (PDM), and stores the PDM under the data source entity. You then generate a logical data model (LDM) from the stored PDM. If you want to learn more, check the [Connect Data](https://www.gooddata.com/developers/cloud-native/doc/hosted/connect-data/) documentation.
+It not only loads the stored layout, but it also reads metrics from dbt models and loads them too.
 
-### Store and load analytics metadata
+## Store analytics model
+Anytime you can fetch analytics model from the GoodData instance and store it to [gooddata_layouts](src/gooddata_layouts) folder.
+It makes sense to do some operations by editing stored layout files, but other in GoodData UI applications.
+For instance, it is more convenient to build more complex GoodData MAQL metrics in the Metric Editor UI application.
+Then, to persist such metrics to [gooddata_layouts](src/gooddata_layouts) folder, run the following command:
 
-The script [gooddata_store_metadata.py](analytics/gooddata_store_metadata.py) is not part of the pipeline and you have to run it manually. It stores metadata of analytics saved in folder structure [gooddata_layouts](analytics/gooddata_layouts). The script is a pre-requisite for the script [gooddata_load_metadata.py](analytics/gooddata_load_metadata.py).
+```bash
+dbt-gooddata store_analytics
+```
 
-The script [gooddata_load_metadata.py](analytics/gooddata_load_metadata.py) takes the metadata of analytics saved in folder structure [gooddata_layouts](analytics/gooddata_layouts) and put it in the staging workspace. It is good to save metadata in the folder structure because you immediately gain versioning of analytics.
+## Invalidate analytics cache 
 
-### Invalidate analytics cache 
-
-The script [gooddata_upload_notification.py](analytics/gooddata_upload_notification.py) invalidate cache of computed reports to force analytics to be recomputed (GoodData caches computation to return results more quickly and not overload the database).
+Anytime you update data, e.g. by running `dbt run` command, you have to invalidate GoodData caches to see the new data there.
+The following command invalidates these caches:
+```bash
+dbt-gooddata upload_notification
+```
 
 ### Test analytics
 
-The script [gooddata_tests.py](analytics/gooddata_tests.p) tests if all insights (visualizations) are possible to execute - it means that you know if insights (visualizations) render correctly.
+It is possible to test if all insights (visualizations) are possible to execute - it means that you know if insights (visualizations) render correctly.
 
-### Deploy analytics
-
-The script [gooddata_provisioning.py](analytics/gooddata_provisioning.py) loads everything from the staging workspace and put everything in the production workspace. It basically deploys new analytics to production.
+Use the following command:
+```bash
+dbt-gooddata test_insights
+```
 
 ---
 

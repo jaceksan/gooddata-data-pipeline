@@ -1,0 +1,84 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: sum_days_to_solve
+                    type: metric
+            localIdentifier: b9093833a513401abfaf0fca9407e606
+            title: Sum days to solve
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: repo_name
+                type: label
+            localIdentifier: 31c8b0ba651b4bed927068f47537e961
+        - attribute:
+            displayForm:
+              identifier:
+                id: pull_request_id
+                type: label
+            localIdentifier: 70820d7f8d044454919e19533e9d9df4
+        - attribute:
+            displayForm:
+              identifier:
+                id: pull_request_title
+                type: label
+            localIdentifier: 6d99e3d9d3cc4cb9aecde79fcba79996
+        - attribute:
+            displayForm:
+              identifier:
+                id: login
+                type: label
+            localIdentifier: d1df8bf7ebcd4bcaad71220c853208bb
+        - attribute:
+            displayForm:
+              identifier:
+                id: created_at.day
+                type: label
+            localIdentifier: 664fb4ad49144cff82c128579955641a
+        - attribute:
+            displayForm:
+              identifier:
+                id: merged_at.day
+                type: label
+            localIdentifier: 0c7c30911e4846228bfa1c8c868f010d
+        - attribute:
+            displayForm:
+              identifier:
+                id: closed_at.day
+                type: label
+            localIdentifier: 93d78c1d6c974d72bf0ee5ff50bba63c
+      localIdentifier: attribute
+  filters:
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: pull_request_draft
+            type: label
+        notIn:
+          values:
+            - 'true'
+    - rankingFilter:
+        measure:
+          localIdentifier: b9093833a513401abfaf0fca9407e606
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts:
+    - measureSortItem:
+        direction: desc
+        locators:
+          - measureLocatorItem:
+              measureIdentifier: b9093833a513401abfaf0fca9407e606
+  version: '2'
+  visualizationUrl: local:table
+description: Longest unsolved PRs
+id: longest_unsolved_prs
+title: Longest unsolved PRs

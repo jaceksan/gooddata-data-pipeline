@@ -1,0 +1,38 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: contribution_-_count_of_merged_pull_requests
+                    type: metric
+            localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
+            title: Contribution - count of merged pull requests
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: login
+                type: label
+            localIdentifier: c9f213f0d432408097f7fd521592d205
+      localIdentifier: view
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: ce4c7ce96fd44fa1a9fcf1893024aa2c
+        operator: TOP
+        value: 10
+  properties:
+    controls:
+      dataLabels:
+        visible: auto
+  sorts: []
+  version: '2'
+  visualizationUrl: local:pie
+description: Top contributors (merged pull requests)
+id: top_contributors_merged_pull_requests
+title: Top contributors (merged pull requests)
