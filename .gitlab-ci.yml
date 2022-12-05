@@ -31,7 +31,7 @@ variables:
     - pip install -r requirements.txt
   script:
     - ./extract.py $REPOSITORIES
-    - ./load.py --profile-dir ../$DBT_PROFILE_DIR --target $DBT_TARGET $REPOSITORIES
+    - ./load.py --profile-dir ../$DBT_PROFILE_DIR $REPOSITORIES
 
 .dbt:
   extends:
