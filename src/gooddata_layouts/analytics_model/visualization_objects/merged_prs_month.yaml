@@ -19,7 +19,7 @@ content:
                 id: merged_at.month
                 type: label
             localIdentifier: 32d9f6b989d14d818aaec3145ba8dd50
-      localIdentifier: view
+      localIdentifier: trend
     - items:
         - attribute:
             displayForm:
@@ -27,12 +27,12 @@ content:
                 id: repo_name
                 type: label
             localIdentifier: 69b4956e27264d6d9993a34b6a1b0aef
-      localIdentifier: stack
+      localIdentifier: segment
   filters: []
   properties: {}
   sorts: []
   version: '2'
-  visualizationUrl: local:column
+  visualizationUrl: local:line
 description: Merged PRs / Month
 id: merged_prs_month
 title: Merged pull requests / month
