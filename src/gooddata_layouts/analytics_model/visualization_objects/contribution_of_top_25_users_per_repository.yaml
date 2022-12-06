@@ -7,18 +7,18 @@ content:
                 filters: []
                 item:
                   identifier:
-                    id: count_commits
+                    id: contribution_of_top_25_users_-_merged_pr
                     type: metric
-            localIdentifier: 9fbbb6e60b2f483bbdd48cf8983e6d1c
-            title: Count of commits
+            localIdentifier: 5438b99f23ac4e7b85ab7ae1bd85ce2b
+            title: Contribution of TOP 25% users - merged PR
       localIdentifier: measures
     - items:
         - attribute:
             displayForm:
               identifier:
-                id: created_at.month
+                id: closed_at.month
                 type: label
-            localIdentifier: c392046f791142cc929ca2b15ea54f62
+            localIdentifier: 8e91666db62e4c079a994172977d6cb8
       localIdentifier: trend
     - items:
         - attribute:
@@ -26,13 +26,13 @@ content:
               identifier:
                 id: repo_name
                 type: label
-            localIdentifier: 9840c472efe143ef90891722bb138b17
+            localIdentifier: 9afa361b82f643cf8e7b7249cdfd4392
       localIdentifier: segment
   filters: []
   properties: {}
   sorts: []
   version: '2'
   visualizationUrl: local:line
-description: Created commits / Month
-id: created_commits_month
-title: Created commits / Month
+description: ''
+id: contribution_of_top_25_users_per_repository
+title: Contribution of TOP 25% users per repository

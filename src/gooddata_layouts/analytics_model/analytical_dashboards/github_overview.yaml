@@ -8,7 +8,7 @@ content:
       - items:
           - size:
               xl:
-                gridWidth: 4
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -42,7 +42,28 @@ content:
               type: insight
           - size:
               xl:
-                gridWidth: 4
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: closed_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: contribution_of_top_25_users_per_repository
+                  type: visualizationObject
+              properties: {}
+              title: Contribution of TOP 25% users per repository
+              type: insight
+        type: IDashboardLayoutSection
+      - items:
+          - size:
+              xl:
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -61,7 +82,7 @@ content:
               type: insight
           - size:
               xl:
-                gridWidth: 4
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
