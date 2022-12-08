@@ -9,11 +9,28 @@ services:
       - "5432:5432"
     volumes:
       - gooddata-data-pipeline:/data
-      - ./fixtures/postgres:/docker-entrypoint-initdb.d:ro
     environment:
       LICENSE_AND_PRIVACY_POLICY_ACCEPTED: "YES"
       APP_LOGLEVEL: "INFO"
       GDC_FEATURES_VALUES_ENABLE_METRIC_SQL_AND_DATA_EXPLAIN: 'ENABLED'
+
+  bootstrap_db:
+    build:
+      context: .
+      dockerfile: Dockerfile_psql
+    entrypoint:
+      - psql
+      - -f
+      - /docker-entrypoint-initdb.d/00_create_db_schema.sql
+      - demo
+    environment:
+      PGDATABASE: demo
+      PGHOST: gooddata-cn-ce
+      PGPORT: 5432
+      PGUSER: demouser
+      PGPASSWORD: demopass
+    volumes:
+      - ./fixtures/postgres:/docker-entrypoint-initdb.d:ro
 
 volumes:
   gooddata-data-pipeline:
