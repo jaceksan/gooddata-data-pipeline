@@ -21,9 +21,19 @@ There are two options:
 - GoodData cloud trial
 
 ### Community edition
-The following command start the single container deployment of GoodData on your machine:
+The following command starts the single container deployment of GoodData on your machine:
 ```bash
-docker-compose up -d
+docker-compose up -d gooddata-cn-ce
+```
+Once it is ready (takes circa 1-2 minutes), run the following command to bootstrap DB schemata for this demo:
+
+```bash
+docker-compose up -d bootstrap_db
+```
+
+How to investigate logs (debug, detail error stacks):
+```bash
+docker-compose logs
 ```
 
 ### GoodData trial
@@ -58,7 +68,7 @@ export DBT_PROFILE_DIR="profile" # default is ~/.dbt
 export DBT_PROFILE="default"
 export GOODDATA_MODEL_ID="github"
 export DBT_TARGET="dev_local"
-export POSTGRES_PASS=cicd123
+export POSTGRES_PASS=demopass
 ```
 
 **Extract/load data from Github**:
