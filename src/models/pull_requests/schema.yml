@@ -181,3 +181,6 @@ metrics:
 
     timestamp: created_at
     time_grains: [day, week, month, quarter, year]
+
+    dimensions:
+      - pull_request_draft
