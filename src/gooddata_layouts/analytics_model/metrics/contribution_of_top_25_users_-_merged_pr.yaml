@@ -5,4 +5,6 @@ content:
     \ {label/user_id}))\n  / {metric/count_merged_pull_requests}\n"
 description: ''
 id: contribution_of_top_25_users_-_merged_pr
+tags:
+  - Metrics GD
 title: Contribution of TOP 25% users - merged PR
