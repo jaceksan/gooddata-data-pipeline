@@ -157,7 +157,7 @@ metrics:
     meta:
       gooddata:
         model_id: github
-        format: "#,##0"
+        format: "#,##0.00"
 
     calculation_method: sum
     expression: days_to_solve
@@ -174,7 +174,7 @@ metrics:
     meta:
       gooddata:
         model_id: github
-        format: "#,##0"
+        format: "#,##0.00"
 
     calculation_method: average
     expression: days_to_solve
