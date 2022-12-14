@@ -17,7 +17,7 @@ repos_extracted as (
 
 final as (
     select
-      repo_id, repo_url, repo_name
+      *
     from repos_extracted r
     -- Filter only repos, for which we collected at least one pull request
     where exists (
