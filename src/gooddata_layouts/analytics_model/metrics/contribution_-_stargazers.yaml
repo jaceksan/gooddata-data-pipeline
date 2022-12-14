@@ -1,0 +1,9 @@
+content:
+  format: '#,##0.00%'
+  maql: "SELECT {metric/sum_stargazers} / (\n  SELECT {metric/sum_stargazers}\n  \
+    \  BY ALL OTHER)"
+description: ''
+id: contribution_-_stargazers
+tags:
+  - Metrics GD
+title: Contribution - stargazers

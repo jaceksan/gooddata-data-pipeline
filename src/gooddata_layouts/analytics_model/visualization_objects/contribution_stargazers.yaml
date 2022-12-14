@@ -1,0 +1,33 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: contribution_-_stargazers
+                    type: metric
+            localIdentifier: d872e7e9e3ef4ea0ad0e039fe2462b80
+            title: Contribution - stargazers
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: repo_name
+                type: label
+            localIdentifier: 7d83537e607d491683b6a80872c3dfe0
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      dataLabels:
+        visible: auto
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: ''
+id: contribution_stargazers
+title: Contribution - stargazers
