@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   gooddata-cn-ce:
-    # Use the dev_latest tag which points to the latest development
+    # You can use "dev_latest" tag which points to the latest development version of GD.CN
     image: gooddata/gooddata-cn-ce:2.2
     ports:
       - "3000:3000"
@@ -32,5 +32,24 @@ services:
     volumes:
       - ./fixtures/postgres:/docker-entrypoint-initdb.d:ro
 
+  extract_load:
+    build:
+      context: src
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-github-repo target-postgres tap-github-org target-postgres
+    environment:
+      POSTGRES_HOST: gooddata-cn-ce
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: demouser
+      POSTGRES_PASS: demopass
+      POSTGRES_DBNAME: demo
+      POSTGRES_INPUT_SCHEMA: cicd_input_stage2
+      MELTANO_DATABASE_URI: "postgresql://demouser:demopass@gooddata-cn-ce:5432/demo?options=-csearch_path%3Dmeltano"
+      TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
+      MELTANO_ENV: dev_local
 volumes:
   gooddata-data-pipeline:

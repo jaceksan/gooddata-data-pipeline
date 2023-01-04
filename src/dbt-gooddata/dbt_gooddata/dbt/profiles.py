@@ -33,12 +33,12 @@ class DbtProfiles:
             self.dbt_profiles = yaml.safe_load(fp)
 
     @staticmethod
-    def inject_password(output: DbtOutput) -> None:
-        pwd_re = re.compile(r"env_var\('([^']+)'\)")
-        if (pwd_match := pwd_re.search(output.password)) is not None:
-            # print(f"DS PWD_MATCH={pwd_match.group(1)} PWD={os.getenv(pwd_match.group(1))}")
-            output.password = os.getenv(pwd_match.group(1))
-        # else do nothing, real password seems to be stored in dbt profile
+    def inject_env_vars(output_def: dict) -> None:
+        env_re = re.compile(r"env_var\('([^']+)'\)")
+        for output_key, output_value in output_def.items():
+            if (pwd_match := env_re.search(str(output_value))) is not None:
+                output_def[output_key] = os.getenv(pwd_match.group(1))
+            # else do nothing, real value seems to be stored in dbt profile
 
     @property
     def profiles(self) -> list[DbtProfile]:
@@ -46,8 +46,8 @@ class DbtProfiles:
         for profile, profile_def in self.dbt_profiles.items():
             outputs = []
             for output, output_def in profile_def["outputs"].items():
+                self.inject_env_vars(output_def)
                 dbt_output = DbtOutput.from_dict({"name": output} | output_def)
-                self.inject_password(dbt_output)
                 outputs.append(dbt_output)
             profiles.append(
                 DbtProfile(name=profile, outputs=outputs)

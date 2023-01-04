@@ -1,4 +1,5 @@
 stages:
+  - build
   - extract_load
   - transform
   - analytics
@@ -9,29 +10,61 @@ variables:
   DBT_PROFILE_DIR: "profile"
   DBT_PROFILE: "default"
   GOODDATA_MODEL_ID: "github"
+  DBT_TARGET: "github2postgres"
+  POSTGRES_HOST: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
+  POSTGRES_PORT: 5432
+  POSTGRES_USER: "cicd"
+  POSTGRES_INPUT_SCHEMA: "cicd_input_stage2"
+  POSTGRES_OUTPUT_SCHEMA: "cicd_output_stage2"
+  MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
+  MELTANO_VERSION: "v2.12.0-python3.10"
+  MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
 
 ##########################
 # Job templates
 ##########################
 .base:
-  image: python:3.10-alpine
+  image: python:3.10-slim-buster
+
+.base_rules:
   rules:
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
+.docker:
+  extends:
+    - .base
+  image: docker:latest
+  services:
+    - docker:18.09.7-dind # older version that does not need demand TLS (see below)
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+
 .extract_load:
   extends:
     - .base
+  # We build a custom image on top of the official Meltano image in this pipeline
+  # It contains Meltano itself, and all extractors/loaders
+  image:
+    name: "$MELTANO_CUSTOM_IMAGE"
+    entrypoint: [""]
   stage: extract_load
-  before_script:
-    - cd "$CI_PROJECT_DIR/src"
-    # Use dbt profiles parser from dbt-gooddata to get connection properties to the current target database
-    - cd dbt-gooddata && python setup.py install && cd ..
-    - cd "extract_load"
-    - pip install -r requirements.txt
+  variables:
+    TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
+    MELTANO_DATABASE_URI: "postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano"
+    CI_DEBUG_TRACE: "true"
+    GIT_STRATEGY: "none"
+  artifacts:
+    paths:
+      - .meltano/logs/**
   script:
-    - ./extract.py $REPOSITORIES
-    - ./load.py --profile-dir ../$DBT_PROFILE_DIR $REPOSITORIES
+    - cd /project
+    - meltano --environment $MELTANO_ENV run tap-github-repo target-postgres tap-github-org target-postgres
+
+.extract_load_changes:
+  changes:
+    - src/meltano.yml
+    - .gitlab-ci.yml
 
 .dbt:
   extends:
@@ -39,15 +72,25 @@ variables:
   stage: transform
   before_script:
     - cd "$CI_PROJECT_DIR/src"
-    - pip install -r requirements.txt
+    - pip install -r requirements-dbt.txt
     # TODO - publish to pip
     - cd dbt-gooddata && python setup.py install && cd ..
     - dbt deps
   script:
-    - dbt run --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $DBT_TARGET
-    - dbt test --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $DBT_TARGET
+    - dbt run --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE
+    - dbt test --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE
     - dbt-gooddata deploy_models
     - dbt-gooddata upload_notification
+
+.dbt_changes:
+  changes:
+    - src/models/**/*
+    - src/profile/**/*
+    - src/dbt_project.yml
+    - src/packages.yml
+    - src/requirements-dbt.txt
+    - src/dbt-gooddata/**/*
+    - .gitlab-ci.yml
 
 .gooddata:
   extends:
@@ -55,65 +98,80 @@ variables:
   stage: analytics
   before_script:
     - cd "$CI_PROJECT_DIR/src"
-    - pip install -r requirements.txt
+    - pip install -r requirements-dbt.txt
     # TODO - publish to pip
     - cd dbt-gooddata && python setup.py install && cd ..
     - dbt deps
   script:
     # Compile to generate manifest.json, which is parsed by dbt-gooddata module
-    - dbt compile --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $DBT_TARGET
+    - dbt compile --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE
     - dbt-gooddata deploy_analytics
     - dbt-gooddata test_insights
+
+.gooddata_changes:
+  changes:
+    - src/models/**/*
+    - src/dbt-gooddata/**/*
+    - src/gooddata_layouts/**/*
+    - .gitlab-ci.yml
 
 #############
 # Pre-merge
 #############
+build_meltano:
+  extends:
+    - .docker
+  stage: build
+  script:
+    - cd "$CI_PROJECT_DIR/src"
+    - docker build 
+      --build-arg MELTANO_VERSION=$MELTANO_VERSION 
+      -f Dockerfile_meltano 
+      -t $MELTANO_CUSTOM_IMAGE .
+    - docker push $MELTANO_CUSTOM_IMAGE
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - src/Dockerfile_meltano
+        - src/meltano.yml
+        - .gitlab-ci.yml
+    - !reference [.base_rules, rules]
+
 extract_load_dev:
   extends:
     - .extract_load
   variables:
-    DBT_TARGET: dev
-    # Load only 1 repo to speed up testing (dev only)
-    REPOSITORIES: "--repositories gooddata/gooddata-python-sdk"
+    POSTGRES_DBNAME: "cicd_dev"
+    MELTANO_ENV: "dev"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes:
-        - src/extract_load/**/*
-        - src/dbt-gooddata/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.extract_load_changes, changes]
+    - !reference [.base_rules, rules]
 
 dbt_dev:
   extends:
     - .dbt
   variables:
-    DBT_TARGET: dev
+    POSTGRES_DBNAME: "cicd_dev"
     GOODDATA_WORKSPACE_ID: "cicd_demo_development"
-    GOODDATA_WORKSPACE_TITLE: "CICD demo (dev)"
+    DBT_TARGET_TITLE: "CICD demo (dev)"
+    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes:
-        - src/extract_load/**/*
-        - src/models/**/*
-        - src/profile/**/*
-        - src/dbt_project.yml
-        - src/packages.yml
-        - src/requirements.txt
-        - src/dbt-gooddata/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.dbt_changes, changes]
+    - !reference [.base_rules, rules]
 
 gooddata_dev:
   extends:
     - .gooddata
   variables:
-    DBT_TARGET: dev
+    POSTGRES_DBNAME: "cicd_dev"
     GOODDATA_WORKSPACE_ID: "cicd_demo_development"
+    DBT_TARGET_TITLE: "CICD demo (dev)"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes:
-        - src/models/**/*
-        - src/dbt-gooddata/**/*
-        - src/gooddata_layouts/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.gooddata_changes, changes]
+    - !reference [.base_rules, rules]
 
 #############
 # Post-merge
@@ -123,46 +181,37 @@ extract_load_staging:
   extends:
     - .extract_load
   variables:
-    DBT_TARGET: staging
+    POSTGRES_DBNAME: "cicd_staging"
+    MELTANO_ENV: "staging"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - src/extract_load/**/*
-        - src/dbt-gooddata/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.extract_load_changes, changes]
+    - !reference [.base_rules, rules]
 
 dbt_staging:
   extends:
     - .dbt
   variables:
-    DBT_TARGET: staging
+    POSTGRES_DBNAME: "cicd_staging"
     GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
-    GOODDATA_WORKSPACE_TITLE: "CICD demo (staging)"
+    DBT_TARGET_TITLE: "CICD demo (staging)"
+    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - src/extract_load/**/*
-        - src/models/**/*
-        - src/profile/**/*
-        - src/dbt_project.yml
-        - src/packages.yml
-        - src/requirements.txt
-        - src/dbt-gooddata/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.dbt_changes, changes]
+    - !reference [.base_rules, rules]
 
 gooddata_staging:
   extends:
     - .gooddata
   variables:
-    DBT_TARGET: staging
+    POSTGRES_DBNAME: "cicd_staging"
     GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
+    DBT_TARGET_TITLE: "CICD demo (staging)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - src/models/**/*
-        - src/dbt-gooddata/**/*
-        - src/gooddata_layouts/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.gooddata_changes, changes]
+    - !reference [.base_rules, rules]
 
 ##########################
 # Post-merge - PROD
@@ -171,47 +220,38 @@ extract_load_prod:
   extends:
     - .extract_load
   variables:
-    DBT_TARGET: prod
+    POSTGRES_DBNAME: "cicd_prod"
+    MELTANO_ENV: "prod"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - src/extract_load/**/*
-        - src/dbt-gooddata/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.extract_load_changes, changes]
     # The pipeline scheduler triggers only PROD jobs
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - !reference [.base_rules, rules]
 
 dbt_prod:
   extends:
     - .dbt
   variables:
-    DBT_TARGET: prod
+    POSTGRES_DBNAME: "cicd_prod"
     GOODDATA_WORKSPACE_ID: "cicd_demo_production"
-    GOODDATA_WORKSPACE_TITLE: "CICD demo (prod)"
+    DBT_TARGET_TITLE: "CICD demo (prod)"
+    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - src/extract_load/**/*
-        - src/models/**/*
-        - src/profile/**/*
-        - src/dbt_project.yml
-        - src/packages.yml
-        - src/requirements.txt
-        - src/dbt-gooddata/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.dbt_changes, changes]
     # The pipeline scheduler triggers only PROD jobs
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
+    - !reference [.base_rules, rules]
 
 gooddata_prod:
   extends:
     - .gooddata
   variables:
-    DBT_TARGET: prod
+    POSTGRES_DBNAME: "cicd_prod"
     GOODDATA_WORKSPACE_ID: "cicd_demo_production"
+    DBT_TARGET_TITLE: "CICD demo (prod)"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - src/models/**/*
-        - src/dbt-gooddata/**/*
-        - src/gooddata_layouts/**/*
-        - .gitlab-ci.yml
+      changes: !reference [.gooddata_changes, changes]
+    - !reference [.base_rules, rules]
