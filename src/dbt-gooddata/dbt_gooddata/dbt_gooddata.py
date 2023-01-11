@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from time import time
+from urllib.parse import quote_plus
 
 from gooddata_sdk import (
     GoodDataSdk,
@@ -17,30 +18,29 @@ from dbt_gooddata.sdk_wrapper import GoodDataSdkWrapper
 
 
 GOODDATA_LAYOUTS_DIR = Path("gooddata_layouts")
+
 # TODO
+#   add support for other database types (Snowflake first)
 #   Tests, ...
-#   + try to use python-github lib.
-#       Sort by date desc and stop when getting to last downloaded (store timestamp in a control table)
 
 
 def register_data_source(sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput, schema_name: str) -> None:
-    sdk.catalog_data_source.create_or_update_data_source(
-        CatalogDataSourcePostgres(
-            # TODO - add support for all database types
-            id=data_source_id,
-            name=dbt_target.title,
-            db_specific_attributes=PostgresAttributes(
-                host=dbt_target.host,
-                db_name=dbt_target.dbname
-            ),
-            # Schema name is collected from dbt manifest from relevant tables
-            schema=schema_name,
-            credentials=BasicCredentials(
-                username=dbt_target.user,
-                password=dbt_target.password,
-            ),
-        )
+    postgres_data_source = CatalogDataSourcePostgres(
+        id=data_source_id,
+        name=dbt_target.title,
+        db_specific_attributes=PostgresAttributes(
+            host=dbt_target.host,
+            # TODO - adopt this in Python SDK
+            db_name=quote_plus(dbt_target.dbname)
+        ),
+        # Schema name is collected from dbt manifest from relevant tables
+        schema=schema_name,
+        credentials=BasicCredentials(
+            username=dbt_target.user,
+            password=dbt_target.password,
+        ),
     )
+    sdk.catalog_data_source.create_or_update_data_source(postgres_data_source)
 
 
 def generate_and_put_pdm(sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables) -> None:

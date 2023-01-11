@@ -14,8 +14,8 @@ variables:
   POSTGRES_HOST: "db.bit.io"
   POSTGRES_PORT: 5432
   POSTGRES_USER: "cicd"
-  POSTGRES_INPUT_SCHEMA: "cicd_input_stage2"
-  POSTGRES_OUTPUT_SCHEMA: "cicd_output_stage2"
+  POSTGRES_INPUT_SCHEMA: "cicd_input_stage"
+  POSTGRES_OUTPUT_SCHEMA: "cicd_output_stage"
   MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
   MELTANO_VERSION: "v2.12.0-python3.10"
   MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
