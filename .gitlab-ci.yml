@@ -11,7 +11,7 @@ variables:
   DBT_PROFILE: "default"
   GOODDATA_MODEL_ID: "github"
   DBT_TARGET: "github2postgres"
-  POSTGRES_HOST: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
+  POSTGRES_HOST: "db.bit.io"
   POSTGRES_PORT: 5432
   POSTGRES_USER: "cicd"
   POSTGRES_INPUT_SCHEMA: "cicd_input_stage2"
@@ -19,6 +19,27 @@ variables:
   MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
   MELTANO_VERSION: "v2.12.0-python3.10"
   MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
+
+.envs:
+  dev:
+    POSTGRES_DBNAME: "jaceksan/cicd_dev"
+    MELTANO_ENV: "dev"
+    DBT_TARGET_TITLE: "CICD demo (dev)"
+    GOODDATA_WORKSPACE_ID: "cicd_demo_development"
+    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+  staging:
+    POSTGRES_DBNAME: "jaceksan/cicd_staging"
+    MELTANO_ENV: "staging"
+    DBT_TARGET_TITLE: "CICD demo (staging)"
+    GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
+    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+  prod:
+    POSTGRES_DBNAME: "jaceksan/cicd_prod"
+    MELTANO_ENV: "prod"
+    DBT_TARGET_TITLE: "CICD demo (prod)"
+    GOODDATA_WORKSPACE_ID: "cicd_demo_production"
+    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+
 
 ##########################
 # Job templates
@@ -51,7 +72,7 @@ variables:
   stage: extract_load
   variables:
     TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
-    MELTANO_DATABASE_URI: "postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano"
+    MELTANO_DATABASE_URI: "postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano&sslmode=require"
     CI_DEBUG_TRACE: "true"
     GIT_STRATEGY: "none"
   artifacts:
@@ -141,8 +162,8 @@ extract_load_dev:
   extends:
     - .extract_load
   variables:
-    POSTGRES_DBNAME: "cicd_dev"
-    MELTANO_ENV: "dev"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    MELTANO_ENV: !reference [.envs, dev, MELTANO_ENV]
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.extract_load_changes, changes]
@@ -152,10 +173,10 @@ dbt_dev:
   extends:
     - .dbt
   variables:
-    POSTGRES_DBNAME: "cicd_dev"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_development"
-    DBT_TARGET_TITLE: "CICD demo (dev)"
-    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
+    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
+    GOODDATA_WORKSPACE_TITLE: !reference [.envs, dev, GOODDATA_WORKSPACE_TITLE]
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]
@@ -165,9 +186,9 @@ gooddata_dev:
   extends:
     - .gooddata
   variables:
-    POSTGRES_DBNAME: "cicd_dev"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_development"
-    DBT_TARGET_TITLE: "CICD demo (dev)"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
+    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.gooddata_changes, changes]
@@ -181,8 +202,8 @@ extract_load_staging:
   extends:
     - .extract_load
   variables:
-    POSTGRES_DBNAME: "cicd_staging"
-    MELTANO_ENV: "staging"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    MELTANO_ENV: !reference [.envs, dev, MELTANO_ENV]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -192,10 +213,10 @@ dbt_staging:
   extends:
     - .dbt
   variables:
-    POSTGRES_DBNAME: "cicd_staging"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
-    DBT_TARGET_TITLE: "CICD demo (staging)"
-    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
+    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
+    GOODDATA_WORKSPACE_TITLE: !reference [.envs, dev, GOODDATA_WORKSPACE_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -205,9 +226,9 @@ gooddata_staging:
   extends:
     - .gooddata
   variables:
-    POSTGRES_DBNAME: "cicd_staging"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
-    DBT_TARGET_TITLE: "CICD demo (staging)"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
+    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -220,8 +241,8 @@ extract_load_prod:
   extends:
     - .extract_load
   variables:
-    POSTGRES_DBNAME: "cicd_prod"
-    MELTANO_ENV: "prod"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    MELTANO_ENV: !reference [.envs, dev, MELTANO_ENV]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -233,10 +254,10 @@ dbt_prod:
   extends:
     - .dbt
   variables:
-    POSTGRES_DBNAME: "cicd_prod"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_production"
-    DBT_TARGET_TITLE: "CICD demo (prod)"
-    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
+    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
+    GOODDATA_WORKSPACE_TITLE: !reference [.envs, dev, GOODDATA_WORKSPACE_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -248,9 +269,9 @@ gooddata_prod:
   extends:
     - .gooddata
   variables:
-    POSTGRES_DBNAME: "cicd_prod"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_production"
-    DBT_TARGET_TITLE: "CICD demo (prod)"
+    POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
+    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
+    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
