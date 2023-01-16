@@ -11,7 +11,7 @@ repos as (
       name as repo_name,
       stargazers_count,
       watchers_count,
-      created_at at time zone '{{ var("timezone") }}' as created_at
+      created_at as created_at
     from {{ var("input_schema") }}.repositories
 ),
 

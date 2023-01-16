@@ -1,12 +1,10 @@
 import sys
 from pathlib import Path
 from time import time
-from urllib.parse import quote_plus
 
 from gooddata_sdk import (
     GoodDataSdk,
-    BasicCredentials, CatalogDataSourcePostgres, PostgresAttributes, CatalogDeclarativeTables,
-    CatalogWorkspace, CatalogDeclarativeModel
+    CatalogDeclarativeTables, CatalogWorkspace, CatalogDeclarativeModel
 )
 
 from dbt_gooddata.dbt.metrics import DbtModelMetrics
@@ -25,22 +23,8 @@ GOODDATA_LAYOUTS_DIR = Path("gooddata_layouts")
 
 
 def register_data_source(sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput, schema_name: str) -> None:
-    postgres_data_source = CatalogDataSourcePostgres(
-        id=data_source_id,
-        name=dbt_target.title,
-        db_specific_attributes=PostgresAttributes(
-            host=dbt_target.host,
-            # TODO - adopt this in Python SDK
-            db_name=quote_plus(dbt_target.dbname)
-        ),
-        # Schema name is collected from dbt manifest from relevant tables
-        schema=schema_name,
-        credentials=BasicCredentials(
-            username=dbt_target.user,
-            password=dbt_target.password,
-        ),
-    )
-    sdk.catalog_data_source.create_or_update_data_source(postgres_data_source)
+    data_source = dbt_target.to_gooddata(data_source_id, schema_name)
+    sdk.catalog_data_source.create_or_update_data_source(data_source)
 
 
 def generate_and_put_pdm(sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables) -> None:
@@ -68,7 +52,7 @@ def generate_and_put_ldm(sdk: GoodDataSdk, data_source_id: str, workspace_id: st
 
 def deploy_models(args, logger, sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput) -> None:
     logger.info("Deploy models")
-    dbt_tables = DbtModelTables(args.gooddata_model_id)
+    dbt_tables = DbtModelTables(args.gooddata_model_id, args.gooddata_upper_case)
     workspace_id = args.gooddata_workspace_id
     workspace_title = args.gooddata_workspace_title
 
@@ -92,7 +76,7 @@ def deploy_analytics(args, logger, sdk: GoodDataSdk) -> None:
     adm = sdk.catalog_workspace_content.load_analytics_model_from_disk(Path("gooddata_layouts"))
 
     logger.info("Append dbt metrics to GoodData metrics")
-    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id).make_gooddata_metrics()
+    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id, args.gooddata_upper_case).make_gooddata_metrics()
     adm.analytics.metrics = adm.analytics.metrics + dbt_gooddata_metrics
 
     # Deploy analytics model into target workspace
@@ -106,7 +90,7 @@ def store_analytics(args, logger, sdk: GoodDataSdk) -> None:
 
     # TODO - this is hack. Add corresponding functionality into Python SDK
     logger.info("Exclude dbt metrics from stored analytics model, they are already defined in dbt models")
-    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id).make_gooddata_metrics()
+    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id, args.gooddata_upper_case).make_gooddata_metrics()
     for metric in dbt_gooddata_metrics:
         metric_path = GOODDATA_LAYOUTS_DIR / "analytics_model" / "metrics" / f"{metric.id}.yaml"
         metric_path.unlink()

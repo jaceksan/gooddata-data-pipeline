@@ -17,7 +17,7 @@ with pull_requests_extracted as (
       pull_requests.created_at,
       pull_requests.merged_at,
       pull_requests.closed_at,
-      to_json("user") as user_json
+      to_json(user) as user_json
     from {{ var("input_schema") }}.pull_requests
 ),
 
@@ -27,9 +27,9 @@ final as (
       html_url as pull_request_url,
       title as pull_request_title,
       draft as pull_request_draft,
-      created_at at time zone '{{ var("timezone") }}' as created_at,
-      merged_at at time zone '{{ var("timezone") }}' as merged_at,
-      closed_at at time zone '{{ var("timezone") }}' as closed_at,
+      created_at as created_at,
+      merged_at as merged_at,
+      closed_at as closed_at,
       CAST(json_extract_path_text(user_json, 'url') as TEXT) as user_url,
       repo_id
     from pull_requests_extracted
