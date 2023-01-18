@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Dict, Type, TypeVar
 import attrs
 from cattrs import structure
@@ -33,6 +34,8 @@ TIMESTAMP_GRANULARITIES = [
     "HOUR_OF_DAY",
 ]
 T = TypeVar("T", bound="Base")
+
+DBT_PATH_TO_MANIFEST = Path("target") / "manifest.json"
 
 
 @attrs.define

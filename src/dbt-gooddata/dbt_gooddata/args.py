@@ -35,6 +35,12 @@ def set_gooddata_model_id_args(parser: argparse.ArgumentParser):
                         default=os.getenv("GOODDATA_MODEL_ID"))
 
 
+def set_gooddata_upper_case_args(parser: argparse.ArgumentParser):
+    parser.add_argument("-guc", "--gooddata-upper-case",
+                        help="Upper case all physical model entities (tables, columns). Valuable for Snowflake!",
+                        action='store_true', default=False)
+
+
 def set_gooddata_workspace_title_args(parser: argparse.ArgumentParser):
     parser.add_argument("-gwt", "--gooddata-workspace-title",
                         help="Workspace title",
@@ -50,7 +56,7 @@ def set_dbt_args(parser: argparse.ArgumentParser):
                         default=os.getenv("DBT_PROFILE", "default"))
     parser.add_argument("-t", "--target",
                         help="dbt target/output. DB where dbt deploys. GoodData registers it as data source.",
-                        default=os.getenv("DBT_TARGET", "dev_local"))
+                        default=os.getenv("ELT_ENVIRONMENT", "dev_local"))
 
 
 def parse_arguments(description: str):
@@ -66,6 +72,7 @@ def parse_arguments(description: str):
     set_gooddata_workspace_id_args(deploy_models)
     set_gooddata_workspace_title_args(deploy_models)
     set_gooddata_model_id_args(deploy_models)
+    set_gooddata_upper_case_args(deploy_models)
     deploy_models.set_defaults(method='deploy_models')
 
     upload_notification = subparsers.add_parser("upload_notification")
@@ -75,11 +82,13 @@ def parse_arguments(description: str):
     deploy_analytics = subparsers.add_parser("deploy_analytics")
     set_gooddata_workspace_id_args(deploy_analytics)
     set_gooddata_model_id_args(deploy_analytics)
+    set_gooddata_upper_case_args(deploy_analytics)
     deploy_analytics.set_defaults(method='deploy_analytics')
 
     store_analytics = subparsers.add_parser("store_analytics")
     set_gooddata_workspace_id_args(store_analytics)
     set_gooddata_model_id_args(store_analytics)
+    set_gooddata_upper_case_args(store_analytics)
     store_analytics.set_defaults(method='store_analytics')
 
     test_insights = subparsers.add_parser("test_insights")

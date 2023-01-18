@@ -59,6 +59,12 @@ models:
         meta:
           gooddata:
             ldm_type: date
+      - name: comment_count
+        data_type: "INT"
+        description: "Comment count"
+        meta:
+          gooddata:
+            ldm_type: fact
 
 metrics:
   - name: count_commits
@@ -74,6 +80,23 @@ metrics:
 
     calculation_method: count_distinct
     expression: commit_id
+
+    timestamp: created_at
+    time_grains: [day, week, month, quarter, year]
+
+  - name: count_commit_comments
+    label: Count of commit comments
+    description: Count of commit comments
+    model: ref('commits')
+    tags:
+      - "Metrics dbt"
+    meta:
+      gooddata:
+        model_id: github
+        format: "#,##0"
+
+    calculation_method: sum
+    expression: comment_count
 
     timestamp: created_at
     time_grains: [day, week, month, quarter, year]

@@ -3,7 +3,7 @@ from typing import Optional
 import attrs
 import re
 
-from dbt_gooddata.dbt.base import Base, GoodDataLdmTypes
+from dbt_gooddata.dbt.base import Base, GoodDataLdmTypes, DBT_PATH_TO_MANIFEST
 from dbt_gooddata.dbt.tables import DbtModelBase, DbtModelTables
 # TODO - add CatalogDeclarativeMetric to gooddata_sdk.__init__.py
 from gooddata_sdk.catalog.workspace.declarative_model.workspace.analytics_model.analytics_model import (
@@ -63,11 +63,11 @@ class DbtModelMetric(DbtModelBase):
 
 
 class DbtModelMetrics:
-    def __init__(self, model_id: str) -> None:
+    def __init__(self, model_id: str, gooddata_upper_case: bool) -> None:
         self.model_id = model_id
-        with open("target/manifest.json") as fp:
+        with open(DBT_PATH_TO_MANIFEST) as fp:
             self.dbt_catalog = json.load(fp)
-        self.dbt_tables = DbtModelTables(self.model_id)
+        self.dbt_tables = DbtModelTables(self.model_id, gooddata_upper_case)
 
     @property
     def metrics(self) -> list[DbtModelMetric]:
