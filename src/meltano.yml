@@ -2,107 +2,107 @@ version: 1
 default_environment: dev_local
 project_id: 04722b1d-768e-4e37-bc49-8b59d673bbdd
 environments:
-- name: cicd_dev_local
-- name: cicd_dev
-- name: cicd_staging
-  config:
-    plugins:
-      extractors:
-      - name: tap-github-repo
-        config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
-          start_date: '2010-01-01'
-- name: cicd_prod
-  config:
-    plugins:
-      extractors:
-      - name: tap-github-repo
-        config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
-          start_date: '2010-01-01'
+  - name: cicd_dev_local
+  - name: cicd_dev
+  - name: cicd_staging
+    config:
+      plugins:
+        extractors:
+          - name: tap-github-repo
+            config:
+              repositories:
+                - gooddata/gooddata-python-sdk
+                - gooddata/gooddata-ui-sdk
+              start_date: '2010-01-01'
+  - name: cicd_prod
+    config:
+      plugins:
+        extractors:
+          - name: tap-github-repo
+            config:
+              repositories:
+                - gooddata/gooddata-python-sdk
+                - gooddata/gooddata-ui-sdk
+              start_date: '2010-01-01'
 plugins:
   extractors:
-  - name: tap-github
-    variant: meltanolabs
-    pip_url: git+https://github.com/MeltanoLabs/tap-github.git
-  - name: tap-github-repo
-    inherit_from: tap-github
-    config:
-      repositories:
-      - gooddata/gooddata-python-sdk
-      start_date: '2022-01-01'
-    select:
+    - name: tap-github
+      variant: meltanolabs
+      pip_url: git+https://github.com/MeltanoLabs/tap-github.git
+    - name: tap-github-repo
+      inherit_from: tap-github
+      config:
+        repositories:
+          - gooddata/gooddata-python-sdk
+        start_date: '2022-01-01'
+      select:
         # Commits
-    - commits.commit_timestamp
-    - commits.sha
-    - commits.html_url
-    - commits.repo_id
-    - commits.author
-    - commits.commit
+        - commits.commit_timestamp
+        - commits.sha
+        - commits.html_url
+        - commits.repo_id
+        - commits.author
+        - commits.commit
         # Pull requests
-    - pull_requests.number               # PR ID
-    - pull_requests.repo_id
-    - pull_requests.html_url
-    - pull_requests.title
-    - pull_requests.draft
-    - pull_requests.state
-    - pull_requests.repo_id
-    - pull_requests.updated_at
-    - pull_requests.created_at
-    - pull_requests.merged_at
-    - pull_requests.closed_at
-    - pull_requests.user
+        - pull_requests.number               # PR ID
+        - pull_requests.repo_id
+        - pull_requests.html_url
+        - pull_requests.title
+        - pull_requests.draft
+        - pull_requests.state
+        - pull_requests.repo_id
+        - pull_requests.updated_at
+        - pull_requests.created_at
+        - pull_requests.merged_at
+        - pull_requests.closed_at
+        - pull_requests.user
         # Collaborators
-    - collaborators.id
-    - collaborators.url
-    - collaborators.login
-    - collaborators.org
-    - collaborators.repo_id
-    - collaborators.role_name
-    - collaborators.site_admin
-    - collaborators.type
-    - collaborators.html_url
-  - name: tap-github-org
-    inherit_from: tap-github
-    config:
-      organizations:
-      - gooddata
-    select:
-    - repositories.id
-    - repositories.html_url
-    - repositories.name
-    - repositories.stargazers_count
-    - repositories.watchers_count
-    - repositories.created_at
-    - repositories.updated_at
+        - collaborators.id
+        - collaborators.url
+        - collaborators.login
+        - collaborators.org
+        - collaborators.repo_id
+        - collaborators.role_name
+        - collaborators.site_admin
+        - collaborators.type
+        - collaborators.html_url
+    - name: tap-github-org
+      inherit_from: tap-github
+      config:
+        organizations:
+          - gooddata
+      select:
+        - repositories.id
+        - repositories.html_url
+        - repositories.name
+        - repositories.stargazers_count
+        - repositories.watchers_count
+        - repositories.created_at
+        - repositories.updated_at
   loaders:
-  - name: target-jsonl
-    variant: andyh1203
-    pip_url: target-jsonl
-  - name: target-postgres
-    variant: transferwise
-    pip_url: git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
-    config:
-      host: ${POSTGRES_HOST}
-      port: ${POSTGRES_PORT}
-      user: ${POSTGRES_USER}
-      password: ${POSTGRES_PASS}
-      dbname: ${POSTGRES_DBNAME}
-      default_target_schema: ${INPUT_SCHEMA}
-      add_metadata_columns: true
-      dialect+driver: postgresql+psycopg2
-  - name: target-snowflake
-    variant: transferwise
-    pip_url: pipelinewise-target-snowflake
-    config:
-      account: ${SNOWFLAKE_ACCOUNT}
-      dbname: ${SNOWFLAKE_DBNAME}
-      user: ${SNOWFLAKE_USER}
-      password: ${SNOWFLAKE_PASS}
-      warehouse: ${SNOWFLAKE_WAREHOUSE}
-      default_target_schema: ${INPUT_SCHEMA}
-      file_format: "PUBLIC.MELTANO_FORMAT"
+    - name: target-jsonl
+      variant: andyh1203
+      pip_url: target-jsonl
+    - name: target-postgres
+      variant: transferwise
+      pip_url: git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
+      config:
+        host: ${POSTGRES_HOST}
+        port: ${POSTGRES_PORT}
+        user: ${POSTGRES_USER}
+        password: ${POSTGRES_PASS}
+        dbname: ${POSTGRES_DBNAME}
+        default_target_schema: ${INPUT_SCHEMA}
+        add_metadata_columns: true
+        dialect+driver: postgresql+psycopg2
+    - name: target-snowflake
+      variant: transferwise
+      pip_url: pipelinewise-target-snowflake
+      config:
+        account: ${SNOWFLAKE_ACCOUNT}
+        dbname: ${SNOWFLAKE_DBNAME}
+        user: ${SNOWFLAKE_USER}
+        password: ${SNOWFLAKE_PASS}
+        warehouse: ${SNOWFLAKE_WAREHOUSE}
+        default_target_schema: ${INPUT_SCHEMA}
+        file_format: "PUBLIC.MELTANO_FORMAT"
