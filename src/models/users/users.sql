@@ -4,18 +4,18 @@
   ]
 ) }}
 
-with collaborators as (
-  select * from {{ var("input_schema") }}.collaborators
+with contributors as (
+  select * from {{ var("input_schema") }}.contributors
 ),
 
 final as (
-  -- We do not want to store users multiple times per repo where they collaborate (no analytics UC yet)
+  -- We do not want to store users multiple times per repo where they contribute (no analytics UC yet)
   select distinct
-      collaborators.id as user_id,
-      collaborators.html_url as user_html_url,
-      collaborators.url as user_url,
-      collaborators.login
-  from collaborators
+    contributors.id as user_id,
+    contributors.html_url as user_html_url,
+    contributors.url as user_url,
+    contributors.login
+  from contributors
 )
 
 select * from final

@@ -56,22 +56,13 @@ plugins:
         - pull_requests.merged_at
         - pull_requests.closed_at
         - pull_requests.user
-        # Collaborators
-        - collaborators.id
-        - collaborators.url
-        - collaborators.login
-        - collaborators.org
-        - collaborators.repo_id
-        - collaborators.role_name
-        - collaborators.site_admin
-        - collaborators.type
-        - collaborators.html_url
     - name: tap-github-org
       inherit_from: tap-github
       config:
         organizations:
           - gooddata
       select:
+        # Repositories
         - repositories.id
         - repositories.html_url
         - repositories.name
@@ -79,6 +70,19 @@ plugins:
         - repositories.watchers_count
         - repositories.created_at
         - repositories.updated_at
+        # Users
+        - contributors.avatar_url
+        - contributors.contributions
+        - contributors.gravatar_id
+        - contributors.html_url
+        - contributors.id
+        - contributors.login
+        - contributors.org
+        - contributors.repo_id
+        - contributors.site_admin
+        - contributors.type
+        - contributors.url
+
   loaders:
     - name: target-jsonl
       variant: andyh1203
