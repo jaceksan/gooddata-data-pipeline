@@ -24,7 +24,7 @@ content:
               identifier:
                 id: pull_request_number
                 type: label
-            localIdentifier: 43a1670f0d70456fb253143256df5549
+            localIdentifier: bed1a40a01ac47438079bc9aa8010728
         - attribute:
             displayForm:
               identifier:
