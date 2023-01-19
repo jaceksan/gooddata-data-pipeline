@@ -47,9 +47,9 @@ services:
       POSTGRES_USER: demouser
       POSTGRES_PASS: demopass
       POSTGRES_DBNAME: demo
-      POSTGRES_INPUT_SCHEMA: cicd_input_stage2
+      INPUT_SCHEMA: cicd_input_stage
       MELTANO_DATABASE_URI: "postgresql://demouser:demopass@gooddata-cn-ce:5432/demo?options=-csearch_path%3Dmeltano"
       TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
-      MELTANO_ENV: dev_local
+      MELTANO_ENV: cicd_dev_local
 volumes:
   gooddata-data-pipeline:

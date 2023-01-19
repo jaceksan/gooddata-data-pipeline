@@ -17,13 +17,14 @@ with pull_requests_extracted as (
       pull_requests.created_at,
       pull_requests.merged_at,
       pull_requests.closed_at,
-      to_json(user) as user_json
+      to_json("{{ get_db_entity_name('user') }}") as user_json
     from {{ var("input_schema") }}.pull_requests
 ),
 
 final as (
     select
-      number as pull_request_id,
+      repo_id || '/' || number as pull_request_id,
+      number as pull_request_number,
       html_url as pull_request_url,
       title as pull_request_title,
       draft as pull_request_draft,

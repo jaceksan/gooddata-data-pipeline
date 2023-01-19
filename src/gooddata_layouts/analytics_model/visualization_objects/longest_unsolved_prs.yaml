@@ -22,9 +22,9 @@ content:
         - attribute:
             displayForm:
               identifier:
-                id: pull_request_id
+                id: pull_request_number
                 type: label
-            localIdentifier: 70820d7f8d044454919e19533e9d9df4
+            localIdentifier: 43a1670f0d70456fb253143256df5549
         - attribute:
             displayForm:
               identifier:

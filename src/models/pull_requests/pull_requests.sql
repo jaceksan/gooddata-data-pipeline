@@ -9,6 +9,7 @@ users as (
 final as (
     select
       pull_requests.pull_request_id,
+      pull_requests.pull_request_number,
       pull_requests.pull_request_url,
       pull_requests.pull_request_title,
       pull_requests.pull_request_draft,

@@ -41,9 +41,9 @@ models:
         meta:
           gooddata:
             ldm_type: fact
-      - name: created_at
+      - name: repo_created_at
         data_type: "TIMESTAMP"
-        description: "Created at"
+        description: "Repository created at"
         meta:
           gooddata:
             ldm_type: date
@@ -63,6 +63,6 @@ metrics:
     calculation_method: sum
     expression: stargazers_count
 
-    timestamp: created_at
+    timestamp: repo_created_at
     time_grains: [day, week, month, quarter, year]
 
