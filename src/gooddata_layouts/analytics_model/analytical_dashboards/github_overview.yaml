@@ -149,22 +149,7 @@ content:
                   id: created_at
                   type: dataset
               description: ''
-              drills:
-                - origin:
-                    measure:
-                      localIdentifier: b9093833a513401abfaf0fca9407e606
-                    type: drillFromMeasure
-                  target:
-                    displayForm:
-                      identifier:
-                        id: pull_request_id
-                        type: label
-                    hyperlinkDisplayForm:
-                      identifier:
-                        id: pull_request_url
-                        type: label
-                  transition: new-window
-                  type: drillToAttributeUrl
+              drills: []
               ignoreDashboardFilters: []
               insight:
                 identifier:

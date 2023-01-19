@@ -1,4 +1,4 @@
-with commits as (
+with commits_extracted as (
     select * from {{ ref('commits_extract_json') }}
 ),
 
@@ -6,22 +6,17 @@ users as (
     select * from {{ ref('users') }}
 ),
 
-repos as (
-    select * from {{ ref('repos') }}
-),
-
 final as (
     select
-      commits.commit_id,
-      commits.commit_url,
-      commits.commit_title,
-      commits.user_id,
-      commits.created_at,
-      repos.repo_id
-    from commits
+      commits_extracted.commit_id,
+      commits_extracted.commit_url,
+      commits_extracted.comment_count,
+      commits_extracted.created_at,
+      commits_extracted.repo_id,
+      users.user_id
+    from commits_extracted
     -- Filter out commits without responsible user (data cleansing)
-    join users on commits.user_id = users.user_id
-    join repos on commits.commit_url like repos.repo_url || '/%'
+    join users on commits_extracted.user_url = users.user_url
 )
 
 select * from final

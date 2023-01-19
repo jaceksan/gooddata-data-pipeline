@@ -18,6 +18,24 @@ class DbtModelMetaGoodDataColumnProps(Base):
     label_type: Optional[str] = None
     attribute_column: Optional[str] = None
 
+    @property
+    def gooddata_ref_table_ldm_id(self) -> Optional[str]:
+        if self.referenced_table:
+            return self.referenced_table.lower()
+
+    @property
+    def gooddata_ref_column_ldm_id(self) -> Optional[str]:
+        if self.referenced_column_name:
+            return self.referenced_column_name.lower()
+
+    def upper_case_names(self):
+        if self.referenced_table:
+            self.referenced_table = self.referenced_table.upper()
+        if self.referenced_column_name:
+            self.referenced_column_name = self.referenced_column_name.upper()
+        if self.attribute_column:
+            self.attribute_column = self.attribute_column.upper()
+
 
 @attrs.define(auto_attribs=True, kw_only=True)
 class DbtModelMetaGoodDataTable(Base):
@@ -35,6 +53,13 @@ class DbtModelBase(Base):
     description: str
     tags: list[str]
 
+    @property
+    def gooddata_ldm_id(self):
+        return self.name.lower()
+
+    def upper_case_name(self):
+        self.name = self.name.upper()
+
 
 @attrs.define(auto_attribs=True, kw_only=True)
 class DbtModelColumn(DbtModelBase):
@@ -50,19 +75,28 @@ class DbtModelTable(DbtModelBase):
 
 
 class DbtModelTables:
-    def __init__(self, model_id: str) -> None:
+    def __init__(self, model_id: str, upper_case: bool) -> None:
         self.model_id = model_id
+        self.upper_case = upper_case
         with open("target/manifest.json") as fp:
             self.dbt_catalog = json.load(fp)
 
     @property
     def tables(self) -> list[DbtModelTable]:
-        result = []
+        tables = []
         for model_name, model_def in self.dbt_catalog["nodes"].items():
-            result.append(DbtModelTable.from_dict(model_def))
+            tables.append(DbtModelTable.from_dict(model_def))
+            
+        if self.upper_case:
+            for table in tables:
+                table.upper_case_name()
+                for column in table.columns.values():
+                    column.upper_case_name()
+                    if column.meta.gooddata is not None:
+                        column.meta.gooddata.upper_case_names()
         # Return only gooddata labelled tables marked by model_id (if requested in args)
         return [
-            r for r in result
+            r for r in tables
             if r.meta.gooddata is not None and (not self.model_id or r.meta.gooddata.model_id == self.model_id)
         ]
 
@@ -72,7 +106,11 @@ class DbtModelTables:
         if len(schemas) != 1:
             raise Exception("Unsupported feature: GoodData does not support multiple schemas.")
         else:
-            return next(iter(schemas))
+            schema_name = next(iter(schemas))
+            if self.upper_case:
+                return schema_name.upper()
+            else:
+                return schema_name
 
     def make_pdm(self):
         result = {"tables": []}
@@ -85,7 +123,7 @@ class DbtModelTables:
                 })
             result["tables"].append({
                 "id": table.name,
-                "path": [table.schema, table.name],
+                "path": [self.schema_name, table.name],
                 "type": "TABLE",
                 "columns": columns,
             })
@@ -96,7 +134,7 @@ class DbtModelTables:
         grain = []
         for column in table.columns.values():
             if column.meta.gooddata.ldm_type == GoodDataLdmTypes.PRIMARY_KEY.value:
-                grain.append({"id": column.name, "type": "attribute"})
+                grain.append({"id": column.gooddata_ldm_id, "type": "attribute"})
         return grain
 
     @staticmethod
@@ -105,9 +143,9 @@ class DbtModelTables:
         for column in table.columns.values():
             referenced_object_id = None
             if column.meta.gooddata.ldm_type == GoodDataLdmTypes.REFERENCE.value:
-                referenced_object_id = column.meta.gooddata.referenced_table
+                referenced_object_id = column.meta.gooddata.gooddata_ref_table_ldm_id
             elif column.meta.gooddata.ldm_type == GoodDataLdmTypes.DATE.value:
-                referenced_object_id = column.name
+                referenced_object_id = column.gooddata_ldm_id
             if referenced_object_id is not None:
                 references.append({
                     "identifier": {"id": referenced_object_id, "type": "dataset"},
@@ -122,7 +160,7 @@ class DbtModelTables:
         for column in table.columns.values():
             if column.meta.gooddata.ldm_type == GoodDataLdmTypes.FACT.value:
                 facts.append({
-                    "id": column.name,
+                    "id": column.gooddata_ldm_id,
                     # TODO - all titles filled from dbt descriptions, incorrect! No title in dbt models.
                     "title": column.description,
                     "description": column.description,
@@ -138,7 +176,7 @@ class DbtModelTables:
             if column.meta.gooddata.ldm_type == GoodDataLdmTypes.LABEL.value \
                     and attribute_column.name == column.meta.gooddata.attribute_column:
                 labels.append({
-                    "id": column.name,
+                    "id": column.gooddata_ldm_id,
                     # TODO - all titles filled from dbt descriptions, incorrect! No title in dbt models.
                     "title": column.description,
                     "description": column.description,
@@ -153,7 +191,7 @@ class DbtModelTables:
         for column in table.columns.values():
             if column.meta.gooddata.ldm_type in [GoodDataLdmTypes.ATTRIBUTE.value, GoodDataLdmTypes.PRIMARY_KEY.value]:
                 attributes.append({
-                    "id": column.name,
+                    "id": column.gooddata_ldm_id,
                     # TODO - all titles filled from dbt descriptions, incorrect! No title in dbt models.
                     "title": column.description,
                     "description": column.description,
@@ -168,13 +206,13 @@ class DbtModelTables:
         date_datasets = []
         for column in table.columns.values():
             existing_dataset_ids = [d["id"] for d in existing_date_datasets]
-            if column.meta.gooddata.ldm_type == "date" and column.name not in existing_dataset_ids:
+            if column.meta.gooddata.ldm_type == "date" and column.gooddata_ldm_id not in existing_dataset_ids:
                 if column.data_type in ["TIMESTAMP", "TIMESTAMPTZ"]:
                     granularities = DATE_GRANULARITIES + TIMESTAMP_GRANULARITIES
                 else:
                     granularities = DATE_GRANULARITIES
                 date_datasets.append({
-                    "id": column.name,
+                    "id": column.gooddata_ldm_id,
                     "title": column.description,
                     "description": column.description,
                     "tags": [table.description] + column.tags,
@@ -195,7 +233,7 @@ class DbtModelTables:
             attributes = self.make_attributes(table)
 
             result["datasets"].append({
-                "id": table.name,
+                "id": table.gooddata_ldm_id,
                 "title": table.description,
                 "description": table.description,
                 "tags": [table.description] + table.tags,
@@ -215,9 +253,15 @@ class DbtModelTables:
 
         return result
 
-    def get_entity_type(self, table_name: str, column_name: str):
+    def get_entity_type(self, table_name: str, column_name: str) -> Optional[str]:
+        comp_table_name = table_name
+        if self.upper_case:
+            comp_table_name = table_name.upper()
+        comp_column_name = column_name
+        if self.upper_case:
+            comp_column_name = column_name.upper()
         for table in self.tables:
-            if table.name == table_name:
+            if table.name == comp_table_name:
                 for column in table.columns.values():
-                    if column.name == column_name:
+                    if column.name == comp_column_name:
                         return column.meta.gooddata.ldm_type

@@ -32,11 +32,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   data_transformation:
-    +schema: "cicd_output_stage"
+    +schema: "{{ env_var('OUTPUT_SCHEMA') }}"
     +materialized: table
 
 vars:
-  timezone: "Europe/Prague"
-  github_date_format: "YYYY-MM-DD\"T\"HH24:MI:SS\"Z\""
-  # TODO - duplicate to schema in profiles.yml
-  input_schema: "cicd_input_stage"
+  "dbt_date:time_zone": "UTC"
+  input_schema: "{{ env_var('INPUT_SCHEMA') }}"

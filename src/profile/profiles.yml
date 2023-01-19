@@ -1,45 +1,52 @@
 default:
-  target: dev
+  target: cicd_dev_local
   # TODO - use dbt vault for credentials shared by dbt and GoodData once GoodData supports vault for data source credentials
   # https://dbtvault.readthedocs.io/en/latest/
   outputs:
-    dev_local:
-      title: "CI/CD dev (local)"
+    cicd_dev_local:
+      # Title is not a standard dbt field. We use it as a title of GoodData data source.
+      # If not filled, ID(dict key) is used
+      title: "{{ env_var('DBT_TARGET_TITLE') }}"
       type: postgres
       threads: 1
-      host: "localhost"
-      port: 5432
-      user: "demouser"
-      password: "demopass"
-      dbname: "demo"
-      schema: "cicd_input_stage"
-    dev:
-      title: "CI/CD dev"
-      type: postgres
-      threads: 1
-      host: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
-      port: 5432
-      user: "cicd"
+      host: "{{ env_var('POSTGRES_HOST') }}"
+      port: "{{ env_var('POSTGRES_PORT') | int }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
       password: "{{ env_var('POSTGRES_PASS') }}"
-      dbname: "cicd_dev"
-      schema: "cicd_input_stage"
-    staging:
-      title: "CI/CD staging"
-      type: postgres
+      dbname: "{{ env_var('POSTGRES_DBNAME') }}"
+      schema: "{{ env_var('INPUT_SCHEMA') }}"
+    # Copy & paste below targets, reasons:
+    # 1. the env variables must be shared with Meltano, so we cannot hardcode them here
+    # 2. we cannot create single target, because its name (dict key) is used as ID of GoodData data source
+    #    dbt does not provide an option to specify the name besides e.g. title,
+    #    and we do not want users to update their profiles only because GoodData
+    cicd_dev:
+      title: "{{ env_var('DBT_TARGET_TITLE') }}"
+      type: snowflake
       threads: 1
-      host: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
-      port: 5432
-      user: "cicd"
-      password: "{{ env_var('POSTGRES_PASS') }}"
-      dbname: "cicd_staging"
-      schema: "cicd_input_stage"
-    prod:
-      title: "CI/CD prod"
-      type: postgres
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASS') }}"
+      database: "{{ env_var('SNOWFLAKE_DBNAME') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      schema: "{{ env_var('INPUT_SCHEMA') }}"
+    cicd_staging:
+      title: "{{ env_var('DBT_TARGET_TITLE') }}"
+      type: snowflake
       threads: 1
-      host: "cust-demos.cumxlzjcxaba.eu-central-1.rds.amazonaws.com"
-      port: 5432
-      user: "cicd"
-      password: "{{ env_var('POSTGRES_PASS') }}"
-      dbname: "cicd_prod"
-      schema: "cicd_input_stage"
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASS') }}"
+      database: "{{ env_var('SNOWFLAKE_DBNAME') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      schema: "{{ env_var('INPUT_SCHEMA') }}"
+    cicd_prod:
+      title: "{{ env_var('DBT_TARGET_TITLE') }}"
+      type: snowflake
+      threads: 1
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASS') }}"
+      database: "{{ env_var('SNOWFLAKE_DBNAME') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
+      schema: "{{ env_var('INPUT_SCHEMA') }}"

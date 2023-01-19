@@ -1,0 +1,13 @@
+/.git
+
+# .gitignore
+/venv
+/.meltano
+/.env
+/ui.cfg
+/output
+
+/target/
+/logs/
+/dbt_packages/
+

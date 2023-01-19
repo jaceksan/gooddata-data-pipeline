@@ -8,13 +8,21 @@ models:
         model_id: github
     columns:
       - name: pull_request_id
-        data_type: "INT"
+        data_type: "STRING"
         description: "Pull request ID"
         tests:
           - dbt_constraints.primary_key
         meta:
           gooddata:
             ldm_type: primary_key
+      - name: pull_request_number
+        data_type: "INT"
+        description: "Pull request number"
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: TEXT
+            attribute_column: pull_request_id
       - name: user_id
         data_type: "INT"
         tests:
