@@ -17,7 +17,7 @@ with pull_requests_extracted as (
       pull_requests.created_at,
       pull_requests.merged_at,
       pull_requests.closed_at,
-      to_json(user) as user_json
+      to_json("{{ get_db_entity_name('user') }}") as user_json
     from {{ var("input_schema") }}.pull_requests
 ),
 
