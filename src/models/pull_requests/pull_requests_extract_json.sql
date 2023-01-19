@@ -1,7 +1,7 @@
 {{ config(
   schema=var('input_schema'),
   indexes=[
-    {'columns': ['pull_request_id'], 'unique': true},
+    {'columns': ['pull_request_number', 'repo_id'], 'unique': true},
     {'columns': ['user_url'], 'unique': false}
   ]
 ) }}
@@ -23,7 +23,6 @@ with pull_requests_extracted as (
 
 final as (
     select
-      repo_id || '/' || number as pull_request_id,
       number as pull_request_number,
       html_url as pull_request_url,
       title as pull_request_title,

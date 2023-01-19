@@ -20,7 +20,9 @@ models:
         description: "Pull request number"
         meta:
           gooddata:
-            ldm_type: attribute
+            ldm_type: label
+            label_type: TEXT
+            attribute_column: pull_request_id
       - name: user_id
         data_type: "INT"
         tests:

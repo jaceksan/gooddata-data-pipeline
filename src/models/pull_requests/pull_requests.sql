@@ -6,9 +6,13 @@ users as (
     select * from {{ ref('users') }}
 ),
 
+repos as (
+    select * from {{ ref('repos') }}
+),
+
 final as (
     select
-      pull_requests.pull_request_id,
+      repos.repo_name || '/' || pull_requests.pull_request_number as pull_request_id,
       pull_requests.pull_request_number,
       pull_requests.pull_request_url,
       pull_requests.pull_request_title,
@@ -26,6 +30,7 @@ final as (
     from pull_requests
     -- Filter out commits without responsible user (data cleansing)
     join users on pull_requests.user_url = users.user_url
+    join repos on pull_requests.repo_id = repos.repo_id
 )
 
 select * from final
