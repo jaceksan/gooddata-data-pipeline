@@ -23,7 +23,8 @@ with pull_requests_extracted as (
 
 final as (
     select
-      number as pull_request_id,
+      repo_id || '/' || number as pull_request_id,
+      number as pull_request_number,
       html_url as pull_request_url,
       title as pull_request_title,
       draft as pull_request_draft,
