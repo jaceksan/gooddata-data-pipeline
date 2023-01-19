@@ -11,7 +11,9 @@ repos as (
       name as repo_name,
       stargazers_count,
       watchers_count,
-      created_at as created_at
+      -- Use a dedicated name (repo prefix) to do not confuse analytics
+      -- From business perspective this is different created_at than in the case of commits/pull_requests
+      created_at as repo_created_at
     from {{ var("input_schema") }}.repositories
 ),
 
