@@ -2,37 +2,55 @@
   schema=var('input_schema'),
   indexes=[
     {'columns': ['pull_request_number', 'repo_id'], 'unique': true},
-    {'columns': ['user_url'], 'unique': false}
-  ]
+    {'columns': ['user_url'], 'unique': false},
+    {'columns': ['created_at'], 'unique': false}
+  ],
+  materialized='incremental',
+  unique_key=['pull_request_number', 'repo_id'],
+  incremental_strategy='delete+insert'
 ) }}
 
-with pull_requests_extracted as (
-    select
-      pull_requests.number,
-      pull_requests.html_url,
-      pull_requests.title,
-      pull_requests.draft,
-      pull_requests.state,
-      pull_requests.repo_id,
-      pull_requests.created_at,
-      pull_requests.merged_at,
-      pull_requests.closed_at,
-      to_json("{{ get_db_entity_name('user') }}") as user_json
-    from {{ var("input_schema") }}.pull_requests
+-- Helper step, materialize extracted JSON fields first and then JOIN it with other tables
+-- Incremental mode
+
+with using_clause as (
+  select
+    number as pull_request_number,
+    html_url as pull_request_url,
+    title as pull_request_title,
+    draft as pull_request_draft,
+    state,
+    repo_id,
+    created_at,
+    merged_at,
+    closed_at,
+    CAST(json_extract_path_text(to_json("{{ get_db_entity_name('user') }}"), 'url') as TEXT) as user_url
+  from {{ var("input_schema") }}.pull_requests
+  {% if is_incremental() %}
+    where created_at > ( select max(created_at) from {{ this }} )
+  {% endif %}
+),
+
+updates as (
+  select *
+  from using_clause
+  {% if is_incremental() %}
+    where (pull_request_number, repo_id) in ( select pull_request_number, repo_id from {{ this }} )
+  {% endif %}
+),
+
+inserts as (
+  select *
+  from using_clause
+  {% if is_incremental() %}
+    where (pull_request_number, repo_id) not in ( select pull_request_number, repo_id from {{ this }} )
+  {% endif %}
 ),
 
 final as (
-    select
-      number as pull_request_number,
-      html_url as pull_request_url,
-      title as pull_request_title,
-      draft as pull_request_draft,
-      created_at as created_at,
-      merged_at as merged_at,
-      closed_at as closed_at,
-      CAST(json_extract_path_text(user_json, 'url') as TEXT) as user_url,
-      repo_id
-    from pull_requests_extracted
+    select *
+    from inserts
+    union all select * from updates
 )
 
 select * from final
