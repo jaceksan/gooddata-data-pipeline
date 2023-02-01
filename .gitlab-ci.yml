@@ -83,7 +83,6 @@ variables:
   variables:
     TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
     MELTANO_DATABASE_URI: "postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano&sslmode=require"
-    DB_NAME: !reference[
     MELTANO_TARGET: "target-snowflake"
     # CI_DEBUG_TRACE: "true"
     GIT_STRATEGY: "none"
