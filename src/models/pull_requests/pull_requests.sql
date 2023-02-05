@@ -24,6 +24,8 @@ updates as (
   from using_clause
   {% if is_incremental() %}
     where (pull_request_number, repo_id) in ( select pull_request_number, repo_id from {{ this }} )
+  {% else %}
+    where 1 = 0
   {% endif %}
 ),
 
@@ -54,6 +56,7 @@ final as (
       p.merged_at,
       p.closed_at,
       p.repo_id,
+      p.user_url,
       users.user_id,
       (
         -- Either merged_at, or closed_at(closed without merged) or now(not yet merged or closed)

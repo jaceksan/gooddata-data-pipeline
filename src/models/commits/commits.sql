@@ -22,6 +22,8 @@ updates as (
   from using_clause
   {% if is_incremental() %}
     where commit_id in ( select commit_id from {{ this }} )
+  {% else %}
+    where 1 = 0
   {% endif %}
 ),
 
@@ -44,6 +46,7 @@ final as (
       c.comment_count,
       c.created_at,
       c.repo_id,
+      c.user_url,
       users.user_id
     from (
       select * from inserts
