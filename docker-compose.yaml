@@ -34,7 +34,7 @@ services:
 
   extract_load:
     build:
-      context: src
+      context: .
       dockerfile: Dockerfile_meltano
     entrypoint:
       - /bin/bash
@@ -51,5 +51,56 @@ services:
       MELTANO_DATABASE_URI: "postgresql://demouser:demopass@gooddata-cn-ce:5432/demo?options=-csearch_path%3Dmeltano"
       TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
       MELTANO_ENV: cicd_dev_local
+
+  transform:
+    build:
+      context: .
+      dockerfile: Dockerfile_dbt
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - |
+        dbt run --profile default --target $$ELT_ENVIRONMENT
+        dbt test --profile default --target $$ELT_ENVIRONMENT
+        dbt-gooddata deploy_models
+        dbt-gooddata upload_notification
+    environment:
+      POSTGRES_HOST: gooddata-cn-ce
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: demouser
+      POSTGRES_PASS: demopass
+      POSTGRES_DBNAME: demo
+      INPUT_SCHEMA: cicd_input_stage
+      OUTPUT_SCHEMA: cicd_output_stage
+      ELT_ENVIRONMENT: cicd_dev_local
+      DBT_TARGET_TITLE: "CI/CD dev (local)"
+      GOODDATA_HOST: "http://gooddata-cn-ce:3000"
+      GOODDATA_OVERRIDE_HOST: "localhost"
+      GOODDATA_WORKSPACE_ID: cicd_demo_development
+      GOODDATA_WORKSPACE_TITLE: "CICD demo (dev)"
+
+  analytics:
+    build:
+      context: .
+      # The same dbt image with dbt-gooddata is sufficient for deploying analytics
+      dockerfile: Dockerfile_dbt
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - |
+        dbt compile --profile default --target $$ELT_ENVIRONMENT
+        dbt-gooddata deploy_analytics
+        dbt-gooddata test_insights
+    environment:
+      ELT_ENVIRONMENT: cicd_dev_local
+      POSTGRES_DBNAME: demo
+      POSTGRES_HOST: gooddata-cn-ce
+      GOODDATA_WORKSPACE_ID: cicd_demo_development
+      DBT_TARGET_TITLE: "CI/CD dev (local)"
+      GOODDATA_HOST: "http://gooddata-cn-ce:3000"
+      GOODDATA_OVERRIDE_HOST: "localhost"
+
 volumes:
   gooddata-data-pipeline:
