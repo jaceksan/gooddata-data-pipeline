@@ -2,8 +2,8 @@
 
 The demo inside this repository demonstrates e2e data pipeline following best software engineering practices.
 It realizes the following steps:
-- crawls data from sources([Meltano](https://meltano.com/))
-- loads data into a warehouse([Meltano](https://meltano.com/))
+- crawls data from sources ([Meltano](https://meltano.com/))
+- loads data into a warehouse ([Meltano](https://meltano.com/))
 - transforms data in the warehouse in a multi-dimensional model ready for analytics ([dbt](https://www.getdbt.com/))
 - generates semantic model from physical model ([GoodData](https://www.gooddata.com/) model from [dbt](https://www.getdbt.com/) models)
 
@@ -15,7 +15,7 @@ Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://
 This README is just a brief how-to, it does not contain all details. If you need help, do not hesitate to ask in our [Slack community](https://www.gooddata.com/slack/).
 
 ## Authors
-- [Jan Soubusta](https://twitter.com/jaceksan).
+- [Jan Soubusta](https://twitter.com/jaceksan)
 - [Patrik Braborec](https://twitter.com/patrikbraborec)
 
 ## Related articles
@@ -51,11 +51,12 @@ Then you can move to Gitlab, forking this repository and run the pipeline agains
     - Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
         and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
 - Create a public PostgreSQL or Snowflake instance
+  - Personally, I found [bit.io](https://bit.io/) as the only free-forever PostgreSQL offering.
   - Create required databases (for dev/staging/prod) and schema `meltano` for Meltano state backend.
  
 You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
 - GITHUB_TOKEN
-- GOODDATA_HOST - host name pointing to the create GoodData instance
+- GOODDATA_HOST - host name pointing to the GoodData instance
 - GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
 
 The rest of environment variables (Github repos to be crawled, DB endpoints, ...) can be configured in [.gitlab-ci.yml](.gitlab-ci.yml)(section `variables`).
@@ -84,6 +85,8 @@ export ELT_ENVIRONMENT="cicd_dev_local"
 export MELTANO_TARGET="target-postgres"
 
 unset GOODDATA_UPPER_CASE
+# Set GOODDATA_UPPER_CASE to --gooddata-upper-case when running against Snowflake and DB table/column names are upper-cased
+# export GOODDATA_UPPER_CASE="--gooddata-upper-case"
 export POSTGRES_HOST="localhost"
 export POSTGRES_PORT="5432"
 export POSTGRES_USER="demouser"
@@ -103,8 +106,7 @@ Meltano tool is used. Configuration file [meltano.yml](src/meltano.yml) declares
 
 How to run:
 ```bash
-cd src
-meltano --environment $ELT_ENVIRONMENT run tap-github-repo $MELTANO_TARGET tap-github-org $MELTANO_TARGET
+make extract_load
 ```
 
 The output of this stage is `cicd_input_stage` schema in the database.
@@ -117,9 +119,7 @@ The folder `src/models` contains [dbt models](https://docs.getdbt.com/docs/build
 
 How to run:
 ```bash
-cd src
-dbt run --profiles-dir profile --target $ELT_ENVIRONMENT
-dbt test --profiles-dir profile --target $ELT_ENVIRONMENT
+make transform
 ```
 
 ### Generate GoodData semantic model from dbt models
@@ -129,17 +129,7 @@ It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python
 
 How to run:
 ```bash
-cd src
-# Reinstall dbt-gooddata if you changed it
-cd dbt-gooddata && python setup.py install && cd ..
-
-# Run data transformation first, or at least run `dbt compile` command. dbt-gooddata relies on dbt manifest.json.
-# Generate PDM/LDM/metrics, deploy them to GoodData
-# add --gooddata-upper-case if you run it against Snowflake
-dbt-gooddata deploy_models
-
-# Tool for invalidating caches. Must be executed anytime data in cicd_output_stage schema are changed 
-dbt-gooddata upload_notification
+make deploy_models
 ```
 
 ## Constraints
@@ -167,16 +157,10 @@ It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python
 
 ## Load analytics model to GoodData
 Analytics model is stored in [gooddata_layouts](src/gooddata_layouts) folder.
-The following command reads the layout, and load it into the GooData instance (based on environment variables):
 
+The following command reads the layout, and loads it into the GooData instance:
 ```bash
-cd src
-
-# Reinstall dbt-gooddata if you changed it
-cd dbt-gooddata && python setup.py install && cd ..
-
-# add --gooddata-upper-case if you run it against Snowflake
-dbt-gooddata deploy_analytics
+make deploy_analytics
 ```
 
 It not only loads the stored layout, but it also reads metrics from dbt models and loads them too.
@@ -188,7 +172,7 @@ For instance, it is more convenient to build more complex GoodData MAQL metrics 
 Then, to persist such metrics to [gooddata_layouts](src/gooddata_layouts) folder, run the following command:
 
 ```bash
-dbt-gooddata store_analytics
+make store_analytics
 ```
 
 ## Invalidate analytics cache 
@@ -196,7 +180,7 @@ dbt-gooddata store_analytics
 Anytime you update data, e.g. by running `dbt run` command, you have to invalidate GoodData caches to see the new data there.
 The following command invalidates these caches:
 ```bash
-dbt-gooddata upload_notification
+make invalidate_analytics_caches
 ```
 
 ### Test analytics
@@ -205,7 +189,7 @@ It is possible to test if all insights (visualizations) are possible to execute 
 
 Use the following command:
 ```bash
-dbt-gooddata test_insights
+make test_insights
 ```
 
 ---
