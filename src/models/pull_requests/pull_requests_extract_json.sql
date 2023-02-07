@@ -36,6 +36,8 @@ updates as (
   from using_clause
   {% if is_incremental() %}
     where (pull_request_number, repo_id) in ( select pull_request_number, repo_id from {{ this }} )
+  {% else %}
+    where 1 = 0
   {% endif %}
 ),
 

@@ -31,6 +31,8 @@ updates as (
   from using_clause
   {% if is_incremental() %}
     where commit_id in ( select commit_id from {{ this }} )
+  {% else %}
+    where 1 = 0
   {% endif %}
 ),
 

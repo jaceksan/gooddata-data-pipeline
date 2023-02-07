@@ -89,6 +89,7 @@ plugins:
       pip_url: target-jsonl
     - name: target-postgres
       variant: transferwise
+      # TODO - once fixed, upgrade to a stable version
       pip_url: git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
       config:
         host: ${POSTGRES_HOST}
