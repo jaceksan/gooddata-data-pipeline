@@ -39,7 +39,7 @@ docker-compose up -d bootstrap_db
 
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
-export GITHUB_TOKEN="<my github token>"
+export TAP_GITHUB_AUTH_TOKEN="<my github token>"
 docker-compose up -d extract_load
 
 # Transform model to be ready for analytics, with dbt
@@ -82,7 +82,7 @@ deactivate
 
 ### Set environment variables
 ```bash
-export TAP_GITHUB_ACCESS_TOKEN="<your token>"
+export TAP_GITHUB_AUTH_TOKEN="<your token>"
 # The folowing variables are valid for local environment started from docker-compose.yaml
 export DBT_PROFILE_DIR="profile"
 export ELT_ENVIRONMENT="cicd_dev_local"

@@ -49,7 +49,7 @@ services:
       POSTGRES_DBNAME: demo
       INPUT_SCHEMA: cicd_input_stage
       MELTANO_DATABASE_URI: "postgresql://demouser:demopass@gooddata-cn-ce:5432/demo?options=-csearch_path%3Dmeltano"
-      TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
+      TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
       MELTANO_ENV: cicd_dev_local
 
   transform:
