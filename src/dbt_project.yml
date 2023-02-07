@@ -32,9 +32,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   data_transformation:
-    +schema: "{{ env_var('OUTPUT_SCHEMA') }}"
+    +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
     +materialized: table
 
 vars:
   "dbt_date:time_zone": "UTC"
-  input_schema: "{{ env_var('INPUT_SCHEMA') }}"
+  input_schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"

@@ -82,15 +82,19 @@ class DbtProfile(Base):
 class DbtProfiles:
     def __init__(self, args):
         self.args = args
-        with open(f"{args.profile_dir}/profiles.yml") as fp:
+        with open(os.path.expanduser(f"{args.profile_dir}/profiles.yml")) as fp:
             self.dbt_profiles = yaml.safe_load(fp)
 
     @staticmethod
     def inject_env_vars(output_def: dict) -> None:
-        env_re = re.compile(r"env_var\('([^']+)'\)")
+        env_re = re.compile(r"env_var\('([^']+)'(,\s*'([^']+)')?\)")
         for output_key, output_value in output_def.items():
-            if (pwd_match := env_re.search(str(output_value))) is not None:
-                output_def[output_key] = os.getenv(pwd_match.group(1))
+            if (env_match := env_re.search(str(output_value))) is not None:
+                default_value = None
+                if len(env_match.groups()) == 3:
+                    default_value = env_match.group(3)
+                final_value = os.getenv(env_match.group(1)) or default_value
+                output_def[output_key] = final_value
             # else do nothing, real value seems to be stored in dbt profile
 
     @staticmethod

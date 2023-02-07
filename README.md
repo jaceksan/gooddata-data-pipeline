@@ -1,165 +1,143 @@
 # GoodData Data Pipeline
 
-The document describes some basics of the project of the GoodData data pipeline.
+The demo inside this repository demonstrates e2e data pipeline following best software engineering practices.
+It realizes the following steps:
+- crawls data from sources ([Meltano](https://meltano.com/))
+- loads data into a warehouse ([Meltano](https://meltano.com/))
+- transforms data in the warehouse in a multi-dimensional model ready for analytics ([dbt](https://www.getdbt.com/))
+- generates semantic model from physical model ([GoodData](https://www.gooddata.com/) model from [dbt](https://www.getdbt.com/) models)
 
-Authors of the project are:
+Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/).
 
-- [Jan Soubusta](https://twitter.com/jaceksan).
-- [Patrik Braborec](https://twitter.com/patrikbraborec).
+![Demo architecture](docs/MDS.png "Demo architecture")
 
+## If you need help
+This README is just a brief how-to, it does not contain all details. If you need help, do not hesitate to ask in our [Slack community](https://www.gooddata.com/slack/).
+
+## Authors
+- [Jan Soubusta](https://twitter.com/jaceksan)
+- [Patrik Braborec](https://twitter.com/patrikbraborec)
+
+## Related articles
 The following articles are based on this project:
 - [How To Build a Modern Data Pipeline](https://medium.com/gooddata-developers/how-to-build-a-modern-data-pipeline-cfdd9d14fbea)
-- TODO - new article about dbt metrics
+- [How GoodData Integrates With dbt](https://medium.com/gooddata-developers/how-gooddata-integrates-with-dbt-a0c6f207eca3)
+- TODO - Meltano article
 
-# Getting Started
+## Getting Started
+I recommend to start on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
 
-The following paragraphs describe the setting for local development.
-
-## Start GoodData
-There are two options:
-- Community edition running on your laptop
-- GoodData cloud trial
-
-### Community edition
-The following command starts the single container deployment of GoodData on your machine:
 ```bash
+# Build custom images based on Meltano, dbt and GoodData artefacts
+docker-compose build
+# Start GoodData
+export GITHUB_TOKEN="<my github token>"
 docker-compose up -d gooddata-cn-ce
-```
-Once it is ready (takes circa 1-2 minutes), run the following command to bootstrap DB schemata for this demo:
+# Wait 1-2 minutes to the service successfully starts
 
-```bash
+# Bootstrap DB schemas
 docker-compose up -d bootstrap_db
+# Extrac/load pipeline based on Meltano
+docker-compose up -d extract_load
+# Transform model to be ready for analytics, with dbt
+# Also, GoodData models are generated from dbt models and pushed to GoodData  
+docker-compose up -d transform  
+# Deliver analytics artefacts(metrics, visualizations, dashboards, ...) into GoodData
+docker-compose up -d analytics
 ```
 
-How to investigate logs (debug, detail error stacks):
+Then you can move to Gitlab, forking this repository and run the pipeline against your environments:
+- Create a public GoodData instance
+    - Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
+        and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
+- Create a public PostgreSQL or Snowflake instance
+  - Personally, I found [bit.io](https://bit.io/) as the only free-forever PostgreSQL offering.
+  - Create required databases (for dev/staging/prod) and schema `meltano` for Meltano state backend.
+ 
+You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
+- GITHUB_TOKEN
+- GOODDATA_HOST - host name pointing to the GoodData instance
+- GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
+
+The rest of environment variables (Github repos to be crawled, DB endpoints, ...) can be configured in [.gitlab-ci.yml](.gitlab-ci.yml)(section `variables`).
+
+## Developer guide
+
+Bootstrap developer environment:
 ```bash
-docker-compose logs
-```
+# Creates virtualenv and installs all dependencies
+make dev
 
-### GoodData trial
-Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
-and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
+# Activate virtualenv
+source .venv/bin/activate
+# You should see a `(.venv)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
 
-## Setup virtual environment
-The tutorial on how to set up a virtual environment follows:
-
-```bash
-# Create virtual env
-virtualenv venv
-# Activate virtual env
-source venv/bin/activate
-#You should see a `(venv)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
 # Deactivate virtual env once you are done
 deactivate
 ```
 
-## Environment variables
-
-You will also need to set up `env variables` in the virtual environment.
-The following setup is valid for local (docker-compose) deployment.
-Modify `DBT_TARGET`, `GOODDATA_HOST` and `GOODDATA_TOKEN` values to run scripts against different environments.
-
-dbt [profiles.yaml](src/profile/profiles.yml) contains database properties for all targets (DB host, ...).
-Change them to redirect this demo to your database.
-
-**shared for all data pipeline phases**:
+### Set environment variables
 ```bash
-export DBT_PROFILE_DIR="profile" # default is ~/.dbt
-export DBT_PROFILE="default"
-export GOODDATA_MODEL_ID="github"
-export DBT_TARGET="dev_local"
+export TAP_GITHUB_ACCESS_TOKEN="<your token>"
+# The folowing variables are valid for local environment started from docker-compose.yaml
+export DBT_PROFILE_DIR="profile"
+export ELT_ENVIRONMENT="cicd_dev_local"
+export MELTANO_TARGET="target-postgres"
+
+unset GOODDATA_UPPER_CASE
+# Set GOODDATA_UPPER_CASE to --gooddata-upper-case when running against Snowflake and DB table/column names are upper-cased
+# export GOODDATA_UPPER_CASE="--gooddata-upper-case"
+export POSTGRES_HOST="localhost"
+export POSTGRES_PORT="5432"
+export POSTGRES_USER="demouser"
 export POSTGRES_PASS=demopass
+export POSTGRES_DBNAME=demo
+
+export INPUT_SCHEMA=cicd_input_stage
+export OUTPUT_SCHEMA=cicd_output_stage
+export DBT_TARGET_TITLE="CI/CD dev (local)"
+export MELTANO_DATABASE_URI="postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano"
+export GOODDATA_WORKSPACE_ID=cicd_demo_development
+export GOODDATA_WORKSPACE_TITLE="CICD demo (dev)"
 ```
 
-**Extract/load data from Github**:
+### Extract and Load
+Meltano tool is used. Configuration file [meltano.yml](src/meltano.yml) declares everything related.
+
+How to run:
 ```bash
-export GITHUB_TOKEN=<github-token>
-# If you want to extract/load only subset of repositories
-export REPOSITORIES="--repositories gooddata/gooddata-python-sdk"
+make extract_load
 ```
-
-**Data transformation**:
-```bash
-# GoodData properties must be set to enable generation and deployment of GoodData semantic model from dbt models
-# These variables correspond to GoodData Community Edition (single container deployment)
-export GOODDATA_HOST="http://localhost:3000"
-export GOODDATA_TOKEN="YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
-export GOODDATA_WORKSPACE_ID="development"
-export GOODDATA_WORKSPACE_TITLE="Development"
-```
-
-**Analytics**:
-```bash
-export GOODDATA_HOST="http://localhost:3000"
-export GOODDATA_TOKEN="YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
-export GOODDATA_WORKSPACE_ID="development"
-```
-
-## Install dependencies 
-
-If you want to run scripts locally, please install the following dependencies:
-
-```bash
-pip install -r src/extract_load/requirements.txt
-pip install -r src/requirements.txt
-# TODO - create a pip package for dbt-gooddata module
-cd src/dbt-gooddata
-python setup.py install
-```
-
-# Extract and Load
-
-The folder `src/extract_load` contains scripts ([extract.py](extract_load/extract.py), [load.py](extract_load/load.py)) to extract data from [GitHub REST API](https://docs.github.com/en/rest) and load data to [PostgreSQL](https://www.postgresql.org/) database.
 
 The output of this stage is `cicd_input_stage` schema in the database.
 
-During implementation, we discovered that we always do a complete refresh of data and do not do incremental loading that would be more suitable for long-term use. It is possible to solve it programmatically and extend scripts, for example, to create a new table where you keep the state of your data or use other tools such as [Airbyte](https://airbyte.com/) that would solve these problems with data extracting for us.
+It is running incrementally, it stores its state into a dedicated schema `meltano`.
+You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
-You can run it locally as well (do not forget to set up env variables!):
+### Data transformation
+The folder `src/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
+
+How to run:
 ```bash
-cd src
-# dbt-gooddata module helps with reading dbt profiles (single source of truth for database properties)
-cd dbt-gooddata && python setup.py install && cd ..
-cd extract_load
-./extract.py $REPOSITORIES
-./load.py --profile-dir ../$DBT_PROFILE_DIR --target $DBT_TARGET $REPOSITORIES
+make transform
 ```
 
-# Data transformation
-
-The folder `src/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data.
-
-As described in the *Extract and Load* section, we do full refresh of tables but dbt allows you to do so-called [incremental models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/configuring-incremental-models) that would allow you transforms only the rows in your source data (in our case `cicd_input_stage`) that you tell dbt to filter for, inserting them into the target table/schema (in our case `cicd_output_stage`).
-
-You can run it locally as well (do not forget to set up env variables!):
-```bash
-cd src
-pip install -r requirements.txt
-dbt deps
-dbt run --profiles-dir $DBT_PROFILE_DIR --target $DBT_TARGET
-dbt test --profiles-dir $DBT_PROFILE_DIR --target $DBT_TARGET
-```
-
-## Generate GoodData semantic model from dbt models
-Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing generators of GoodData semantic model objects.
-Specifically, it allows you to generate so called PDM (Physical Data Model), LDM(Logical Data Model, mapped to PDM), and metrics from dbt models.
+### Generate GoodData semantic model from dbt models
+Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing generators of GoodData semantic model objects from dbt models.
+In particular, it allows you to generate so called GoodData PDM (Physical Data Model), LDM(Logical Data Model, mapped to PDM), and metrics.
 It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 
-You can run it locally as well (do not forget to set up env variables!):
+How to run:
 ```bash
-cd src
-cd dbt-gooddata && python setup.py install && cd ..
-# Run data transformation first, or at least run `dbt compile` command. dbt-gooddata relies on dbt manifest.json.
-# Generate PDM/LDM/metrics, deploy them to GoodData
-dbt-gooddata deploy_models
-# Tool for invalidating caches. Must be executed anytime data in cicd_output_stage schema are changed 
-dbt-gooddata upload_notification
+make deploy_models
 ```
 
 ## Constraints
-We wanted to define database constraints. Why? [GoodData](https://www.gooddata.com/) will join automatically between tables if you have tables that have foreign keys. This is a huge benefit that saves time, and also you can avoid mistakes thanks to that. 
+We wanted to define database constraints. Why? [GoodData](https://www.gooddata.com/) can join automatically between tables if you have tables that have foreign keys. This is a huge benefit that saves time, and also you can avoid mistakes thanks to that.
 
 We used package [Snowflake-Labs/dbt_constraints](https://github.com/Snowflake-Labs/dbt_constraints) for defining constrains.
+
+Another option is to declare these semantic properties into GoodData-specific `meta` sections in dbt models (it is utilized in this demo).
 
 ## Schema names
 The dbt autogenerates the schema name but you can easily change it by custom macro - see our [approach how we dealt with schema names](data_transformation/macros/generate_schema_name.sql).
@@ -169,9 +147,8 @@ This can help you to bootstrap schema.yaml files programmatically. Then, you can
 
 Example:
 ```bash
-dbt --profiles-dir ./profile \
-  run-operation generate_source \
-  --args "{\"schema_name\": \"$POSTGRES_OUTPUT_SCHEMA\", \"generate_columns\": true, \"include_descriptions\": true}"
+dbt --profiles-dir profile run-operation generate_source \
+  --args "{\"schema_name\": \"$OUTPUT_SCHEMA\", \"generate_columns\": true, \"include_descriptions\": true}"
 ```
 
 # Analytics
@@ -180,10 +157,10 @@ It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python
 
 ## Load analytics model to GoodData
 Analytics model is stored in [gooddata_layouts](src/gooddata_layouts) folder.
-The following command reads the layout, and load it into the GooData instance (based on environment variables):
 
+The following command reads the layout, and loads it into the GooData instance:
 ```bash
-dbt-gooddata deploy_analytics
+make deploy_analytics
 ```
 
 It not only loads the stored layout, but it also reads metrics from dbt models and loads them too.
@@ -195,7 +172,7 @@ For instance, it is more convenient to build more complex GoodData MAQL metrics 
 Then, to persist such metrics to [gooddata_layouts](src/gooddata_layouts) folder, run the following command:
 
 ```bash
-dbt-gooddata store_analytics
+make store_analytics
 ```
 
 ## Invalidate analytics cache 
@@ -203,7 +180,7 @@ dbt-gooddata store_analytics
 Anytime you update data, e.g. by running `dbt run` command, you have to invalidate GoodData caches to see the new data there.
 The following command invalidates these caches:
 ```bash
-dbt-gooddata upload_notification
+make invalidate_analytics_caches
 ```
 
 ### Test analytics
@@ -212,7 +189,7 @@ It is possible to test if all insights (visualizations) are possible to execute 
 
 Use the following command:
 ```bash
-dbt-gooddata test_insights
+make test_insights
 ```
 
 ---

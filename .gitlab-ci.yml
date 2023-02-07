@@ -7,7 +7,6 @@ stages:
 ##########################
 # Global variables
 variables:
-  DBT_PROFILE_DIR: "profile"
   DBT_PROFILE: "default"
   GOODDATA_MODEL_ID: "github"
   GOODDATA_UPPER_CASE: "--gooddata-upper-case"
@@ -24,6 +23,9 @@ variables:
   MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
   MELTANO_VERSION: "v2.12.0-python3.10"
   MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
+  DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
+  DBT_VERSION: "1.4.1"
+  DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION"
 
 .envs:
   # Meltano, dbt and GoodData environments have 1:1 relationship in this demo
@@ -83,15 +85,15 @@ variables:
   variables:
     TAP_GITHUB_AUTH_TOKEN: "$GITHUB_TOKEN"
     MELTANO_DATABASE_URI: "postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano&sslmode=require"
-    DB_NAME: !reference[
     MELTANO_TARGET: "target-snowflake"
     # CI_DEBUG_TRACE: "true"
     GIT_STRATEGY: "none"
   artifacts:
     paths:
       - .meltano/logs/**
-  script:
+  before_script:
     - cd /project
+  script:
     - meltano --environment $ELT_ENVIRONMENT run tap-github-repo $MELTANO_TARGET tap-github-org $MELTANO_TARGET
 
 .extract_load_changes:
@@ -102,16 +104,17 @@ variables:
 .dbt:
   extends:
     - .base
+  # We build a custom image on top of the official dbt image in this pipeline
+  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
+  image:
+    name: "$DBT_CUSTOM_IMAGE"
+    entrypoint: [""]
   stage: transform
   before_script:
-    - cd "$CI_PROJECT_DIR/src"
-    - pip install -r requirements-dbt.txt
-    # TODO - publish to pip
-    - cd dbt-gooddata && python setup.py install && cd ..
-    - dbt deps
+    - cd /usr/app
   script:
-    - dbt run --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
-    - dbt test --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
+    - dbt run --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
+    - dbt test --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
     - dbt-gooddata deploy_models $GOODDATA_UPPER_CASE
     - dbt-gooddata upload_notification
 
@@ -128,21 +131,23 @@ variables:
 .gooddata:
   extends:
     - .base
+  # We build a custom image on top of the official dbt image in this pipeline
+  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
+  image:
+    name: "$DBT_CUSTOM_IMAGE"
+    entrypoint: [""]
   stage: analytics
   before_script:
-    - cd "$CI_PROJECT_DIR/src"
-    - pip install -r requirements-dbt.txt
-    # TODO - publish to pip
-    - cd dbt-gooddata && python setup.py install && cd ..
-    - dbt deps
-  script:
+    - cd /usr/app
     # Compile to generate manifest.json, which is parsed by dbt-gooddata module
-    - dbt compile --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
+    - dbt compile --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
+  script:
     - dbt-gooddata deploy_analytics $GOODDATA_UPPER_CASE
     - dbt-gooddata test_insights
 
 .gooddata_changes:
   changes:
+    - src/macros/**/*
     - src/models/**/*
     - src/dbt-gooddata/**/*
     - src/gooddata_layouts/**/*
@@ -151,17 +156,21 @@ variables:
 #############
 # Pre-merge
 #############
+
+# Builds
 build_meltano:
   extends:
     - .docker
   stage: build
   script:
-    - cd "$CI_PROJECT_DIR/src"
-    - docker build 
+    - cd "$CI_PROJECT_DIR"
+    # TODO
+    - docker buildx ls
+    - docker build
+      --push
       --build-arg MELTANO_VERSION=$MELTANO_VERSION 
       -f Dockerfile_meltano 
       -t $MELTANO_CUSTOM_IMAGE .
-    - docker push $MELTANO_CUSTOM_IMAGE
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
@@ -170,6 +179,30 @@ build_meltano:
         - .gitlab-ci.yml
     - !reference [.base_rules, rules]
 
+build_dbt:
+  extends:
+    - .docker
+  stage: build
+  script:
+    - cd "$CI_PROJECT_DIR"
+    - docker build
+      --push
+      --build-arg DBT_VERSION=$DBT_VERSION
+      -f Dockerfile_dbt
+      -t $DBT_CUSTOM_IMAGE .
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - src/Dockerfile_dbt
+        - src/packages.yml
+        - src/dbt_project.yml
+        - src/profile/profiles.yml
+        - src/models
+        - src/macros
+        - .gitlab-ci.yml
+    - !reference [.base_rules, rules]
+
+# Data pipeline jobs
 extract_load_dev:
   extends:
     - .extract_load
