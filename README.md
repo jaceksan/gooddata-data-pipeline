@@ -25,23 +25,27 @@ The following articles are based on this project:
 - TODO - Meltano article
 
 ## Getting Started
-I recommend to start on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
+I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
 docker-compose build
 # Start GoodData
-export GITHUB_TOKEN="<my github token>"
 docker-compose up -d gooddata-cn-ce
 # Wait 1-2 minutes to the service successfully starts
 
 # Bootstrap DB schemas
 docker-compose up -d bootstrap_db
-# Extrac/load pipeline based on Meltano
+
+# Extract/load pipeline based on Meltano
+# Github token for authenticating with Github REST API 
+export GITHUB_TOKEN="<my github token>"
 docker-compose up -d extract_load
+
 # Transform model to be ready for analytics, with dbt
 # Also, GoodData models are generated from dbt models and pushed to GoodData  
 docker-compose up -d transform  
+
 # Deliver analytics artefacts(metrics, visualizations, dashboards, ...) into GoodData
 docker-compose up -d analytics
 ```
