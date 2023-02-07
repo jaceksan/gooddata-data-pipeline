@@ -43,7 +43,7 @@ default:
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
       schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
     cicd_prod:
-      title: "{{ env_var('DBT_TARGET_TITLE, 'CI/CD prod') }}"
+      title: "{{ env_var('DBT_TARGET_TITLE', 'CI/CD prod') }}"
       type: snowflake
       threads: 1
       account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'gooddata') }}"
