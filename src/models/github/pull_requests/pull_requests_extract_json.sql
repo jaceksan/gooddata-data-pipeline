@@ -37,6 +37,7 @@ updates as (
   {% if is_incremental() %}
     where (pull_request_number, repo_id) in ( select pull_request_number, repo_id from {{ this }} )
   {% else %}
+    -- No updates when doing full load
     where 1 = 0
   {% endif %}
 ),
