@@ -33,22 +33,22 @@ default:
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
       schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
     cicd_staging:
-      title: "{{ env_var('DBT_TARGET_TITLE', 'CI/CD dev') }}"
+      title: "{{ env_var('DBT_TARGET_TITLE', 'CI/CD staging') }}"
       type: snowflake
       threads: 1
       account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'gooddata') }}"
       user: "{{ env_var('SNOWFLAKE_USER', 'cicd') }}"
       password: "{{ env_var('SNOWFLAKE_PASS', 'xxxxx') }}"
-      database: "{{ env_var('SNOWFLAKE_DBNAME', 'CICD_DEV') }}"
+      database: "{{ env_var('SNOWFLAKE_DBNAME', 'CICD_STAGING') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
       schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
     cicd_prod:
-      title: "{{ env_var('DBT_TARGET_TITLE, 'CI/CD dev'') }}"
+      title: "{{ env_var('DBT_TARGET_TITLE, 'CI/CD prod') }}"
       type: snowflake
       threads: 1
       account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'gooddata') }}"
       user: "{{ env_var('SNOWFLAKE_USER', 'cicd') }}"
       password: "{{ env_var('SNOWFLAKE_PASS', 'xxxxx') }}"
-      database: "{{ env_var('SNOWFLAKE_DBNAME', 'CICD_DEV') }}"
+      database: "{{ env_var('SNOWFLAKE_DBNAME', 'CICD_PROD') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
       schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
