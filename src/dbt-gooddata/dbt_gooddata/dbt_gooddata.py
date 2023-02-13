@@ -163,7 +163,7 @@ def main():
                 if environment.id == args.gooddata_environment_id:
                     workspace_id = f"{data_product.id}_{environment.id}"
                     if args.method == "store_analytics":
-                        store_analytics(args, logger, sdk, workspace_id, data_product)
+                        store_analytics(logger, sdk, workspace_id, data_product)
                     elif args.method == "deploy_analytics":
                         deploy_analytics(logger, sdk, workspace_id, data_product)
                     elif args.method == "test_insights":
