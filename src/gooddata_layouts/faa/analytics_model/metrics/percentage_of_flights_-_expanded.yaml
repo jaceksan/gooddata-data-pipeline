@@ -1,0 +1,7 @@
+content:
+  format: '#,##0.00%'
+  maql: "SELECT COUNT({dataset/flights}) / (\n  SELECT COUNT({dataset/flights})\n\
+    \    BY ALL OTHER)\n"
+description: ''
+id: percentage_of_flights_-_expanded
+title: Percentage of flights - expanded

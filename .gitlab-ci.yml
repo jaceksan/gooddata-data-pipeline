@@ -8,7 +8,7 @@ stages:
 # Global variables
 variables:
   DBT_PROFILE: "default"
-  GOODDATA_MODEL_ID: "github"
+  GOODDATA_MODEL_IDS: "github faa"
   GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   # TODO - store the state in a so-called custom state backend, e.g. in AWS S3, and get rid of PostgreSQL
   # https://docs.meltano.com/concepts/state_backends#aws-s3
@@ -34,23 +34,17 @@ variables:
     ELT_ENVIRONMENT: "cicd_dev"
     POSTGRES_DBNAME: "jaceksan/cicd_dev"
     SNOWFLAKE_DBNAME: "CICD_DEV"
-    DBT_TARGET_TITLE: "CICD demo (dev)"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_development"
-    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+    GOODDATA_ENVIRONMENT_ID: "development"
   staging:
     ELT_ENVIRONMENT: "cicd_staging"
     POSTGRES_DBNAME: "jaceksan/cicd_staging"
     SNOWFLAKE_DBNAME: "CICD_STAGING"
-    DBT_TARGET_TITLE: "CICD demo (staging)"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_staging"
-    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+    GOODDATA_ENVIRONMENT_ID: "staging"
   prod:
     ELT_ENVIRONMENT: "cicd_prod"
     POSTGRES_DBNAME: "jaceksan/cicd_prod"
     SNOWFLAKE_DBNAME: "CICD_PROD"
-    DBT_TARGET_TITLE: "CICD demo (prod)"
-    GOODDATA_WORKSPACE_ID: "cicd_demo_production"
-    GOODDATA_WORKSPACE_TITLE: "$DBT_TARGET_TITLE"
+    GOODDATA_ENVIRONMENT_ID: "production"
 
 
 ##########################
@@ -94,7 +88,7 @@ variables:
   before_script:
     - cd /project
   script:
-    - meltano --environment $ELT_ENVIRONMENT run tap-github-repo $MELTANO_TARGET tap-github-org $MELTANO_TARGET
+    - meltano --environment $ELT_ENVIRONMENT run tap-github-repo $MELTANO_TARGET tap-github-org $MELTANO_TARGET tap-s3-csv $MELTANO_TARGET
 
 .extract_load_changes:
   changes:
@@ -164,8 +158,6 @@ build_meltano:
   stage: build
   script:
     - cd "$CI_PROJECT_DIR"
-    # TODO
-    - docker buildx ls
     - docker build
       --push
       --build-arg MELTANO_VERSION=$MELTANO_VERSION 
@@ -222,9 +214,6 @@ dbt_dev:
     ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
     POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
     SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
-    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
-    GOODDATA_WORKSPACE_TITLE: !reference [.envs, dev, GOODDATA_WORKSPACE_TITLE]
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]
@@ -237,8 +226,6 @@ gooddata_dev:
     ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
     POSTGRES_DBNAME: !reference [.envs, dev, POSTGRES_DBNAME]
     SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-    GOODDATA_WORKSPACE_ID: !reference [.envs, dev, GOODDATA_WORKSPACE_ID]
-    DBT_TARGET_TITLE: !reference [.envs, dev, DBT_TARGET_TITLE]
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.gooddata_changes, changes]
@@ -267,9 +254,6 @@ dbt_staging:
     ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
     POSTGRES_DBNAME: !reference [.envs, staging, POSTGRES_DBNAME]
     SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-    GOODDATA_WORKSPACE_ID: !reference [.envs, staging, GOODDATA_WORKSPACE_ID]
-    DBT_TARGET_TITLE: !reference [.envs, staging, DBT_TARGET_TITLE]
-    GOODDATA_WORKSPACE_TITLE: !reference [.envs, staging, GOODDATA_WORKSPACE_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -282,8 +266,6 @@ gooddata_staging:
     ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
     POSTGRES_DBNAME: !reference [.envs, staging, POSTGRES_DBNAME]
     SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-    GOODDATA_WORKSPACE_ID: !reference [.envs, staging, GOODDATA_WORKSPACE_ID]
-    DBT_TARGET_TITLE: !reference [.envs, staging, DBT_TARGET_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -313,9 +295,6 @@ dbt_prod:
     ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
     POSTGRES_DBNAME: !reference [.envs, prod, POSTGRES_DBNAME]
     SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-    GOODDATA_WORKSPACE_ID: !reference [.envs, prod, GOODDATA_WORKSPACE_ID]
-    DBT_TARGET_TITLE: !reference [.envs, prod, DBT_TARGET_TITLE]
-    GOODDATA_WORKSPACE_TITLE: !reference [.envs, prod, GOODDATA_WORKSPACE_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -330,8 +309,6 @@ gooddata_prod:
     ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
     POSTGRES_DBNAME: !reference [.envs, prod, POSTGRES_DBNAME]
     SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-    GOODDATA_WORKSPACE_ID: !reference [.envs, prod, GOODDATA_WORKSPACE_ID]
-    DBT_TARGET_TITLE: !reference [.envs, prod, DBT_TARGET_TITLE]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]

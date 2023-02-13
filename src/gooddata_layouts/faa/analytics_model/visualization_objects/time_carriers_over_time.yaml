@@ -1,0 +1,43 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count
+                    type: metric
+            localIdentifier: 0216c124b1414640a1b58d403c486523
+            title: Flight count
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: dep_time.month
+                type: label
+            localIdentifier: a29a83b794844c49bd5ce5179ff31bba
+      localIdentifier: trend
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: nickname
+                type: label
+            localIdentifier: 09d221941f5841bca2ff6bc260ff43f9
+      localIdentifier: segment
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: 0216c124b1414640a1b58d403c486523
+        operator: TOP
+        value: 10000
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:line
+description: Time - Carriers over time
+id: time_carriers_over_time
+title: Time - Carriers over time

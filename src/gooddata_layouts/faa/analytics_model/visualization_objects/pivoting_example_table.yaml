@@ -1,0 +1,54 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: percentage_of_flights
+                    type: metric
+            localIdentifier: 9d356f1f60e342c78601cec915adea7e
+            title: Percentage of flights
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: manufacturer
+                type: label
+            localIdentifier: c72278aca21f4d588834c919a95ba46b
+        - attribute:
+            displayForm:
+              identifier:
+                id: aircraft_model_code
+                type: label
+            localIdentifier: f6ecbf28c9344f3c8472175a5a1f1c8d
+      localIdentifier: attribute
+      totals:
+        - attributeIdentifier: f6ecbf28c9344f3c8472175a5a1f1c8d
+          measureIdentifier: 9d356f1f60e342c78601cec915adea7e
+          type: sum
+        - attributeIdentifier: c72278aca21f4d588834c919a95ba46b
+          measureIdentifier: 9d356f1f60e342c78601cec915adea7e
+          type: sum
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: faa_region_destination
+                type: label
+            localIdentifier: faa8254604414939871b516e01c16e2b
+      localIdentifier: columns
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: c72278aca21f4d588834c919a95ba46b
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Pivoting Example - Table
+id: pivoting_example_table
+title: Pivoting Example - Table

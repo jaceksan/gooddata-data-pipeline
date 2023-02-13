@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: aircraft
+    description: "Aircraft"
+    meta:
+      gooddata:
+        model_id: faa
+    columns:
+      - name: tail_num
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: aircraft_model_code
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('aircraft_models')
+              pk_column_name: aircraft_model_code
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: aircraft_models

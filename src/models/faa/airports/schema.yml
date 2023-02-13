@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: airports
+    meta:
+      gooddata:
+        model_id: faa
+    columns:
+      - name: code
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: faa_region
+      - name: fac_type
+      - name: state
+      - name: elevation
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: name

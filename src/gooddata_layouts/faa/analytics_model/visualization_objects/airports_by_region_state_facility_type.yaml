@@ -1,0 +1,85 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: airport_count
+                    type: metric
+            localIdentifier: 10efa27afb10403c924936d5685c0d90
+            title: Airport count
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: faa_region_origin
+                type: label
+            localIdentifier: a7a7a8fde4574e4295cc8fa50197fdd3
+        - attribute:
+            displayForm:
+              identifier:
+                id: state_origin
+                type: label
+            localIdentifier: 00a5d38daffb44869faed656b3fb1064
+      localIdentifier: attribute
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: state_origin
+                type: label
+            localIdentifier: cc37c1592ef74f34b49580e73ea47c84
+      localIdentifier: columns
+  filters: []
+  properties:
+    controls:
+      columnWidths:
+        - measureColumnWidthItem:
+            locators:
+              - attributeLocatorItem:
+                  attributeIdentifier: cc37c1592ef74f34b49580e73ea47c84
+                  element: ULTRALIGHT
+              - measureLocatorItem:
+                  measureIdentifier: 10efa27afb10403c924936d5685c0d90
+            width:
+              value: 108
+        - measureColumnWidthItem:
+            locators:
+              - attributeLocatorItem:
+                  attributeIdentifier: cc37c1592ef74f34b49580e73ea47c84
+                  element: GLIDERPORT
+              - measureLocatorItem:
+                  measureIdentifier: 10efa27afb10403c924936d5685c0d90
+            width:
+              value: 122
+        - measureColumnWidthItem:
+            locators:
+              - attributeLocatorItem:
+                  attributeIdentifier: cc37c1592ef74f34b49580e73ea47c84
+                  element: BALLOONPORT
+              - measureLocatorItem:
+                  measureIdentifier: 10efa27afb10403c924936d5685c0d90
+            width:
+              value: 130
+        - measureColumnWidthItem:
+            locators:
+              - attributeLocatorItem:
+                  attributeIdentifier: cc37c1592ef74f34b49580e73ea47c84
+                  element: SEAPLANE BASE
+              - measureLocatorItem:
+                  measureIdentifier: 10efa27afb10403c924936d5685c0d90
+            width:
+              value: 142
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: a7a7a8fde4574e4295cc8fa50197fdd3
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Airports - by region, state and facility type
+id: airports_by_region_state_facility_type
+title: Airports - by region, state and facility type
