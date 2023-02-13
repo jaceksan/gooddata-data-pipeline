@@ -1,0 +1,105 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count_-_carriers
+                    type: metric
+            localIdentifier: 58f5b115c049493397453f0308647602
+            title: Flight count - carriers
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: percentage_of_carrier_flights
+                    type: metric
+            localIdentifier: 0a4725df75054f5399d2b967ec38fa6e
+            title: Percentage of carrier flights
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count_-_top_x
+                    type: metric
+            localIdentifier: a6a0e96702964401904d52db4353c4dc
+            title: Flight count - TOP(X)
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count_-_destination
+                    type: metric
+            localIdentifier: 2b4e617204d443d588f8b05893d01f42
+            title: Flight count - destination
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: percentage_of_current_to_carrier
+                    type: metric
+            localIdentifier: ef9cf386d7964fa59719936237ad79bf
+            title: Percentage of current to carrier
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: percentage_of_carrier_to_destination_flights
+                    type: metric
+            localIdentifier: 19d49ad3bf544538b5e6ca0af537ae14
+            title: Percentage of carrier to destination flights
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: nickname
+                type: label
+            localIdentifier: 8e3f6e977a614f199bb25e19e06deab0
+        - attribute:
+            displayForm:
+              identifier:
+                id: code_destination
+                type: label
+            localIdentifier: 6a9b2d2a70c743aea8cbfa3766d1ba06
+        - attribute:
+            displayForm:
+              identifier:
+                id: name_destination
+                type: label
+            localIdentifier: 775bc4d7adf64a15b2899b1278ec042e
+      localIdentifier: attribute
+  filters: []
+  properties:
+    controls:
+      columnWidths:
+        - attributeColumnWidthItem:
+            attributeIdentifier: 775bc4d7adf64a15b2899b1278ec042e
+            width:
+              value: 200
+        - attributeColumnWidthItem:
+            attributeIdentifier: 8e3f6e977a614f199bb25e19e06deab0
+            width:
+              value: 103
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: 8e3f6e977a614f199bb25e19e06deab0
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Carriers - overview
+id: carriers_overview
+title: Carriers - overview

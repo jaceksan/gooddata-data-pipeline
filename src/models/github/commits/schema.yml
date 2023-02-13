@@ -47,12 +47,6 @@ models:
             ldm_type: label
             label_type: HYPERLINK
             attribute_column: commit_id
-      - name: commit_title
-        data_type: "STRING"
-        description: "Commit title"
-        meta:
-          gooddata:
-            ldm_type: attribute
       - name: created_at
         data_type: "TIMESTAMP"
         description: "Created at"

@@ -1,0 +1,34 @@
+content:
+  filterContextRef:
+    identifier:
+      id: be794706-d19d-48ef-8ddf-e19c80651589
+      type: filterContext
+  layout:
+    sections:
+      - items:
+          - size:
+              xl:
+                gridHeight: 40
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: dep_time
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: carriers_overview
+                  type: visualizationObject
+              properties: {}
+              title: Carriers - overview
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: Inspired by 3_carrier_analysis.malloy from Malloy samples
+id: carriers
+title: 03 - Carriers

@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.00%'
+  maql: SELECT {metric/flight_count_-_carriers} / {metric/flight_count_-_overall}
+description: ''
+id: percentage_of_carrier_flights
+title: Percentage of carrier flights

@@ -2,15 +2,17 @@ import sys
 from pathlib import Path
 from time import time
 
+import yaml
 from gooddata_sdk import (
     GoodDataSdk,
-    CatalogDeclarativeTables, CatalogWorkspace, CatalogDeclarativeModel
+    CatalogDeclarativeTables, CatalogWorkspace, CatalogDeclarativeModel, CatalogScanModelRequest
 )
 
 from dbt_gooddata.dbt.metrics import DbtModelMetrics
 from dbt_gooddata.dbt.tables import DbtModelTables
 from dbt_gooddata.dbt.profiles import DbtProfiles, DbtOutput
 from dbt_gooddata.args import parse_arguments
+from dbt_gooddata.gooddata.config import GoodDataConfig, GoodDataConfigProduct
 from dbt_gooddata.logger import get_logger
 from dbt_gooddata.sdk_wrapper import GoodDataSdkWrapper
 
@@ -18,13 +20,7 @@ from dbt_gooddata.sdk_wrapper import GoodDataSdkWrapper
 GOODDATA_LAYOUTS_DIR = Path("gooddata_layouts")
 
 # TODO
-#   add support for other database types (Snowflake first)
 #   Tests, ...
-
-
-def register_data_source(sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput, schema_name: str) -> None:
-    data_source = dbt_target.to_gooddata(data_source_id, schema_name)
-    sdk.catalog_data_source.create_or_update_data_source(data_source)
 
 
 def generate_and_put_pdm(sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables) -> None:
@@ -35,35 +31,38 @@ def generate_and_put_pdm(sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtM
     sdk.catalog_data_source.put_declarative_pdm(data_source_id, declarative_tables)
 
 
-def create_workspace(sdk: GoodDataSdk, workspace_id: str, workspace_title: str) -> None:
-    # Create workspaces, if they do not exist yet, otherwise update them
-    workspace = CatalogWorkspace(workspace_id=workspace_id, name=workspace_title)
-    sdk.catalog_workspace.create_or_update(workspace=workspace)
-
-
-def generate_and_put_ldm(sdk: GoodDataSdk, data_source_id: str, workspace_id: str, dbt_tables: DbtModelTables) -> None:
+def generate_and_put_ldm(
+    sdk: GoodDataSdk, data_source_id: str, workspace_id: str, dbt_tables: DbtModelTables, model_id: str
+) -> None:
     # Construct GoodData LDM from dbt models
-    declarative_datasets = dbt_tables.make_declarative_datasets(data_source_id)
+    declarative_datasets = dbt_tables.make_declarative_datasets(data_source_id, model_id)
     ldm = CatalogDeclarativeModel.from_dict({"ldm": declarative_datasets}, camel_case=False)
 
     # Deploy logical into target workspace
     sdk.catalog_workspace_content.put_declarative_ldm(workspace_id, ldm)
 
 
-def deploy_models(args, logger, sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput) -> None:
-    logger.info("Deploy models")
-    dbt_tables = DbtModelTables(args.gooddata_model_id, args.gooddata_upper_case)
-    workspace_id = args.gooddata_workspace_id
-    workspace_title = args.gooddata_workspace_title
-
+def register_data_source(
+    logger, sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput, dbt_tables: DbtModelTables
+):
     logger.info(f"Register data source {data_source_id=} schema={dbt_tables.schema_name}")
-    register_data_source(sdk, data_source_id, dbt_target, dbt_tables.schema_name)
+    data_source = dbt_target.to_gooddata(data_source_id, dbt_tables.schema_name)
+    sdk.catalog_data_source.create_or_update_data_source(data_source)
+
     logger.info(f"Generate and put PDM")
     generate_and_put_pdm(sdk, data_source_id, dbt_tables)
-    logger.info(f"Create workspace {workspace_id=}")
-    create_workspace(sdk, workspace_id, workspace_title)
+
+def create_workspace(logger, sdk: GoodDataSdk, workspace_id: str, workspace_title: str) -> None:
+    logger.info(f"Create workspace {workspace_id=} {workspace_title=}")
+    # Create workspaces, if they do not exist yet, otherwise update them
+    workspace = CatalogWorkspace(workspace_id=workspace_id, name=workspace_title)
+    sdk.catalog_workspace.create_or_update(workspace=workspace)
+
+def deploy_ldm(
+    logger, sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables, model_id: str, workspace_id: str
+) -> None:
     logger.info(f"Generate and put LDM")
-    generate_and_put_ldm(sdk, data_source_id, workspace_id, dbt_tables)
+    generate_and_put_ldm(sdk, data_source_id, workspace_id, dbt_tables, model_id)
 
 
 def upload_notification(logger, sdk: GoodDataSdk, data_source_id: str) -> None:
@@ -71,39 +70,51 @@ def upload_notification(logger, sdk: GoodDataSdk, data_source_id: str) -> None:
     sdk.catalog_data_source.register_upload_notification(data_source_id)
 
 
-def deploy_analytics(args, logger, sdk: GoodDataSdk) -> None:
+def deploy_analytics(logger, sdk: GoodDataSdk, workspace_id: str, data_product: GoodDataConfigProduct) -> None:
+    logger.info(f"Deploy analytics {workspace_id=}")
+
+    logger.info("Get LDM")
+    ldm = sdk.catalog_workspace_content.get_declarative_ldm(workspace_id)
+
     logger.info("Read analytics model from disk")
-    adm = sdk.catalog_workspace_content.load_analytics_model_from_disk(Path("gooddata_layouts"))
+    adm = sdk.catalog_workspace_content.load_analytics_model_from_disk(
+        GOODDATA_LAYOUTS_DIR / data_product.id
+    )
 
     logger.info("Append dbt metrics to GoodData metrics")
-    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id, args.gooddata_upper_case).make_gooddata_metrics()
+    dbt_gooddata_metrics = DbtModelMetrics(data_product.model_id, ldm).make_gooddata_metrics()
     adm.analytics.metrics = adm.analytics.metrics + dbt_gooddata_metrics
 
     # Deploy analytics model into target workspace
     logger.info("Load analytics model into GoodData")
-    sdk.catalog_workspace_content.put_declarative_analytics_model(args.gooddata_workspace_id, adm)
+    sdk.catalog_workspace_content.put_declarative_analytics_model(workspace_id, adm)
 
 
-def store_analytics(args, logger, sdk: GoodDataSdk) -> None:
+def store_analytics(logger, sdk: GoodDataSdk, workspace_id: str, data_product: GoodDataConfigProduct) -> None:
     logger.info("Store analytics model to disk")
-    sdk.catalog_workspace_content.store_analytics_model_to_disk(args.gooddata_workspace_id, GOODDATA_LAYOUTS_DIR)
+    layout_model_dir = GOODDATA_LAYOUTS_DIR / data_product.id
+    sdk.catalog_workspace_content.store_analytics_model_to_disk(workspace_id, layout_model_dir)
+
+    logger.info("Get LDM")
+    ldm = sdk.catalog_workspace_content.get_declarative_ldm(workspace_id)
 
     # TODO - this is hack. Add corresponding functionality into Python SDK
     logger.info("Exclude dbt metrics from stored analytics model, they are already defined in dbt models")
-    dbt_gooddata_metrics = DbtModelMetrics(args.gooddata_model_id, args.gooddata_upper_case).make_gooddata_metrics()
+
+    dbt_gooddata_metrics = DbtModelMetrics(data_product.model_id, ldm).make_gooddata_metrics()
     for metric in dbt_gooddata_metrics:
-        metric_path = GOODDATA_LAYOUTS_DIR / "analytics_model" / "metrics" / f"{metric.id}.yaml"
+        metric_path = layout_model_dir / "analytics_model" / "metrics" / f"{metric.id}.yaml"
         metric_path.unlink()
 
 
-def test_insights(args, logger, sdk: GoodDataSdk) -> None:
-    logger.info("Test insights")
-    insights = sdk.insights.get_insights(args.gooddata_workspace_id)
+def test_insights(logger, sdk: GoodDataSdk, workspace_id: str) -> None:
+    logger.info(f"Test insights {workspace_id=}")
+    insights = sdk.insights.get_insights(workspace_id)
 
     for insight in insights:
         try:
             start = time()
-            sdk.tables.for_insight(args.gooddata_workspace_id, insight)
+            sdk.tables.for_insight(workspace_id, insight)
             duration = int((time() - start) * 1000)
             logger.info(f"Test successful insight=\"{insight.title}\" duration={duration}(ms) ...")
         except RuntimeError:
@@ -115,21 +126,49 @@ def main():
     logger = get_logger("dbt-gooddata", args.debug)
     logger.info("Start")
     sdk = GoodDataSdkWrapper(args, logger).sdk
+    with open("gooddata.yml") as fp:
+        gd_config = GoodDataConfig.from_dict(yaml.safe_load(fp))
 
-    if args.method == "store_analytics":
-        store_analytics(args, logger, sdk)
-    elif args.method == "deploy_analytics":
-        deploy_analytics(args, logger, sdk)
-    elif args.method == "test_insights":
-        test_insights(args, logger, sdk)
-    else:
+    # TODO - filter products by args.model_ids
+    #      -  filter environments by args.gooddata_environment_id
+
+    if args.method in ["upload_notification", "deploy_models"]:
         dbt_target = DbtProfiles(args).target
         data_source_id = dbt_target.name
-        if args.method == "deploy_models":
-            deploy_models(args, logger, sdk, data_source_id, dbt_target)
-        elif args.method == "upload_notification":
+        if args.method == "upload_notification":
+            # Caches are invalidated only per data source, not per data product
             upload_notification(logger, sdk, data_source_id)
         else:
-            raise Exception(f"Unsupported method requested in args: {args.method}")
+            scan_request = CatalogScanModelRequest(scan_tables=True, scan_views=True)
+            logger.info(f"Scan data source {data_source_id=}")
+            scan_pdm = sdk.catalog_data_source.scan_data_source(
+                data_source_id, scan_request, report_warnings=True
+            ).pdm
+            dbt_tables = DbtModelTables(args.gooddata_model_ids, args.gooddata_upper_case, scan_pdm)
+            register_data_source(logger, sdk, data_source_id, dbt_target, dbt_tables)
+            for data_product in gd_config.data_products:
+                logger.info(f"Process product name={data_product.name}")
+                environments = gd_config.get_environment_workspaces(data_product.environment_setup_id)
+                for environment in environments:
+                    if environment.id == args.gooddata_environment_id:
+                        workspace_id = f"{data_product.id}_{environment.id}"
+                        workspace_title = f"{data_product.name} ({environment.name})"
+                        create_workspace(logger, sdk, workspace_id, workspace_title)
+                        deploy_ldm(logger, sdk, data_source_id, dbt_tables, data_product.model_id, workspace_id)
+    else:
+        for data_product in gd_config.data_products:
+            logger.info(f"Process product name={data_product.name}")
+            environments = gd_config.get_environment_workspaces(data_product.environment_setup_id)
+            for environment in environments:
+                if environment.id == args.gooddata_environment_id:
+                    workspace_id = f"{data_product.id}_{environment.id}"
+                    if args.method == "store_analytics":
+                        store_analytics(args, logger, sdk, workspace_id, data_product)
+                    elif args.method == "deploy_analytics":
+                        deploy_analytics(logger, sdk, workspace_id, data_product)
+                    elif args.method == "test_insights":
+                        test_insights(logger, sdk, workspace_id)
+                    else:
+                        raise Exception(f"Unsupported method requested in args: {args.method}")
 
     logger.info("End")

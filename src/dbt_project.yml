@@ -35,6 +35,9 @@ models:
     github:
       +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
       +materialized: table
+    faa:
+      +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+      +materialized: table
 
 vars:
   "dbt_date:time_zone": "UTC"

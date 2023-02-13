@@ -1,0 +1,8 @@
+content:
+  format: '#,##0'
+  maql: "SELECT {metric/flight_count}\n  WHERE TOP(10) IN (\n  SELECT {metric/flight_count}\n\
+    \    BY {dataset/airports_destination} ALL OTHER) WITHIN({dataset/carriers}, ALL\
+    \ OTHER )"
+description: ''
+id: flight_count_-_top_x
+title: Flight count - TOP(X)

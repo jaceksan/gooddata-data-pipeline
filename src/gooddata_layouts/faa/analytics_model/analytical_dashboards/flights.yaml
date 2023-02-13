@@ -1,0 +1,73 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 6158d377-2ebd-462b-b43a-5610d41a022e
+      type: filterContext
+  layout:
+    sections:
+      - items:
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: dep_time
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: flights_by_carrier
+                  type: visualizationObject
+              properties: {}
+              title: Flights - by carrier
+              type: insight
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: dep_time
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: flights_by_origin
+                  type: visualizationObject
+              properties: {}
+              title: Flights - by origin
+              type: insight
+        type: IDashboardLayoutSection
+      - items:
+          - size:
+              xl:
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: dep_time
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: flights_by_month
+                  type: visualizationObject
+              properties: {}
+              title: Flights - by month
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: Inspired by 2_flights.malloy from Malloy samples
+id: flights
+title: 02 - Flights

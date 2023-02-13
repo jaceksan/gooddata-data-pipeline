@@ -1,0 +1,69 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 70ae49aa-f71a-4ebd-b946-a6a079d667f2
+      type: filterContext
+  layout:
+    sections:
+      - items:
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: dep_time
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: airports_by_state
+                  type: visualizationObject
+              properties: {}
+              title: Airports - by state
+              type: insight
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: airports_by_facility_type
+                  type: visualizationObject
+              properties: {}
+              title: Airports - by facility type
+              type: insight
+        type: IDashboardLayoutSection
+      - items:
+          - size:
+              xl:
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: dep_time
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: airports_by_region_state_facility_type
+                  type: visualizationObject
+              properties: {}
+              title: Airports - by region, state and facility type
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: Inspired by 1_airports.malloy from Malloy samples
+id: airports
+title: 01 - Airports

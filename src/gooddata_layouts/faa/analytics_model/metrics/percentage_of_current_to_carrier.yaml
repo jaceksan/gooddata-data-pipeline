@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.00%'
+  maql: SELECT {metric/flight_count_-_top_x} / {metric/flight_count_-_carriers}
+description: ''
+id: percentage_of_current_to_carrier
+title: Percentage of current to carrier

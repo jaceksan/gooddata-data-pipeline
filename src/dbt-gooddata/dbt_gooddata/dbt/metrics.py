@@ -3,12 +3,13 @@ from typing import Optional
 import attrs
 import re
 
-from dbt_gooddata.dbt.base import Base, GoodDataLdmTypes, DBT_PATH_TO_MANIFEST
-from dbt_gooddata.dbt.tables import DbtModelBase, DbtModelTables
+from dbt_gooddata.dbt.base import Base, DBT_PATH_TO_MANIFEST
+from dbt_gooddata.dbt.tables import DbtModelBase
 # TODO - add CatalogDeclarativeMetric to gooddata_sdk.__init__.py
 from gooddata_sdk.catalog.workspace.declarative_model.workspace.analytics_model.analytics_model import (
     CatalogDeclarativeMetric
 )
+from gooddata_sdk import CatalogDeclarativeModel
 
 
 DBT_TO_GD_CALC_METHODS = {
@@ -24,15 +25,6 @@ DBT_TO_GD_FILTER_OPERATORS = {
     "is": "=",
     "is not": "<>",
 }
-
-OBJECT_TO_METRIC_TYPES = {
-    GoodDataLdmTypes.PRIMARY_KEY.value: "label",
-    GoodDataLdmTypes.ATTRIBUTE.value: "label",
-    GoodDataLdmTypes.LABEL.value: "label",
-    GoodDataLdmTypes.DATE.value: "date",
-    GoodDataLdmTypes.FACT.value: "fact",
-}
-
 
 @attrs.define(auto_attribs=True, kw_only=True)
 class DbtModelMetaGoodDataMetricProps(Base):
@@ -63,11 +55,11 @@ class DbtModelMetric(DbtModelBase):
 
 
 class DbtModelMetrics:
-    def __init__(self, model_id: str, gooddata_upper_case: bool) -> None:
+    def __init__(self, model_id: Optional[str], ldm: CatalogDeclarativeModel) -> None:
         self.model_id = model_id
+        self.ldm = ldm
         with open(DBT_PATH_TO_MANIFEST) as fp:
             self.dbt_catalog = json.load(fp)
-        self.dbt_tables = DbtModelTables(self.model_id, gooddata_upper_case)
 
     @property
     def metrics(self) -> list[DbtModelMetric]:
@@ -89,12 +81,26 @@ class DbtModelMetrics:
             raise Exception("dbt model not specified by ref('xxx'), such breaking change not supported")
 
     def get_entity_type(self, table_name: str, expression_entity: str) -> str:
-        entity_type = self.dbt_tables.get_entity_type(table_name, expression_entity)
-        result = OBJECT_TO_METRIC_TYPES.get(entity_type)
+        result = None
+        expression_entity_cmp = expression_entity.lower()
+        for dataset in self.ldm.ldm.datasets:
+            if dataset.data_source_table_id.id.lower() == table_name.lower():
+                for attribute in dataset.attributes:
+                    if attribute.source_column.lower() == expression_entity_cmp:
+                        result = "label"
+                    for label in attribute.labels:
+                        if label.source_column.lower() == expression_entity_cmp:
+                            result = "label"
+                for fact in dataset.facts:
+                    if fact.source_column.lower() == expression_entity_cmp:
+                        result = "fact"
+        for date_dataset in self.ldm.ldm.date_instances:
+            if date_dataset.id.lower() == expression_entity_cmp:
+                result = "date"
         if result:
             return result
         else:
-            raise Exception(f"Unsupported entity type {table_name=} {expression_entity=} {entity_type=}")
+            raise Exception(f"Unsupported entity type {table_name=} {expression_entity=}")
 
     def make_entity_id(self, table_name: str, token: str) -> Optional[str]:
         entity_type = self.get_entity_type(table_name, token)

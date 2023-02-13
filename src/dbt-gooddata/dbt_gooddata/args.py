@@ -23,16 +23,22 @@ def set_gooddata_endpoint_args(parser):
                         default=os.getenv("GOODDATA_OVERRIDE_HOST"))
 
 
-def set_gooddata_workspace_id_args(parser: argparse.ArgumentParser):
-    parser.add_argument("-gw", "--gooddata-workspace-id",
-                        help="Workspace ID, where we want to load metadata",
-                        default=os.getenv("GOODDATA_WORKSPACE_ID"))
+def set_environment_id_arg(parser: argparse.ArgumentParser):
+    parser.add_argument("-gw", "--gooddata-environment-id",
+                        help="Environment where to deploy. Environments are configured in gooddata.yml.",
+                        default=os.getenv("GOODDATA_ENVIRONMENT_ID", "development"))
 
 
 def set_gooddata_model_id_args(parser: argparse.ArgumentParser):
-    parser.add_argument("-gm", "--gooddata-model-id",
+    model_ids = os.getenv("GOODDATA_MODEL_IDS", None)
+    if model_ids:
+        default = model_ids.split(" ")
+    else:
+        default = []
+    parser.add_argument("-gm", "--gooddata-model-ids",
+                        nargs='+',
                         help="Model ID specified in meta of dbt models. Models(tables) to be included into GoodData.",
-                        default=os.getenv("GOODDATA_MODEL_ID"))
+                        default=default)
 
 
 def set_gooddata_upper_case_args(parser: argparse.ArgumentParser):
@@ -56,7 +62,7 @@ def set_dbt_args(parser: argparse.ArgumentParser):
                         default=os.getenv("DBT_PROFILE", "default"))
     parser.add_argument("-t", "--target",
                         help="dbt target/output. DB where dbt deploys. GoodData registers it as data source.",
-                        default=os.getenv("ELT_ENVIRONMENT", "dev_local"))
+                        default=os.getenv("ELT_ENVIRONMENT", "cicd_dev_local"))
 
 
 def parse_arguments(description: str):
@@ -69,8 +75,7 @@ def parse_arguments(description: str):
 
     deploy_models = subparsers.add_parser("deploy_models")
     set_dbt_args(deploy_models)
-    set_gooddata_workspace_id_args(deploy_models)
-    set_gooddata_workspace_title_args(deploy_models)
+    set_environment_id_arg(deploy_models)
     set_gooddata_model_id_args(deploy_models)
     set_gooddata_upper_case_args(deploy_models)
     deploy_models.set_defaults(method='deploy_models')
@@ -80,19 +85,20 @@ def parse_arguments(description: str):
     upload_notification.set_defaults(method='upload_notification')
 
     deploy_analytics = subparsers.add_parser("deploy_analytics")
-    set_gooddata_workspace_id_args(deploy_analytics)
+    set_environment_id_arg(deploy_analytics)
     set_gooddata_model_id_args(deploy_analytics)
+    # TODO - now it is no longer needed. Either delete it or utilize it to do not lower_case everything
     set_gooddata_upper_case_args(deploy_analytics)
     deploy_analytics.set_defaults(method='deploy_analytics')
 
     store_analytics = subparsers.add_parser("store_analytics")
-    set_gooddata_workspace_id_args(store_analytics)
+    set_environment_id_arg(store_analytics)
     set_gooddata_model_id_args(store_analytics)
     set_gooddata_upper_case_args(store_analytics)
     store_analytics.set_defaults(method='store_analytics')
 
     test_insights = subparsers.add_parser("test_insights")
-    set_gooddata_workspace_id_args(test_insights)
+    set_environment_id_arg(test_insights)
     test_insights.set_defaults(method='test_insights')
 
     return parser.parse_args()

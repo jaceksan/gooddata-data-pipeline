@@ -1,0 +1,30 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count
+                    type: metric
+            localIdentifier: 1f3841d79f504c54a76738572301985f
+            title: Flight count
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: dep_time.month
+                type: label
+            localIdentifier: 7ddccf80dec1475daf8b5586ff7fe629
+      localIdentifier: trend
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:line
+description: Flights - by month
+id: flights_by_month
+title: Flights - by month

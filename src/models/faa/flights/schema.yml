@@ -1,0 +1,95 @@
+version: 2
+
+models:
+  - name: flights
+    description: "Flights"
+    meta:
+      gooddata:
+        model_id: faa
+    columns:
+      - name: id2
+        description: ""
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: carrier
+        description: ""
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('carriers')
+              pk_column_name: code
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: carriers
+      - name: origin
+        description: ""
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('airports')
+              pk_column_name: code
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: airports
+      - name: destination
+        description: ""
+# Corrupted input data, e.g. destination SCE does not exists in airports!
+#        tests:
+#          - dbt_constraints.foreign_key:
+#              pk_table_name: ref('airports')
+#              pk_column_name: code
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: airports
+      - name: tail_num
+        description: ""
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('aircraft')
+              pk_column_name: tail_num
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: aircraft
+      - name: cancelled
+        description: ""
+      - name: diverted
+        description: ""
+      - name: flight_num
+        description: ""
+      - name: arr_delay
+        description: ""
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: dep_delay
+        description: ""
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: distance
+        description: ""
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: flight_time
+        description: ""
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: taxi_in
+        description: ""
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: taxi_out
+        description: ""
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: dep_time
+        description: ""

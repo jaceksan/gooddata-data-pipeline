@@ -1,0 +1,55 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count
+                    type: metric
+            localIdentifier: 57ab1be0780246d28161a6aa3ca9f3fd
+            title: Flight count
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: destination_count
+                    type: metric
+            localIdentifier: f2f60c6c1325482ba171d27ea0fdf4d9
+            title: Destination count
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: percentage_of_flights
+                    type: metric
+            localIdentifier: de2947ffdd2547beae6a3ca81978d6b3
+            title: Percentage of flights
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: nickname
+                type: label
+            localIdentifier: e21e3c6007644cab841244f95509a979
+      localIdentifier: attribute
+  filters: []
+  properties: {}
+  sorts:
+    - measureSortItem:
+        direction: desc
+        locators:
+          - measureLocatorItem:
+              measureIdentifier: de2947ffdd2547beae6a3ca81978d6b3
+  version: '2'
+  visualizationUrl: local:table
+description: Flights - by carrier
+id: flights_by_carrier
+title: Flights - by carrier
