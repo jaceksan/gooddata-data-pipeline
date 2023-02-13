@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({dataset/carriers})
+description: ''
+id: carrier_count
+title: Carrier count

@@ -37,6 +37,21 @@ T = TypeVar("T", bound="Base")
 
 DBT_PATH_TO_MANIFEST = Path("target") / "manifest.json"
 
+class DbtTests(Enum):
+    PRIMARY_KEY = "dbt_constraints.primary_key"
+    FOREIGN_KEY = "dbt_constraints.foreign_key"
+    FOREIGN_KEY_REF = "pk_table_name"
+
+DATETIME_DATA_TYPES = [
+    "DATE",
+    "TIMESTAMP",
+    "TIMESTAMPTZ"
+]
+
+TIMESTAMP_DATA_TYPES = [
+    "TIMESTAMP",
+    "TIMESTAMPTZ"
+]
 
 @attrs.define
 class Base:

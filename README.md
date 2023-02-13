@@ -11,6 +11,8 @@ Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://
 
 ![Demo architecture](docs/MDS.png "Demo architecture")
 
+Latest changes are highlighted by the green color. 
+
 ## If you need help
 This README is just a brief how-to, it does not contain all details. If you need help, do not hesitate to ask in our [Slack community](https://www.gooddata.com/slack/).
 
@@ -22,10 +24,11 @@ This README is just a brief how-to, it does not contain all details. If you need
 The following articles are based on this project:
 - [How To Build a Modern Data Pipeline](https://medium.com/gooddata-developers/how-to-build-a-modern-data-pipeline-cfdd9d14fbea)
 - [How GoodData Integrates With dbt](https://medium.com/gooddata-developers/how-gooddata-integrates-with-dbt-a0c6f207eca3)
-- TODO - Meltano article
+- [Extending CI/CD data pipeline with Meltano](https://medium.com/gooddata-developers/extending-ci-cd-data-pipeline-with-meltano-7de3bce74f57)
 
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
+It utilizes the [GoodData Community Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available for free in DockerHub.
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
@@ -35,19 +38,19 @@ docker-compose up -d gooddata-cn-ce
 # Wait 1-2 minutes to the service successfully starts
 
 # Bootstrap DB schemas
-docker-compose up -d bootstrap_db
+docker-compose up bootstrap_db
 
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
-docker-compose up -d extract_load
+docker-compose up extract_load
 
 # Transform model to be ready for analytics, with dbt
 # Also, GoodData models are generated from dbt models and pushed to GoodData  
-docker-compose up -d transform  
+docker-compose up transform  
 
 # Deliver analytics artefacts(metrics, visualizations, dashboards, ...) into GoodData
-docker-compose up -d analytics
+docker-compose up analytics
 ```
 
 Then you can move to Gitlab, forking this repository and run the pipeline against your environments:
@@ -59,7 +62,7 @@ Then you can move to Gitlab, forking this repository and run the pipeline agains
   - Create required databases (for dev/staging/prod) and schema `meltano` for Meltano state backend.
  
 You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
-- GITHUB_TOKEN
+- TAP_GITHUB_AUTH_TOKEN
 - GOODDATA_HOST - host name pointing to the GoodData instance
 - GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
 
@@ -88,6 +91,7 @@ export DBT_PROFILE_DIR="profile"
 export ELT_ENVIRONMENT="cicd_dev_local"
 export MELTANO_TARGET="target-postgres"
 
+export GOODDATA_ENVIRONMENT_ID="development"
 unset GOODDATA_UPPER_CASE
 # Set GOODDATA_UPPER_CASE to --gooddata-upper-case when running against Snowflake and DB table/column names are upper-cased
 # export GOODDATA_UPPER_CASE="--gooddata-upper-case"
@@ -101,8 +105,6 @@ export INPUT_SCHEMA=cicd_input_stage
 export OUTPUT_SCHEMA=cicd_output_stage
 export DBT_TARGET_TITLE="CI/CD dev (local)"
 export MELTANO_DATABASE_URI="postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano"
-export GOODDATA_WORKSPACE_ID=cicd_demo_development
-export GOODDATA_WORKSPACE_TITLE="CICD demo (dev)"
 ```
 
 ### Extract and Load

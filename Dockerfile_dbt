@@ -29,5 +29,6 @@ COPY src/profile/profiles.yml /root/.dbt/profiles.yml
 RUN dbt deps
 
 COPY src/gooddata_layouts gooddata_layouts
+COPY src/gooddata.yml gooddata.yml
 
 ENTRYPOINT ["dbt"]

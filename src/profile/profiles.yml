@@ -8,7 +8,7 @@ default:
     cicd_dev_local:
       # Title is not a standard dbt field. We use it as a title of GoodData data source.
       # If not filled, ID(dict key) is used
-      title: "{{ env_var('DBT_TARGET_TITLE', 'CI/CD dev (local)') }}"
+      title: "CICD demo (dev local)"
       type: postgres
       threads: 1
       host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
@@ -20,10 +20,8 @@ default:
     # Copy & paste below targets, reasons:
     # 1. the env variables must be shared with Meltano, so we cannot hardcode them here
     # 2. we cannot create single target, because its name (dict key) is used as ID of GoodData data source
-    #    dbt does not provide an option to specify the name besides e.g. title,
-    #    and we do not want users to update their profiles only because GoodData
     cicd_dev:
-      title: "{{ env_var('DBT_TARGET_TITLE', 'CI/CD dev') }}"
+      title: "CICD demo (dev)"
       type: snowflake
       threads: 1
       account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'gooddata') }}"
@@ -33,7 +31,7 @@ default:
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
       schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
     cicd_staging:
-      title: "{{ env_var('DBT_TARGET_TITLE', 'CI/CD staging') }}"
+      title: "CICD demo (staging)"
       type: snowflake
       threads: 1
       account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'gooddata') }}"
@@ -43,7 +41,7 @@ default:
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
       schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
     cicd_prod:
-      title: "{{ env_var('DBT_TARGET_TITLE', 'CI/CD prod') }}"
+      title: "CICD demo (prod)"
       type: snowflake
       threads: 1
       account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'gooddata') }}"

@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: 'SELECT COUNT({dataset/flights}) BY ALL OTHER '
+description: ''
+id: flight_count_-_overall
+title: Flight count - overall

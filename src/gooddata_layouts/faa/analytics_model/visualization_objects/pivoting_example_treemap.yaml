@@ -1,0 +1,38 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: percentage_of_flights
+                    type: metric
+            localIdentifier: 9d356f1f60e342c78601cec915adea7e
+            title: Percentage of flights
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: manufacturer
+                type: label
+            localIdentifier: c72278aca21f4d588834c919a95ba46b
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: faa_region_destination
+                type: label
+            localIdentifier: faa8254604414939871b516e01c16e2b
+      localIdentifier: segment
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:treemap
+description: Pivoting Example - TreeMap
+id: pivoting_example_treemap
+title: Pivoting Example - TreeMap

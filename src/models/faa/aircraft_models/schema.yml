@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: aircraft_models
+    description: "Aircraft models"
+    meta:
+      gooddata:
+        model_id: faa
+    columns:
+      - name: aircraft_model_code
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: manufacturer
+      - name: seats
+        meta:
+          gooddata:
+            ldm_type: fact
