@@ -167,7 +167,7 @@ build_meltano:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
-        - $SRC_DATA_PIPELINE/Dockerfile_meltano
+        - Dockerfile_meltano
         - $SRC_DATA_PIPELINE/meltano.yml
         - .gitlab-ci.yml
     - !reference [.base_rules, rules]
@@ -186,7 +186,7 @@ build_dbt:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
-        - $SRC_DATA_PIPELINE/Dockerfile_dbt
+        - Dockerfile_dbt
         - $SRC_DATA_PIPELINE/packages.yml
         - $SRC_DATA_PIPELINE/dbt_project.yml
         - $SRC_DATA_PIPELINE/profile/profiles.yml
