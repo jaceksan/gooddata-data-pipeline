@@ -1,2 +1,1 @@
-meltano==2.15
-
+meltano==2.15.3
