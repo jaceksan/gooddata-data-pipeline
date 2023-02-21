@@ -7,6 +7,7 @@ stages:
 ##########################
 # Global variables
 variables:
+  SRC_DATA_PIPELINE: "data_pipeline"
   DBT_PROFILE: "default"
   GOODDATA_MODEL_IDS: "github faa"
   GOODDATA_UPPER_CASE: "--gooddata-upper-case"
@@ -92,7 +93,7 @@ variables:
 
 .extract_load_changes:
   changes:
-    - src/meltano.yml
+    - $SRC_DATA_PIPELINE/meltano.yml
     - .gitlab-ci.yml
 
 .dbt:
@@ -114,12 +115,12 @@ variables:
 
 .dbt_changes:
   changes:
-    - src/models/**/*
-    - src/profile/**/*
-    - src/dbt_project.yml
-    - src/packages.yml
-    - src/requirements-dbt.txt
-    - src/dbt-gooddata/**/*
+    - $SRC_DATA_PIPELINE/models/**/*
+    - $SRC_DATA_PIPELINE/profile/**/*
+    - $SRC_DATA_PIPELINE/dbt_project.yml
+    - $SRC_DATA_PIPELINE/packages.yml
+    - $SRC_DATA_PIPELINE/requirements-dbt.txt
+    - $SRC_DATA_PIPELINE/dbt-gooddata/**/*
     - .gitlab-ci.yml
 
 .gooddata:
@@ -141,10 +142,10 @@ variables:
 
 .gooddata_changes:
   changes:
-    - src/macros/**/*
-    - src/models/**/*
-    - src/dbt-gooddata/**/*
-    - src/gooddata_layouts/**/*
+    - $SRC_DATA_PIPELINE/macros/**/*
+    - $SRC_DATA_PIPELINE/models/**/*
+    - $SRC_DATA_PIPELINE/dbt-gooddata/**/*
+    - $SRC_DATA_PIPELINE/gooddata_layouts/**/*
     - .gitlab-ci.yml
 
 #############
@@ -166,8 +167,8 @@ build_meltano:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
-        - src/Dockerfile_meltano
-        - src/meltano.yml
+        - $SRC_DATA_PIPELINE/Dockerfile_meltano
+        - $SRC_DATA_PIPELINE/meltano.yml
         - .gitlab-ci.yml
     - !reference [.base_rules, rules]
 
@@ -185,12 +186,12 @@ build_dbt:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes:
-        - src/Dockerfile_dbt
-        - src/packages.yml
-        - src/dbt_project.yml
-        - src/profile/profiles.yml
-        - src/models
-        - src/macros
+        - $SRC_DATA_PIPELINE/Dockerfile_dbt
+        - $SRC_DATA_PIPELINE/packages.yml
+        - $SRC_DATA_PIPELINE/dbt_project.yml
+        - $SRC_DATA_PIPELINE/profile/profiles.yml
+        - $SRC_DATA_PIPELINE/models
+        - $SRC_DATA_PIPELINE/macros
         - .gitlab-ci.yml
     - !reference [.base_rules, rules]
 
