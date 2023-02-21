@@ -47,6 +47,7 @@ plugins:
         - pull_requests.number                   # PR ID
         - pull_requests.repo_id
         - pull_requests.html_url
+        - pull_requests.url
         - pull_requests.title
         - pull_requests.draft
         - pull_requests.state
