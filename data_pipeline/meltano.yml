@@ -57,20 +57,23 @@ plugins:
         - pull_requests.merged_at
         - pull_requests.closed_at
         - pull_requests.user
+        # TODO - no way to JOIN reviews with pull requests (so far).
+        # pull_request_url is filled, but no counterpart column in pull_requests
+        # commmit_id works, but no way to join commits and pull_requests
         # Reviews
-        - reviews.author_association
-        - reviews.body
-        - reviews.commit_id
-        - reviews.html_url
-        - reviews.id
-        - reviews.org
-        - reviews.pull_number
-        - reviews.pull_request_url
-        - reviews.repo
-        - reviews.repo_id
-        - reviews.state
-        - reviews.submitted_at
-        - reviews.user
+#        - reviews.author_association
+#        - reviews.body
+#        - reviews.commit_id
+#        - reviews.html_url
+#        - reviews.id
+#        - reviews.org
+#        - reviews.pull_number
+#        - reviews.pull_request_url
+#        - reviews.repo
+#        - reviews.repo_id
+#        - reviews.state
+#        - reviews.submitted_at
+#        - reviews.user
     - name: tap-github-org
       inherit_from: tap-github
       config:
