@@ -9,6 +9,7 @@ stages:
 variables:
   SRC_DATA_PIPELINE: "data_pipeline"
   DBT_PROFILE: "default"
+  GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
   GOODDATA_MODEL_IDS: "github faa"
   GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   # TODO - store the state in a so-called custom state backend, e.g. in AWS S3, and get rid of PostgreSQL

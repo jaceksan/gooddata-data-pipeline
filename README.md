@@ -6,8 +6,11 @@ It realizes the following steps:
 - loads data into a warehouse ([Meltano](https://meltano.com/))
 - transforms data in the warehouse in a multi-dimensional model ready for analytics ([dbt](https://www.getdbt.com/))
 - generates semantic model from physical model ([GoodData](https://www.gooddata.com/) model from [dbt](https://www.getdbt.com/) models)
+- deploys analytics model (metrics, insights, dashboards) from locally stored [layout files](data_pipeline/gooddata_layouts/)
+- deploys UI data apps coupled with the data pipeline. Read more details in [apps folder](apps/) 
 
-Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/).
+Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/) (except the data apps).
+Generally, you can change the whole data pipeline and UI apps by a single commit, and deliver everything consistently.
 
 ![Demo architecture](docs/MDS.png "Demo architecture")
 
@@ -39,6 +42,10 @@ docker-compose up -d gooddata-cn-ce
 
 # Bootstrap DB schemas
 docker-compose up bootstrap_db
+
+# Allow https://localhost:8443 in CORS
+# This enables testing of locally started UI apps based on UI.SDK (examples in /apps folder) 
+docker-compose up bootstrap_origins
 
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 

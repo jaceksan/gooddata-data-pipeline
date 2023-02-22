@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://unpkg.com/aframe@1.4.1"></script>
+        <script src="https://unpkg.com/aframe-state-component@7.1.0/dist/aframe-state-component.min.js"></script>
+        <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
+        <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
+        <script src="src/state.js"></script>
+        <script src="src/data.js"></script>
+        <script src="src/thumbstick_movement.js"></script>
+
+        <title>GoodData VR</title>
+        <meta charset="UTF-8" />
+    </head>
+
+    <body>
+        <a-scene id="scene" id="scene" cursor="rayOrigin: mouse">
+            <a-entity environment="preset: yavapai"></a-entity>
+            <a-sky color="white"></a-sky>
+            <a-entity position="-1.5 2 5" text="value: Data points:\n\nRadius represents flight distance.\nColor represents flight delay.; width: 3; align: left; side: double; color: black" rotation="0 -180 0"></a-entity>
+            <a-entity bind-for="for: point; in: executionData; key: hash; updateInPlace: true">
+                <template>
+                    <a-sphere
+                        color="{{point.color}}"
+                        radius="{{point.size}}"
+                        position="{{point.x}} {{point.y}} {{point.z}}"
+                        class="clickable"
+                        event-set__mouseenter="scale: 1.2 1.2 1.2"
+                        event-set__mouseleave="scale: 1.0 1.0 1.0"
+                        event-set__mousedown="opacity: 0.8"
+                        event-set__mouseup="opacity: 1.0"
+                        shadow
+                    ></a-sphere>
+
+                    <a-entity
+                        id="{{point.tooltipId}}"
+                        visible="false"
+                        material="color: #333"
+                        position="{{point.x}} {{point.yTooltip}} {{point.z}}"
+                        text="value: Flights: {{point.yRaw}}\nDistance: {{point.sizeRaw}}\nDelay: {{point.colorRaw}}\nQuarter: {{point.year}}\nDayOfWeek: {{point.day}}; align: center; color: black"
+                        rotation="0 -135 0"
+                    ></a-entity>
+                </template>
+            </a-entity>
+            <a-cylinder
+                id="x-axis"
+                color="red"
+                height="4"
+                radius="0.05"
+                position="2 0 4"
+                rotation="0 0 90"
+            ></a-cylinder>
+            <a-entity bind-for="for: tick; in: zAxisTicks; updateInPlace: false">
+                <template>
+                    <a-cylinder
+                        color="grey"
+                        height="4"
+                        radius="0.005"
+                        position="2 0 {{tick}}"
+                        rotation="0 0 90"
+                    ></a-cylinder>
+                </template>
+            </a-entity>
+            <a-entity position="2 0.2 4" bind__text="xAxisTitleRich" rotation="0 180 0"></a-entity>
+            <a-cylinder id="y-axis" color="black" height="4" radius="0.05" position="4 2 4"></a-cylinder>
+            <a-entity bind-for="for: tick; in: yAxisTicks; updateInPlace: false">
+                <template>
+                    <a-cylinder
+                        color="grey"
+                        height="4"
+                        radius="0.005"
+                        position="4 {{tick}} 2"
+                        rotation="90 0 0"
+                    ></a-cylinder>
+                </template>
+            </a-entity>
+            <a-entity position="3 3.8 4" bind__text="yAxisTitleRich" rotation="0 -135 0"></a-entity>
+            <a-cylinder
+                id="z-axis"
+                color="blue"
+                height="4"
+                radius="0.05"
+                position="4 0 2"
+                rotation="90 0 0"
+            ></a-cylinder>
+            <a-entity bind-for="for: tick; in: xAxisTicks; updateInPlace: false">
+                <template>
+                    <a-cylinder
+                        color="grey"
+                        height="4"
+                        radius="0.005"
+                        position="{{tick}} 0 2"
+                        rotation="90 0 0"
+                    ></a-cylinder>
+                </template>
+            </a-entity>
+            <a-entity position="4 0.2 2" bind__text="zAxisTitleRich" rotation="0 -90 0"></a-entity>
+            <a-entity id="hand" laser-controls raycaster="objects: .clickable"></a-entity>
+            <a-entity id="rig">
+                <a-camera position="0 2 0" look-controls></a-camera>
+                <a-entity oculus-touch-controls="hand: left"></a-entity>
+                <a-entity oculus-touch-controls="hand: right" oculus-thumbstick-controls></a-entity>
+            </a-entity>
+        </a-scene>
+    </body>
+</html>
