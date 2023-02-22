@@ -6,8 +6,11 @@ It realizes the following steps:
 - loads data into a warehouse ([Meltano](https://meltano.com/))
 - transforms data in the warehouse in a multi-dimensional model ready for analytics ([dbt](https://www.getdbt.com/))
 - generates semantic model from physical model ([GoodData](https://www.gooddata.com/) model from [dbt](https://www.getdbt.com/) models)
+- deploys analytics model (metrics, insights, dashboards) from locally stored [layout files](data_pipeline/gooddata_layouts/)
+- deploys UI data apps coupled with the data pipeline. Read more details in [apps folder](apps/) 
 
-Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/).
+Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/) (except the data apps).
+Generally, you can change the whole data pipeline and UI apps by a single commit, and deliver everything consistently.
 
 ![Demo architecture](docs/MDS.png "Demo architecture")
 
@@ -39,6 +42,10 @@ docker-compose up -d gooddata-cn-ce
 
 # Bootstrap DB schemas
 docker-compose up bootstrap_db
+
+# Allow https://localhost:8443 in CORS
+# This enables testing of locally started UI apps based on UI.SDK (examples in /apps folder) 
+docker-compose up bootstrap_origins
 
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
@@ -108,7 +115,7 @@ export MELTANO_DATABASE_URI="postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRE
 ```
 
 ### Extract and Load
-Meltano tool is used. Configuration file [meltano.yml](src/meltano.yml) declares everything related.
+Meltano tool is used. Configuration file [meltano.yml](data_pipeline/meltano.yml) declares everything related.
 
 How to run:
 ```bash
@@ -121,7 +128,7 @@ It is running incrementally, it stores its state into a dedicated schema `meltan
 You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 ### Data transformation
-The folder `src/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
+The folder `data_pipeline/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 How to run:
 ```bash
@@ -129,7 +136,7 @@ make transform
 ```
 
 ### Generate GoodData semantic model from dbt models
-Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing generators of GoodData semantic model objects from dbt models.
+Folder [dbt-gooddata](data_pipeline/dbt-gooddata) contains a PoC of dbt plugin providing generators of GoodData semantic model objects from dbt models.
 In particular, it allows you to generate so called GoodData PDM (Physical Data Model), LDM(Logical Data Model, mapped to PDM), and metrics.
 It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 
@@ -158,11 +165,11 @@ dbt --profiles-dir profile run-operation generate_source \
 ```
 
 # Analytics
-Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing tools for loading/storing GoodData analytics model (metrics, insights, dashboards).
+Folder [dbt-gooddata](data_pipeline/dbt-gooddata) contains a PoC of dbt plugin providing tools for loading/storing GoodData analytics model (metrics, insights, dashboards).
 It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 
 ## Load analytics model to GoodData
-Analytics model is stored in [gooddata_layouts](src/gooddata_layouts) folder.
+Analytics model is stored in [gooddata_layouts](data_pipeline/gooddata_layouts) folder.
 
 The following command reads the layout, and loads it into the GooData instance:
 ```bash
@@ -172,10 +179,10 @@ make deploy_analytics
 It not only loads the stored layout, but it also reads metrics from dbt models and loads them too.
 
 ## Store analytics model
-Anytime you can fetch analytics model from the GoodData instance and store it to [gooddata_layouts](src/gooddata_layouts) folder.
+Anytime you can fetch analytics model from the GoodData instance and store it to [gooddata_layouts](data_pipeline/gooddata_layouts) folder.
 It makes sense to do some operations by editing stored layout files, but other in GoodData UI applications.
 For instance, it is more convenient to build more complex GoodData MAQL metrics in the Metric Editor UI application.
-Then, to persist such metrics to [gooddata_layouts](src/gooddata_layouts) folder, run the following command:
+Then, to persist such metrics to [gooddata_layouts](data_pipeline/gooddata_layouts) folder, run the following command:
 
 ```bash
 make store_analytics

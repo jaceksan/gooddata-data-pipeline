@@ -1,5 +1,7 @@
 version: 2
 
+# TODO - no way to JOIN with pull_requests so far
+
 models:
   - name: reviews
     description: "Reviews"

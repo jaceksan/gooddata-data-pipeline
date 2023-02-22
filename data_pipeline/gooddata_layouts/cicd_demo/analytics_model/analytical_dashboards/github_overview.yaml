@@ -8,27 +8,6 @@ content:
       - items:
           - size:
               xl:
-                gridWidth: 12
-            type: IDashboardLayoutItem
-            widget:
-              dateDataSet:
-                identifier:
-                  id: closed_at
-                  type: dataset
-              description: ''
-              drills: []
-              ignoreDashboardFilters: []
-              insight:
-                identifier:
-                  id: 259d1108-47d7-48ca-95e7-42727bf29803
-                  type: visualizationObject
-              properties: {}
-              title: Reviews by time
-              type: insight
-        type: IDashboardLayoutSection
-      - items:
-          - size:
-              xl:
                 gridWidth: 4
             type: IDashboardLayoutItem
             widget:
