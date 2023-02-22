@@ -17,7 +17,6 @@ with using_clause as (
   select
     number as pull_request_number,
     html_url as pull_request_url,
-    url as pull_requests_api_url,
     title as pull_request_title,
     draft as pull_request_draft,
     state,

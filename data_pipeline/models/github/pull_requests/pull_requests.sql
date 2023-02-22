@@ -4,8 +4,7 @@
     {'columns': ['pull_request_id'], 'unique': true},
     {'columns': ['user_url'], 'unique': false},
     {'columns': ['repo_id'], 'unique': false},
-    {'columns': ['created_at'], 'unique': false},
-    {'columns': ['pull_requests_api_url'], 'unique': false}
+    {'columns': ['created_at'], 'unique': false}
   ],
   materialized='incremental',
   unique_key=['pull_request_number', 'repo_id'],
@@ -52,7 +51,6 @@ final as (
       repos.repo_name || '/' || p.pull_request_number as pull_request_id,
       p.pull_request_number,
       p.pull_request_url,
-      p.pull_requests_api_url,
       p.pull_request_title,
       p.pull_request_draft,
       p.created_at,

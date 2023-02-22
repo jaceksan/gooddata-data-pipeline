@@ -32,6 +32,28 @@ services:
     volumes:
       - ./fixtures/postgres:/docker-entrypoint-initdb.d:ro
 
+  bootstrap_origins:
+    image: alpine/curl
+    entrypoint:
+      - /bin/sh
+      - -c
+    command:
+      - |
+        curl -v -H "Authorization: Bearer $GOODDATA_TOKEN" -s -H "Content-Type: application/vnd.gooddata.api+json" -H "Host: localhost" -X PATCH \
+            -d "{
+              \"data\": {
+                \"id\": \"$$GOODDATA_ORGANIZATION\",
+                \"type\": \"organization\",
+                \"attributes\": {
+                  \"allowedOrigins\": [\"https://localhost:8443\"]
+                }
+              }
+            }" \
+          gooddata-cn-ce:3000/api/v1/entities/admin/organizations/$$GOODDATA_ORGANIZATION
+    environment:
+      GOODDATA_TOKEN: YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz
+      GOODDATA_ORGANIZATION: default
+
   extract_load:
     build:
       context: .
