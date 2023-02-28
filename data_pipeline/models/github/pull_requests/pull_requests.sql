@@ -2,7 +2,7 @@
   indexes=[
     {'columns': ['pull_request_number', 'repo_id'], 'unique': true},
     {'columns': ['pull_request_id'], 'unique': true},
-    {'columns': ['user_url'], 'unique': false},
+    {'columns': ['user_id'], 'unique': false},
     {'columns': ['repo_id'], 'unique': false},
     {'columns': ['created_at'], 'unique': false}
   ],
@@ -57,8 +57,7 @@ final as (
       p.merged_at,
       p.closed_at,
       p.repo_id,
-      p.user_url,
-      users.user_id,
+      p.user_id,
       (
         -- Either merged_at, or closed_at(closed without merged) or now(not yet merged or closed)
         extract(epoch from coalesce(p.merged_at, p.closed_at, {{ dbt_date.now() }}))
@@ -69,7 +68,7 @@ final as (
       union all select * from updates
     ) p
     -- Filter out commits without responsible user (data cleansing)
-    join users on p.user_url = users.user_url
+    join users on p.user_id = users.user_id
     join repos on p.repo_id = repos.repo_id
 )
 
