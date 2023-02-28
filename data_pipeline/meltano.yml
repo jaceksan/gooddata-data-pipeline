@@ -41,8 +41,8 @@ plugins:
         - commits.sha
         - commits.html_url
         - commits.repo_id
-        - commits.author
-        - commits.commit
+        - commits.author*
+        - commits.commit*
         # Pull requests
         - pull_requests.number                   # PR ID
         - pull_requests.repo_id
@@ -56,10 +56,12 @@ plugins:
         - pull_requests.created_at
         - pull_requests.merged_at
         - pull_requests.closed_at
-        - pull_requests.user
+        - pull_requests.user*
         # TODO - no way to JOIN reviews with pull requests (so far).
         # pull_request_url is filled, but no counterpart column in pull_requests
         # commmit_id works, but no way to join commits and pull_requests
+        # TODO - try to use the wildcard pattern (e.g. pull_requests.user*)
+        # still, the performance is poor, for each PR reviews must be collected
         # Reviews
 #        - reviews.author_association
 #        - reviews.body

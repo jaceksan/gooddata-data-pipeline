@@ -2,7 +2,7 @@
   schema=var('input_schema'),
   indexes=[
     {'columns': ['pull_request_number', 'repo_id'], 'unique': true},
-    {'columns': ['user_url'], 'unique': false},
+    {'columns': ['user_id'], 'unique': false},
     {'columns': ['created_at'], 'unique': false}
   ],
   materialized='incremental',
@@ -24,7 +24,7 @@ with using_clause as (
     created_at,
     merged_at,
     closed_at,
-    CAST(json_extract_path_text(to_json("{{ get_db_entity_name('user') }}"), 'url') as TEXT) as user_url
+    CAST(json_extract_path_text(to_json("{{ get_db_entity_name('user') }}"), 'id') as INT) as user_id
   from {{ var("input_schema") }}.pull_requests
   {% if is_incremental() %}
     where created_at > ( select max(created_at) from {{ this }} )
