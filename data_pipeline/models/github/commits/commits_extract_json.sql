@@ -2,7 +2,7 @@
   schema=var('input_schema'),
   indexes=[
     {'columns': ['commit_id'], 'unique': true},
-    {'columns': ['user_url'], 'unique': false}
+    {'columns': ['user_id'], 'unique': false}
   ],
   materialized='incremental',
   unique_key='commit_id',
@@ -18,7 +18,7 @@ with using_clause as (
     html_url as commit_url,
     CAST(json_extract_path_text(to_json(commit), 'comment_count') as INT) as comment_count,
     commit_timestamp as created_at,
-    CAST(json_extract_path_text(to_json(author), 'url') as TEXT) as user_url,
+    CAST(json_extract_path_text(to_json(author), 'id') as INT) as user_id,
     repo_id
   from {{ var("input_schema") }}.commits
   {% if is_incremental() %}

@@ -1,7 +1,7 @@
 {{ config(
   indexes=[
     {'columns': ['commit_id'], 'unique': true},
-    {'columns': ['user_url'], 'unique': false}
+    {'columns': ['user_id'], 'unique': false}
   ],
   materialized='incremental',
   unique_key='commit_id',
@@ -47,14 +47,13 @@ final as (
       c.comment_count,
       c.created_at,
       c.repo_id,
-      c.user_url,
       users.user_id
     from (
       select * from inserts
       union all select * from updates
     ) c
     -- Filter out commits without responsible user (data cleansing)
-    join users on c.user_url = users.user_url
+    join users on c.user_id = users.user_id
 )
 
 select * from final
