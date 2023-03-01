@@ -122,6 +122,8 @@ variables:
     - $SRC_DATA_PIPELINE/packages.yml
     - $SRC_DATA_PIPELINE/requirements-dbt.txt
     - $SRC_DATA_PIPELINE/dbt-gooddata/**/*
+    # Changing meltano.yml can affect the input stage data, so dbt transform must be executed too
+    - $SRC_DATA_PIPELINE/meltano.yml
     - .gitlab-ci.yml
 
 .gooddata:

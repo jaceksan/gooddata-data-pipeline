@@ -172,3 +172,10 @@ plugins:
         warehouse: ${SNOWFLAKE_WAREHOUSE}
         default_target_schema: ${INPUT_SCHEMA}
         file_format: PUBLIC.MELTANO_FORMAT
+
+state_backend:
+  # TODO - migrate to dedicated user and bucket
+  uri: "s3://gdc-quiver/cicd_demo_meltano_state"
+  s3:
+    aws_access_key_id: ${MELTANO_STATE_AWS_ACCESS_KEY_ID}
+    aws_secret_access_key: ${MELTANO_STATE_AWS_SECRET_ACCESS_KEY}
