@@ -10,6 +10,8 @@ It realizes the following steps:
 - deploys UI data apps coupled with the data pipeline. Read more details in [apps folder](apps/) 
 
 Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/) (except the data apps).
+Data apps are delivered by [render.com](render.com) service after merge to `main` branch (staging), and after merge to `prod` branch(production).
+
 Generally, you can change the whole data pipeline and UI apps by a single commit, and deliver everything consistently.
 
 ![Demo architecture](docs/MDS.png "Demo architecture")
@@ -28,6 +30,7 @@ The following articles are based on this project:
 - [How To Build a Modern Data Pipeline](https://medium.com/gooddata-developers/how-to-build-a-modern-data-pipeline-cfdd9d14fbea)
 - [How GoodData Integrates With dbt](https://medium.com/gooddata-developers/how-gooddata-integrates-with-dbt-a0c6f207eca3)
 - [Extending CI/CD data pipeline with Meltano](https://medium.com/gooddata-developers/extending-ci-cd-data-pipeline-with-meltano-7de3bce74f57)
+- [Analytics Inside Virtual Reality: Too Soon?](TODO)
 
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
@@ -36,12 +39,9 @@ It utilizes the [GoodData Community Edition](https://hub.docker.com/r/gooddata/g
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
 docker-compose build
-# Start GoodData
-docker-compose up -d gooddata-cn-ce
-# Wait 1-2 minutes to the service successfully starts
-
-# Bootstrap DB schemas
-docker-compose up bootstrap_db
+# Start GoodData, and Minio(AWS S3 Meltano state backend)
+docker-compose up -d gooddata-cn-ce minio minio-bootstrap
+# Wait 1-2 minutes to services successfully start
 
 # Allow https://localhost:8443 in CORS
 # This enables testing of locally started UI apps based on UI.SDK (examples in /apps folder) 
@@ -50,6 +50,9 @@ docker-compose up bootstrap_origins
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
+# Set AWS S3 credentials to be able to ELT the FAA data (stored in public dataset)
+export AWS_ACCESS_KEY_ID="<my AWS access key>"
+export AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
 docker-compose up extract_load
 
 # Transform model to be ready for analytics, with dbt
@@ -66,12 +69,13 @@ Then you can move to Gitlab, forking this repository and run the pipeline agains
         and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
 - Create a public PostgreSQL or Snowflake instance
   - Personally, I found [bit.io](https://bit.io/) as the only free-forever PostgreSQL offering.
-  - Create required databases (for dev/staging/prod) and schema `meltano` for Meltano state backend.
+  - Create required databases (for dev/staging/prod).
  
 You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
 - TAP_GITHUB_AUTH_TOKEN
 - GOODDATA_HOST - host name pointing to the GoodData instance
 - GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
+- MELTANO_STATE_AWS_ACCESS_KEY_ID/MELTANO_STATE_AWS_SECRET_ACCESS_KEY - Meltano stores its state to AWS S3, and needs these credentials
 
 The rest of environment variables (Github repos to be crawled, DB endpoints, ...) can be configured in [.gitlab-ci.yml](.gitlab-ci.yml)(section `variables`).
 
@@ -93,6 +97,8 @@ deactivate
 ### Set environment variables
 ```bash
 export TAP_GITHUB_AUTH_TOKEN="<your token>"
+export AWS_ACCESS_KEY_ID="<my AWS access key>"
+export AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
 # The folowing variables are valid for local environment started from docker-compose.yaml
 export DBT_PROFILE_DIR="profile"
 export ELT_ENVIRONMENT="cicd_dev_local"
@@ -111,7 +117,6 @@ export POSTGRES_DBNAME=demo
 export INPUT_SCHEMA=cicd_input_stage
 export OUTPUT_SCHEMA=cicd_output_stage
 export DBT_TARGET_TITLE="CI/CD dev (local)"
-export MELTANO_DATABASE_URI="postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano"
 ```
 
 ### Extract and Load
@@ -204,6 +209,13 @@ Use the following command:
 ```bash
 make test_insights
 ```
+
+## Applications
+
+Applications are stored in [apps](apps/) folder. They are not delivered by the Gitlab pipeline, but by render.com service watching this repo.
+
+### VR demo
+[README](apps/vr_analytics/)
 
 ---
 
