@@ -175,7 +175,8 @@ plugins:
 
 state_backend:
   # TODO - migrate to dedicated user and bucket
-  uri: "s3://gdc-quiver/cicd_demo_meltano_state"
+  uri: "s3://${MELTANO_STATE_AWS_BUCKET}/cicd_demo_meltano_state"
   s3:
     aws_access_key_id: ${MELTANO_STATE_AWS_ACCESS_KEY_ID}
     aws_secret_access_key: ${MELTANO_STATE_AWS_SECRET_ACCESS_KEY}
+    endpoint_url: ${MELTANO_STATE_AWS_ENDPOINT}
