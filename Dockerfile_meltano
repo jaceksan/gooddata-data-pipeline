@@ -6,6 +6,9 @@ ARG SRC_DATA_PIPELINE=data_pipeline
 WORKDIR /project
 
 # Copy over Meltano project directory
+COPY ${SRC_DATA_PIPELINE}/requirements-meltano.txt requirements-meltano.txt
+RUN pip install -r requirements-meltano.txt
+
 COPY ${SRC_DATA_PIPELINE}/meltano.yml meltano.yml
 RUN meltano install
 
