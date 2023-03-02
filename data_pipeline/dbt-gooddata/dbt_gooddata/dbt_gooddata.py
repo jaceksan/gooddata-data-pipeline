@@ -23,16 +23,23 @@ GOODDATA_LAYOUTS_DIR = Path("gooddata_layouts")
 #   Tests, ...
 
 
-def generate_and_put_pdm(sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables) -> None:
+def generate_and_put_pdm(logger, sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables) -> None:
     # Construct GoodData PDM from dbt models and put it to the server
     # GoodData caches the metadata to reduce querying them (costly) in runtime.
-    pdm = dbt_tables.make_pdm()
+    scan_request = CatalogScanModelRequest(scan_tables=True, scan_views=True)
+    logger.info(f"Scan data source {data_source_id=}")
+    scan_pdm = sdk.catalog_data_source.scan_data_source(
+        data_source_id, scan_request, report_warnings=True
+    ).pdm
+
+    logger.info(f"Generate and put PDM {data_source_id=}")
+    pdm = dbt_tables.make_pdm(scan_pdm)
     declarative_tables = CatalogDeclarativeTables.from_dict(pdm, camel_case=False)
     sdk.catalog_data_source.put_declarative_pdm(data_source_id, declarative_tables)
 
 
 def generate_and_put_ldm(
-    sdk: GoodDataSdk, data_source_id: str, workspace_id: str, dbt_tables: DbtModelTables, model_id: str
+        sdk: GoodDataSdk, data_source_id: str, workspace_id: str, dbt_tables: DbtModelTables, model_id: str
 ) -> None:
     # Construct GoodData LDM from dbt models
     declarative_datasets = dbt_tables.make_declarative_datasets(data_source_id, model_id)
@@ -43,14 +50,15 @@ def generate_and_put_ldm(
 
 
 def register_data_source(
-    logger, sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput, dbt_tables: DbtModelTables
+        logger, sdk: GoodDataSdk, data_source_id: str, dbt_target: DbtOutput, dbt_tables: DbtModelTables
 ):
     logger.info(f"Register data source {data_source_id=} schema={dbt_tables.schema_name}")
     data_source = dbt_target.to_gooddata(data_source_id, dbt_tables.schema_name)
     sdk.catalog_data_source.create_or_update_data_source(data_source)
 
     logger.info(f"Generate and put PDM")
-    generate_and_put_pdm(sdk, data_source_id, dbt_tables)
+    generate_and_put_pdm(logger, sdk, data_source_id, dbt_tables)
+
 
 def create_workspace(logger, sdk: GoodDataSdk, workspace_id: str, workspace_title: str) -> None:
     logger.info(f"Create workspace {workspace_id=} {workspace_title=}")
@@ -58,8 +66,9 @@ def create_workspace(logger, sdk: GoodDataSdk, workspace_id: str, workspace_titl
     workspace = CatalogWorkspace(workspace_id=workspace_id, name=workspace_title)
     sdk.catalog_workspace.create_or_update(workspace=workspace)
 
+
 def deploy_ldm(
-    logger, sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables, model_id: str, workspace_id: str
+        logger, sdk: GoodDataSdk, data_source_id: str, dbt_tables: DbtModelTables, model_id: str, workspace_id: str
 ) -> None:
     logger.info(f"Generate and put LDM")
     generate_and_put_ldm(sdk, data_source_id, workspace_id, dbt_tables, model_id)
@@ -139,12 +148,7 @@ def main():
             # Caches are invalidated only per data source, not per data product
             upload_notification(logger, sdk, data_source_id)
         else:
-            scan_request = CatalogScanModelRequest(scan_tables=True, scan_views=True)
-            logger.info(f"Scan data source {data_source_id=}")
-            scan_pdm = sdk.catalog_data_source.scan_data_source(
-                data_source_id, scan_request, report_warnings=True
-            ).pdm
-            dbt_tables = DbtModelTables(args.gooddata_model_ids, args.gooddata_upper_case, scan_pdm)
+            dbt_tables = DbtModelTables(args.gooddata_model_ids, args.gooddata_upper_case)
             register_data_source(logger, sdk, data_source_id, dbt_target, dbt_tables)
             for data_product in gd_config.data_products:
                 logger.info(f"Process product name={data_product.name}")
