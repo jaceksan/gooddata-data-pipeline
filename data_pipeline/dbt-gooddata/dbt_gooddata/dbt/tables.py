@@ -1,12 +1,11 @@
 import copy
 import json
-from pathlib import Path
 from typing import Optional
 import attrs
 
 from dbt_gooddata.dbt.base import (
     Base, DATE_GRANULARITIES, TIMESTAMP_GRANULARITIES, GoodDataLdmTypes,
-    TIMESTAMP_DATA_TYPES, DATETIME_DATA_TYPES, DBT_PATH_TO_MANIFEST
+    TIMESTAMP_DATA_TYPES, DATETIME_DATA_TYPES, DBT_PATH_TO_MANIFEST, NUMERIC_DATA_TYPES
 )
 from gooddata_sdk import CatalogDeclarativeTables, CatalogDeclarativeTable, CatalogDeclarativeColumn
 
@@ -93,7 +92,8 @@ class DbtModelColumn(DbtModelBase):
         return self.meta is not None and self.meta.gooddata is not None
 
     def gooddata_is_fact(self) -> bool:
-        return self.has_gooddata_metadata() and self.meta.gooddata.ldm_type == GoodDataLdmTypes.FACT.value
+        return (self.has_gooddata_metadata() and self.meta.gooddata.ldm_type == GoodDataLdmTypes.FACT.value) or \
+            self.is_number()
 
     def gooddata_is_attribute(self) -> bool:
         valid_ldm_types = [GoodDataLdmTypes.ATTRIBUTE.value, GoodDataLdmTypes.PRIMARY_KEY.value]
@@ -110,6 +110,9 @@ class DbtModelColumn(DbtModelBase):
         gooddata_date = self.has_gooddata_metadata() and self.meta.gooddata.ldm_type == "date"
         return gooddata_date or self.data_type.upper() in DATETIME_DATA_TYPES
 
+    def is_number(self) -> bool:
+        return self.data_type.upper() in NUMERIC_DATA_TYPES
+
     def is_reference(self) -> bool:
         return self.has_gooddata_metadata() and self.meta.gooddata.ldm_type == GoodDataLdmTypes.REFERENCE.value
 
@@ -124,28 +127,23 @@ class DbtModelTable(DbtModelBase):
 
 
 class DbtModelTables:
-    def __init__(self, model_ids: list[str], upper_case: bool, scan_pdm: CatalogDeclarativeTables) -> None:
+    def __init__(self, model_ids: list[str], upper_case: bool) -> None:
         self.model_ids = model_ids
         self.upper_case = upper_case
-        self.scan_pdm = scan_pdm
         with open(DBT_PATH_TO_MANIFEST) as fp:
             self.dbt_catalog = json.load(fp)
 
-    @property
-    def tables(self) -> list[DbtModelTable]:
+        self.tables = self.read_dbt_models()
+
+    def read_dbt_models(self) -> list[DbtModelTable]:
         tables = []
         for model_name, model_def in self.dbt_catalog["nodes"].items():
             tables.append(DbtModelTable.from_dict(model_def))
 
         for table in tables:
-            scan_table = self.get_scan_table(table.name)
             if self.upper_case:
                 table.upper_case_name()
             for column in table.columns.values():
-                # dbt does not provide data types in manifest.json
-                # get it from GoodData scan API
-                scan_column = self.get_scan_column(scan_table, column.name)
-                column.data_type = scan_column.data_type
                 if self.upper_case:
                     column.upper_case_name()
                     if column.has_gooddata_metadata():
@@ -162,6 +160,15 @@ class DbtModelTables:
         else:
             return result
 
+    def set_data_types(self, scan_pdm: CatalogDeclarativeTables) -> None:
+        for table in self.tables:
+            scan_table = self.get_scan_table(scan_pdm, table.name)
+            for column in table.columns.values():
+                # dbt does not provide data types in manifest.json
+                # get it from GoodData scan API
+                scan_column = self.get_scan_column(scan_table, column.name)
+                column.data_type = scan_column.data_type
+
     @property
     def schema_name(self):
         schemas = set([t.schema for t in self.tables if t.schema])
@@ -176,8 +183,9 @@ class DbtModelTables:
             else:
                 return schema_name
 
-    def get_scan_table(self, table_name: str) -> CatalogDeclarativeTable:
-        for table in self.scan_pdm.tables:
+    @staticmethod
+    def get_scan_table(scan_pdm: CatalogDeclarativeTables, table_name: str) -> CatalogDeclarativeTable:
+        for table in scan_pdm.tables:
             if table.id.lower() == table_name.lower():
                 return table
         # Scan can find more tables being a part of ELT, which we do not want to use for analytics.
@@ -190,10 +198,11 @@ class DbtModelTables:
                 return column
         raise Exception(f"get_scan_column table={table.id} column={column_name} not found in scan")
 
-    def make_pdm(self):
+    def make_pdm(self, scan_pdm: CatalogDeclarativeTables) -> dict:
+        self.set_data_types(scan_pdm)
         result = {"tables": []}
         for table in self.tables:
-            scan_table = self.get_scan_table(table.name)
+            scan_table = self.get_scan_table(scan_pdm, table.name)
             columns = []
             for column in table.columns.values():
                 # dbt does not propagate data types to manifest (not yet?)
