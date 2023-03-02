@@ -53,6 +53,10 @@ TIMESTAMP_DATA_TYPES = [
     "TIMESTAMPTZ"
 ]
 
+NUMERIC_DATA_TYPES = [
+    "NUMERIC",
+]
+
 @attrs.define
 class Base:
     @classmethod
