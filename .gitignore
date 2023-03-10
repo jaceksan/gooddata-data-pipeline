@@ -8,3 +8,4 @@ build
 dist
 *.iml
 .user.yml
+.env.custom.*

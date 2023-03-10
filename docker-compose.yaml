@@ -36,7 +36,7 @@ services:
       GOODDATA_TOKEN: YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz
       GOODDATA_ORGANIZATION: default
 
-  extract_load:
+  extract_load_github:
     build:
       context: .
       dockerfile: Dockerfile_meltano
@@ -44,22 +44,49 @@ services:
       - /bin/bash
       - -c
     command:
-      - meltano --environment $$MELTANO_ENV run tap-github-repo target-postgres tap-github-org target-postgres tap-s3-csv target-postgres
+      - meltano --environment $$MELTANO_ENV run tap-github-repo target-postgres tap-github-org target-postgres
     environment:
       POSTGRES_HOST: gooddata-cn-ce
       POSTGRES_PORT: 5432
       POSTGRES_USER: demouser
       POSTGRES_PASS: demopass
       POSTGRES_DBNAME: demo
-      INPUT_SCHEMA: cicd_input_stage
+      TARGET_SCHEMA: github_input_stage
       TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
       MELTANO_ENV: cicd_dev_local
       MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
       MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
       MELTANO_STATE_AWS_BUCKET: "meltano"
       MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
-      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
+
+  extract_load_faa:
+    build:
+      context: .
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-s3-csv target-postgres
+    environment:
+      POSTGRES_HOST: gooddata-cn-ce
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: demouser
+      POSTGRES_PASS: demopass
+      POSTGRES_DBNAME: demo
+      TARGET_SCHEMA: faa_input_stage
+      TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
+      MELTANO_ENV: cicd_dev_local
+      MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
+      MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
+      MELTANO_STATE_AWS_BUCKET: "meltano"
+      MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
+      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
+      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
 
   transform:
     build:
@@ -81,13 +108,17 @@ services:
       POSTGRES_PASS: demopass
       POSTGRES_DBNAME: demo
       INPUT_SCHEMA: cicd_input_stage
+      INPUT_SCHEMA_GITHUB: "github_input_stage"
+      INPUT_SCHEMA_FAA: "faa_input_stage"
       OUTPUT_SCHEMA: cicd_output_stage
       ELT_ENVIRONMENT: cicd_dev_local
-      DBT_TARGET_TITLE: "CI/CD dev (local)"
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
-      GOODDATA_WORKSPACE_ID: cicd_demo_development
-      GOODDATA_WORKSPACE_TITLE: "CICD demo (dev)"
+    volumes:
+      - ./data_pipeline/macros:/project/macros
+      - ./data_pipeline/models:/project/models
+      - ./data_pipeline/profile/profiles.yml:/root/.dbt/profiles.yml
+      - ./data_pipeline/gooddata.yml:/project/gooddata.yml
 
   analytics:
     build:
@@ -107,9 +138,17 @@ services:
       POSTGRES_DBNAME: demo
       POSTGRES_HOST: gooddata-cn-ce
       GOODDATA_WORKSPACE_ID: cicd_demo_development
-      DBT_TARGET_TITLE: "CI/CD dev (local)"
+      INPUT_SCHEMA_GITHUB: "github_input_stage"
+      INPUT_SCHEMA_FAA: "faa_input_stage"
+      OUTPUT_SCHEMA: cicd_output_stage
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
+    volumes:
+      - ./data_pipeline/macros:/project/macros
+      - ./data_pipeline/models:/project/models
+      - ./data_pipeline/profile/profiles.yml:/root/.dbt/profiles.yml
+      - ./data_pipeline/gooddata_layouts:/project/gooddata_layouts
+      - ./data_pipeline/gooddata.yml:/project/gooddata.yml
 
   # Minio serves as AWS S3 state backend for extract_load (Meltano)
   minio:

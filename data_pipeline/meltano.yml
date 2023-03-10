@@ -158,7 +158,7 @@ plugins:
         user: ${POSTGRES_USER}
         password: ${POSTGRES_PASS}
         dbname: ${POSTGRES_DBNAME}
-        default_target_schema: ${INPUT_SCHEMA}
+        default_target_schema: ${TARGET_SCHEMA}
         add_metadata_columns: true
         dialect+driver: postgresql+psycopg2
     - name: target-snowflake
@@ -170,7 +170,7 @@ plugins:
         user: ${SNOWFLAKE_USER}
         password: ${SNOWFLAKE_PASS}
         warehouse: ${SNOWFLAKE_WAREHOUSE}
-        default_target_schema: ${INPUT_SCHEMA}
+        default_target_schema: ${TARGET_SCHEMA}
         file_format: PUBLIC.MELTANO_FORMAT
 
 state_backend:

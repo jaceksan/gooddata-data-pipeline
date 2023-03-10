@@ -23,11 +23,14 @@ dev:
 
 
 extract_load:
-	cd $(SRC_DATA_PIPELINE) && meltano --environment $$ELT_ENVIRONMENT run tap-github-repo $$MELTANO_TARGET tap-github-org $$MELTANO_TARGET
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_GITHUB && meltano --environment $$ELT_ENVIRONMENT run tap-github-repo $$MELTANO_TARGET tap-github-org $$MELTANO_TARGET
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_FAA && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv $$MELTANO_TARGET
 
 transform:
 	cd $(SRC_DATA_PIPELINE) && dbt run --profiles-dir profile --target $$ELT_ENVIRONMENT
 	cd $(SRC_DATA_PIPELINE) && dbt test --profiles-dir profile --target $$ELT_ENVIRONMENT
+
+invalidate_caches:
 	# Invalidate GoodData caches after new data are delivered
 	cd $(SRC_DATA_PIPELINE) && dbt-gooddata upload_notification
 

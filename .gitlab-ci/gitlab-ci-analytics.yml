@@ -39,8 +39,6 @@ gooddata_dev:
   variables:
     ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
     SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-    SNOWFLAKE_USER: !reference [.envs, dev, SNOWFLAKE_USER]
-    SNOWFLAKE_PASS: !reference [.envs, dev, SNOWFLAKE_PASS]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, dev, GOODDATA_ENVIRONMENT_ID]
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
@@ -54,8 +52,6 @@ gooddata_staging:
   variables:
     ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
     SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-    SNOWFLAKE_USER: !reference [.envs, staging, SNOWFLAKE_USER]
-    SNOWFLAKE_PASS: !reference [.envs, staging, SNOWFLAKE_PASS]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
@@ -69,8 +65,6 @@ gooddata_prod:
   variables:
     ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
     SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-    SNOWFLAKE_USER: !reference [.envs, prod, SNOWFLAKE_USER]
-    SNOWFLAKE_PASS: !reference [.envs, prod, SNOWFLAKE_PASS]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'

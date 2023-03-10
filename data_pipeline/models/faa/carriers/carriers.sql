@@ -3,7 +3,7 @@ with carriers as (
     code,
     name,
     nickname
-  from {{ var("input_schema") }}.carriers
+  from {{ var("input_schema_faa") }}.carriers
 )
 
 select * from carriers

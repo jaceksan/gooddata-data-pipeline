@@ -15,8 +15,10 @@ data_products:
   - id: cicd_demo
     name: CICD demo
     environment_setup_id: default
-    model_id: github
+    model_ids:
+      - github
   - id: faa
     name: Federal Aviation Administration
     environment_setup_id: default
-    model_id: faa
+    model_ids:
+      - faa
