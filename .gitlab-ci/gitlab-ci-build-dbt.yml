@@ -1,0 +1,23 @@
+build_dbt:
+  extends:
+    - .docker
+  stage: build
+  script:
+    - cd "$CI_PROJECT_DIR"
+    - docker build
+      --build-arg DBT_VERSION=$DBT_VERSION
+      --build-arg IMAGES_WORKDIR=$IMAGES_WORKDIR
+      -f Dockerfile_dbt
+      -t $DBT_CUSTOM_IMAGE .
+    - docker push $DBT_CUSTOM_IMAGE
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - Dockerfile_dbt
+        - $SRC_DATA_PIPELINE/requirements-dbt.txt
+        - $SRC_DATA_PIPELINE/packages.yml
+        - $SRC_DATA_PIPELINE/dbt_project.yml
+        - .gitlab-ci/gitlab-ci-build-dbt.yml
+        - .gitlab-ci/gitlab-ci-build-base.yml
+        - .gitlab-ci.yml
+    - !reference [.base_rules, rules]
