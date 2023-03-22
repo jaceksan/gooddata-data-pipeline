@@ -1,7 +1,8 @@
 {{ config(
   indexes=[
     {'columns': ['commit_id'], 'unique': true},
-    {'columns': ['user_id'], 'unique': false}
+    {'columns': ['user_id'], 'unique': false},
+    {'columns': ['repo_id'], 'unique': false}
   ],
   materialized='incremental',
   unique_key='commit_id',

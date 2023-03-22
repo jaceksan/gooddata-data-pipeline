@@ -43,4 +43,5 @@ models:
 
 vars:
   "dbt_date:time_zone": "UTC"
-  input_schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
+  input_schema_github: "{{ env_var('INPUT_SCHEMA_GITHUB', 'github_input_stage') }}"
+  input_schema_faa: "{{ env_var('INPUT_SCHEMA_FAA', 'faa_input_stage') }}"

@@ -1,0 +1,22 @@
+build_meltano:
+  extends:
+    - .docker
+  stage: build
+  script:
+    - cd "$CI_PROJECT_DIR"
+    - docker build
+      --build-arg MELTANO_VERSION=$MELTANO_VERSION
+      --build-arg IMAGES_WORKDIR=$IMAGES_WORKDIR
+      -f Dockerfile_meltano
+      -t $MELTANO_CUSTOM_IMAGE .
+    - docker push $MELTANO_CUSTOM_IMAGE
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - Dockerfile_meltano
+        - $SRC_DATA_PIPELINE/requirements-meltano.txt
+        - $SRC_DATA_PIPELINE/meltano-plugins.yml
+        - .gitlab-ci/gitlab-ci-build-meltano.yml
+        - .gitlab-ci/gitlab-ci-build-base.yml
+        - .gitlab-ci.yml
+    - !reference [.base_rules, rules]

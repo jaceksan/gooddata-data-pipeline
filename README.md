@@ -95,29 +95,7 @@ deactivate
 ```
 
 ### Set environment variables
-```bash
-export TAP_GITHUB_AUTH_TOKEN="<your token>"
-export AWS_ACCESS_KEY_ID="<my AWS access key>"
-export AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
-# The folowing variables are valid for local environment started from docker-compose.yaml
-export DBT_PROFILE_DIR="profile"
-export ELT_ENVIRONMENT="cicd_dev_local"
-export MELTANO_TARGET="target-postgres"
-
-export GOODDATA_ENVIRONMENT_ID="development"
-unset GOODDATA_UPPER_CASE
-# Set GOODDATA_UPPER_CASE to --gooddata-upper-case when running against Snowflake and DB table/column names are upper-cased
-# export GOODDATA_UPPER_CASE="--gooddata-upper-case"
-export POSTGRES_HOST="localhost"
-export POSTGRES_PORT="5432"
-export POSTGRES_USER="demouser"
-export POSTGRES_PASS=demopass
-export POSTGRES_DBNAME=demo
-
-export INPUT_SCHEMA=cicd_input_stage
-export OUTPUT_SCHEMA=cicd_output_stage
-export DBT_TARGET_TITLE="CI/CD dev (local)"
-```
+See [.env.local](.env.local) example. Fill in sensitive variables.
 
 ### Extract and Load
 Meltano tool is used. Configuration file [meltano.yml](data_pipeline/meltano.yml) declares everything related.
@@ -141,7 +119,7 @@ make transform
 ```
 
 ### Generate GoodData semantic model from dbt models
-Folder [dbt-gooddata](data_pipeline/dbt-gooddata) contains a PoC of dbt plugin providing generators of GoodData semantic model objects from dbt models.
+Plugin [dbt-gooddata](https://github.com/jaceksan/dbt-gooddata) provides generators of GoodData semantic model objects from dbt models.
 In particular, it allows you to generate so called GoodData PDM (Physical Data Model), LDM(Logical Data Model, mapped to PDM), and metrics.
 It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 

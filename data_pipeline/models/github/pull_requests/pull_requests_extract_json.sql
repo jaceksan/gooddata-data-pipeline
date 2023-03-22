@@ -1,5 +1,5 @@
 {{ config(
-  schema=var('input_schema'),
+  schema=var('input_schema_github'),
   indexes=[
     {'columns': ['pull_request_number', 'repo_id'], 'unique': true},
     {'columns': ['user_id'], 'unique': false},
@@ -20,12 +20,12 @@ with using_clause as (
     title as pull_request_title,
     draft as pull_request_draft,
     state,
-    repo_id,
+    CAST(repo_id as INT) as repo_id,
     created_at,
     merged_at,
     closed_at,
     CAST(json_extract_path_text(to_json("{{ get_db_entity_name('user') }}"), 'id') as INT) as user_id
-  from {{ var("input_schema") }}.pull_requests
+  from {{ var("input_schema_github") }}.pull_requests
   {% if is_incremental() %}
     where created_at > ( select max(created_at) from {{ this }} )
   {% endif %}

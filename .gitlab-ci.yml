@@ -8,17 +8,19 @@ stages:
 # Global variables
 variables:
   SRC_DATA_PIPELINE: "data_pipeline"
+  DBT_PROFILE_DIR: "profile"
   DBT_PROFILE: "default"
   GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
-  GOODDATA_MODEL_IDS: "github faa"
   GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   SNOWFLAKE_ACCOUNT: "gooddata"
   SNOWFLAKE_USER: "cicd"
   SNOWFLAKE_WAREHOUSE: "DEMO_WH"
-  INPUT_SCHEMA: "cicd_input_stage"
+  INPUT_SCHEMA_FAA: "faa_input_stage"
+  INPUT_SCHEMA_GITHUB: "github_input_stage"
   OUTPUT_SCHEMA: "cicd_output_stage"
+  IMAGES_WORKDIR: "/project"
   MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
-  MELTANO_VERSION: "v2.12.0-python3.10"
+  MELTANO_VERSION: "v2.16.0-python3.10"
   MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
   MELTANO_STATE_AWS_BUCKET: "gdc-quiver"
   DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
@@ -53,256 +55,12 @@ variables:
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
-.docker:
-  extends:
-    - .base
-  image: docker:latest
-  services:
-    - docker:18.09.7-dind # older version that does not need demand TLS (see below)
-  before_script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-
-.extract_load:
-  extends:
-    - .base
-  # We build a custom image on top of the official Meltano image in this pipeline
-  # It contains Meltano itself, and all extractors/loaders
-  image:
-    name: "$MELTANO_CUSTOM_IMAGE"
-    entrypoint: [""]
-  stage: extract_load
-  variables:
-    TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
-    MELTANO_TARGET: "target-snowflake"
-    # CI_DEBUG_TRACE: "true"
-    GIT_STRATEGY: "none"
-  artifacts:
-    paths:
-      - .meltano/logs/**
-  before_script:
-    - cd /project
-  script:
-    - meltano --environment $ELT_ENVIRONMENT run tap-github-repo $MELTANO_TARGET tap-github-org $MELTANO_TARGET tap-s3-csv $MELTANO_TARGET
-
-.extract_load_changes:
-  changes:
-    - $SRC_DATA_PIPELINE/meltano.yml
-    - .gitlab-ci.yml
-
-.dbt:
-  extends:
-    - .base
-  # We build a custom image on top of the official dbt image in this pipeline
-  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
-  image:
-    name: "$DBT_CUSTOM_IMAGE"
-    entrypoint: [""]
-  stage: transform
-  before_script:
-    - cd /usr/app
-  script:
-    - dbt run --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
-    - dbt test --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
-    - dbt-gooddata deploy_models $GOODDATA_UPPER_CASE
-    - dbt-gooddata upload_notification
-
-.dbt_changes:
-  changes:
-    - $SRC_DATA_PIPELINE/models/**/*
-    - $SRC_DATA_PIPELINE/profile/**/*
-    - $SRC_DATA_PIPELINE/dbt_project.yml
-    - $SRC_DATA_PIPELINE/packages.yml
-    - $SRC_DATA_PIPELINE/requirements-dbt.txt
-    - $SRC_DATA_PIPELINE/dbt-gooddata/**/*
-    # Changing meltano.yml can affect the input stage data, so dbt transform must be executed too
-    - $SRC_DATA_PIPELINE/meltano.yml
-    - .gitlab-ci.yml
-
-.gooddata:
-  extends:
-    - .base
-  # We build a custom image on top of the official dbt image in this pipeline
-  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
-  image:
-    name: "$DBT_CUSTOM_IMAGE"
-    entrypoint: [""]
-  stage: analytics
-  before_script:
-    - cd /usr/app
-    # Compile to generate manifest.json, which is parsed by dbt-gooddata module
-    - dbt compile --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
-  script:
-    - dbt-gooddata deploy_analytics $GOODDATA_UPPER_CASE
-    - dbt-gooddata test_insights
-
-.gooddata_changes:
-  changes:
-    - $SRC_DATA_PIPELINE/macros/**/*
-    - $SRC_DATA_PIPELINE/models/**/*
-    - $SRC_DATA_PIPELINE/dbt-gooddata/**/*
-    - $SRC_DATA_PIPELINE/gooddata_layouts/**/*
-    - .gitlab-ci.yml
-
-#############
-# Pre-merge
-#############
-
-# Builds
-build_meltano:
-  extends:
-    - .docker
-  stage: build
-  script:
-    - cd "$CI_PROJECT_DIR"
-    - docker build
-      --push
-      --build-arg MELTANO_VERSION=$MELTANO_VERSION 
-      -f Dockerfile_meltano 
-      -t $MELTANO_CUSTOM_IMAGE .
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes:
-        - Dockerfile_meltano
-        - $SRC_DATA_PIPELINE/meltano.yml
-        - .gitlab-ci.yml
-    - !reference [.base_rules, rules]
-
-build_dbt:
-  extends:
-    - .docker
-  stage: build
-  script:
-    - cd "$CI_PROJECT_DIR"
-    - docker build
-      --push
-      --build-arg DBT_VERSION=$DBT_VERSION
-      -f Dockerfile_dbt
-      -t $DBT_CUSTOM_IMAGE .
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes:
-        - Dockerfile_dbt
-        - $SRC_DATA_PIPELINE/packages.yml
-        - $SRC_DATA_PIPELINE/dbt_project.yml
-        - $SRC_DATA_PIPELINE/profile/profiles.yml
-        - $SRC_DATA_PIPELINE/models
-        - $SRC_DATA_PIPELINE/macros
-        - .gitlab-ci.yml
-    - !reference [.base_rules, rules]
-
-# Data pipeline jobs
-extract_load_dev:
-  extends:
-    - .extract_load
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes: !reference [.extract_load_changes, changes]
-    - !reference [.base_rules, rules]
-
-dbt_dev:
-  extends:
-    - .dbt
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, dev, GOODDATA_ENVIRONMENT_ID]
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes: !reference [.dbt_changes, changes]
-    - !reference [.base_rules, rules]
-
-gooddata_dev:
-  extends:
-    - .gooddata
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, dev, GOODDATA_ENVIRONMENT_ID]
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
-
-#############
-# Post-merge
-#############
-
-extract_load_staging:
-  extends:
-    - .extract_load
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.extract_load_changes, changes]
-    - !reference [.base_rules, rules]
-
-dbt_staging:
-  extends:
-    - .dbt
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    - !reference [.base_rules, rules]
-
-gooddata_staging:
-  extends:
-    - .gooddata
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
-
-##########################
-# Post-merge - PROD
-##########################
-extract_load_prod:
-  extends:
-    - .extract_load
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.extract_load_changes, changes]
-    # The pipeline scheduler triggers only PROD jobs
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
-    - !reference [.base_rules, rules]
-
-dbt_prod:
-  extends:
-    - .dbt
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    # The pipeline scheduler triggers only PROD jobs
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL == "true"'
-    - !reference [.base_rules, rules]
-
-gooddata_prod:
-  extends:
-    - .gooddata
-  variables:
-    ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
+# Separate files for each use case
+# Prevent pipeline to be running if we change one gitlab-ci.yaml file containing all use cases
+include:
+  - ".gitlab-ci/gitlab-ci-build-base.yml"
+  - ".gitlab-ci/gitlab-ci-build-meltano.yml"
+  - ".gitlab-ci/gitlab-ci-build-dbt.yml"
+  - ".gitlab-ci/gitlab-ci-extract-load.yml"
+  - ".gitlab-ci/gitlab-ci-transform.yml"
+  - ".gitlab-ci/gitlab-ci-analytics.yml"
