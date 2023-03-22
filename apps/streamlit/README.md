@@ -33,4 +33,4 @@ The app relies on GoodData instance. Check [top-level README](../../README.md) f
 
 ## Deploy to cloud
 
-Deployment to Streamlit cloud is triggered by merge to public Git repository.
+Deployment to [render.com](render.com) cloud is triggered by merge to this public Git repository.

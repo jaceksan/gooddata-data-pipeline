@@ -138,6 +138,10 @@ class Charts:
             )
 
     def render_chart(self, df: pd.DataFrame) -> None:
+        view_by_for_chart = next(iter(self.catalog.selected_view_by), None)
+        if view_by_for_chart:
+            # Altair charts do not accept df.MultiIndex
+            df.reset_index(inplace=True)
         with st.container():
             self.display_skipped_entities()
             if self.chart_type == "Table":
@@ -145,10 +149,6 @@ class Charts:
                 st.dataframe(sub_df, use_container_width=True, height=500)
             else:
                 metric_for_chart = next(iter(self.catalog.selected_metrics), None)
-                view_by_for_chart = next(iter(self.catalog.selected_view_by), None)
-                if view_by_for_chart:
-                    # Altair charts do not accept df.MultiIndex
-                    df.reset_index(inplace=True)
                 if self.chart_type in ["Line chart", "Bar chart"]:
                     st.altair_chart(
                         AltairCharts(
