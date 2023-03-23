@@ -1,8 +1,9 @@
 {{ config(
-  schema=var('input_schema'),
+  schema=var('input_schema_github'),
   indexes=[
     {'columns': ['commit_id'], 'unique': true},
-    {'columns': ['user_id'], 'unique': false}
+    {'columns': ['user_id'], 'unique': false},
+    {'columns': ['repo_id'], 'unique': false}
   ],
   materialized='incremental',
   unique_key='commit_id',
@@ -19,8 +20,8 @@ with using_clause as (
     CAST(json_extract_path_text(to_json(commit), 'comment_count') as INT) as comment_count,
     commit_timestamp as created_at,
     CAST(json_extract_path_text(to_json(author), 'id') as INT) as user_id,
-    repo_id
-  from {{ var("input_schema") }}.commits
+    CAST(repo_id as INT) as repo_id
+  from {{ var("input_schema_github") }}.commits
   {% if is_incremental() %}
     where commit_timestamp > ( select max(created_at) from {{ this }} )
   {% endif %}

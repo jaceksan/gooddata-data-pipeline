@@ -15,7 +15,7 @@ with flights as (
     origin,
     dep_time,
     tail_num
-  from {{ var("input_schema") }}.flights
+  from {{ var("input_schema_faa") }}.flights
 )
 
 select * from flights

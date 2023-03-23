@@ -6,7 +6,7 @@ with pulls_repo_ids as (
 
 repos as (
     select
-      id as repo_id,
+      CAST(id as INT) as repo_id,
       html_url as repo_url,
       name as repo_name,
       stargazers_count,
@@ -14,7 +14,7 @@ repos as (
       -- Use a dedicated name (repo prefix) to do not confuse analytics
       -- From business perspective this is different created_at than in the case of commits/pull_requests
       created_at as repo_created_at
-    from {{ var("input_schema") }}.repositories
+    from {{ var("input_schema_github") }}.repositories
 ),
 
 final as (

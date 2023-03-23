@@ -3,7 +3,7 @@ with aircraft_models as (
     aircraft_model_code,
     manufacturer,
     cast(seats as int) as seats
-  from {{ var("input_schema") }}.aircraft_models
+  from {{ var("input_schema_faa") }}.aircraft_models
 )
 
 select * from aircraft_models
