@@ -5,7 +5,9 @@ import streamlit as st
 from app_ext.catalog_dropdown import CatalogDropDown
 from app_ext.state import AppState
 from gooddata_sdk import CatalogAttribute, CatalogFact
-from gooddata.catalog import Catalog
+
+from gooddata.__init import DEFAULT_EMPTY_SELECT_OPTION_ID
+from gooddata.catalog import Catalog, ids_with_default, get_title_for_id
 from streamlit_ext.altair_charts import AltairCharts
 
 FACT_AGG_FUNC = [
@@ -27,12 +29,14 @@ class Charts:
     def __init__(
         self, logger: Logger, app_state: AppState,
         catalog: Catalog,
+        clear_report_def: bool,
         filter_values: Optional[dict[str, list[str]]] = None,
     ) -> None:
         self.logger = logger
         self.app_state = app_state
         self.dropdown = CatalogDropDown(self.app_state)
         self.catalog = catalog
+        self.clear_report_def = clear_report_def
         self.filter_values = filter_values or []
 
     @property
@@ -45,6 +49,27 @@ class Charts:
     @property
     def chart_type(self):
         return self.app_state.get("chart_type") or "Table"
+
+    def render_stored_insights_picker(self) -> None:
+        options = ids_with_default(self.catalog.insights)
+        self.app_state.set("previous_selected_insight", self.app_state.get("selected_insight"))
+        kwargs = {
+            "label": "Stored reports",
+            "options": options,
+            "format_func": lambda x: get_title_for_id(self.catalog.insights, x),
+            "key": "selected_insight"
+        }
+        if self.clear_report_def:
+            default_option_index = options.index(DEFAULT_EMPTY_SELECT_OPTION_ID)
+            kwargs["index"] = default_option_index
+            self.app_state.set("selected_insight", DEFAULT_EMPTY_SELECT_OPTION_ID)
+
+        st.selectbox(**kwargs)
+
+        # if self.clear_report_def:
+        #     self.app_state.set("selected_insight", DEFAULT_EMPTY_SELECT_OPTION_ID)
+        # else:
+        #     self.app_state.set("selected_insight", insight_id)
 
     def render_filter_attributes(self):
         # Non DATE attributes. TODO - date filters
@@ -102,64 +127,69 @@ class Charts:
             with columns[i]:
                 st.checkbox(label=f"{ldm_object.title} DESC", key=f"selected_sort_by_desc__{ldm_object.obj_id}")
 
-    def render_chart_header(self):
+    def render_chart_header_type_stored_insights(self):
         with st.container():
-            columns = st.columns((2, 10))
+            columns = st.columns((2, 8))
             with columns[0]:
                 st.selectbox(label="Chart type", options=self.chart_types, key="chart_type")
             with columns[1]:
-                if self.catalog.selected_metrics:
-                    with st.container():
-                        self.render_metric_functions()
+                self.render_stored_insights_picker()
 
+    def render_chart_header_filters_metric_func_sort_by(self):
         with st.container():
-            columns = st.columns((2, 10))
+            self.render_metric_functions()
+        with st.container():
+            columns = st.columns((2, 8))
             with columns[0]:
                 self.render_filter_attributes()
-
-                if self.chart_type == "Table":
-                    self.render_sort_by()
-
             with columns[1]:
                 if self.app_state.get("selected_filter_attributes"):
                     self.render_attribute_filter_values()
-
+        with st.container():
+            columns = st.columns((2, 8))
+            with columns[0]:
+                if self.chart_type == "Table":
+                    self.render_sort_by()
+            with columns[1]:
                 if self.catalog.selected_sort_by:
                     self.render_sort_by_methods()
 
 
     def display_skipped_entities(self) -> None:
-        if self.chart_type != "Table" and len(self.catalog.selected_metrics) > 1 or len(self.catalog.selected_view_by) > 1:
+        if self.chart_type != "Table" and (len(self.catalog.selected_metrics) > 1 or len(self.catalog.selected_view_by) > 1):
             skipped_metrics = [x.title for x in self.catalog.selected_metrics[1:]]
             skipped_view_by = [x.title for x in self.catalog.selected_view_by[1:]]
-            st.info(
-                "These selected catalog entities cannot be visualized in selected type of chart: "
-                f"{skipped_metrics=} {skipped_view_by=}"
-            )
+            msg = f"The following selected entities cannot be visualized in `{self.chart_type}`:\n"
+            if skipped_metrics:
+                msg += f"- Metrics: {', '.join(skipped_metrics)}\n"
+            if skipped_view_by:
+                msg += f"- View by: {', '.join(skipped_view_by)}\n"
 
-    def render_chart(self, df: pd.DataFrame) -> None:
-        view_by_for_chart = next(iter(self.catalog.selected_view_by), None)
-        if view_by_for_chart:
+            st.info(msg)
+
+    def render_chart(self, df: pd.DataFrame, metrics_with_functions: dict[str, str]) -> None:
+        first_view_by = next(iter(self.catalog.selected_view_by), None)
+        if first_view_by:
             # Altair charts do not accept df.MultiIndex
             df.reset_index(inplace=True)
         with st.container():
-            self.display_skipped_entities()
             if self.chart_type == "Table":
                 sub_df = self.app_state.handle_paging(df)
-                st.dataframe(sub_df, use_container_width=True, height=500)
+                # st.dataframe(sub_df, use_container_width=True, height=500)
+                st.write(sub_df)
             else:
                 metric_for_chart = next(iter(self.catalog.selected_metrics), None)
+                altair_charts = AltairCharts(
+                    df, self.chart_type, first_view_by, metric_for_chart, metrics_with_functions
+                )
                 if self.chart_type in ["Line chart", "Bar chart"]:
                     st.altair_chart(
-                        AltairCharts(
-                            df, self.chart_type, view_by_for_chart, metric_for_chart
-                        ).generate_line_bar_chart(self.catalog.selected_segmented_by),
+                        altair_charts.generate_line_bar_chart(self.catalog.selected_segmented_by),
                         use_container_width=True
                     )
                 elif self.chart_type == "Donut chart":
                     st.altair_chart(
-                        AltairCharts(
-                            df, self.chart_type, view_by_for_chart, metric_for_chart
-                        ).generate_donut_chart(),
+                        altair_charts.generate_donut_chart(),
                         use_container_width=True
                     )
+            self.display_skipped_entities()
