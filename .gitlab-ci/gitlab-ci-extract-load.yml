@@ -11,6 +11,7 @@
   stage: extract_load
   variables:
     MELTANO_TARGET: "target-snowflake"
+    FULL_REFRESH: "${FULL_REFRESH}"
   parallel:
     matrix:
       - MELTANO_SOURCE: tap-github-repo
@@ -27,8 +28,9 @@
     - cd $SRC_DATA_PIPELINE
     # Meltano plugins are installed during build of docker image to workdir
     - ln -s ${IMAGES_WORKDIR}/.meltano .meltano
+    - if [ "$FULL_REFRESH" == "true" ]; then export FR_ARG="--full-refresh"; else export FR_ARG=""; fi
   script:
-    - meltano --environment $ELT_ENVIRONMENT run $MELTANO_SOURCE $MELTANO_TARGET
+    - meltano --environment $ELT_ENVIRONMENT run $MELTANO_SOURCE $MELTANO_TARGET $FR_ARG
 
 .extract_load_changes:
   changes:
@@ -51,6 +53,7 @@ extract_load_dev:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.extract_load_changes, changes]
     - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
 
 # post-merge
 extract_load_staging:
@@ -65,6 +68,7 @@ extract_load_staging:
     # The pipeline scheduler. Run ELT jobs regularly to load new data.
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
     - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
 
 # merge to prod branch
 extract_load_prod:
@@ -79,3 +83,4 @@ extract_load_prod:
     # The pipeline scheduler. Run ELT jobs regularly to load new data.
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
     - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]

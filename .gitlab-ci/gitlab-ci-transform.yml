@@ -13,8 +13,9 @@
     - cd $SRC_DATA_PIPELINE
     # dbt packages are installed during build of docker image to workdir
     - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
+    - if [ "$FULL_REFRESH" == "true" ]; then export FR_ARG="--full-refresh"; else export FR_ARG=""; fi
   script:
-    - dbt run --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
+    - dbt run --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT $FR_ARG
     - dbt test --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
     - dbt-gooddata deploy_models $GOODDATA_UPPER_CASE
     # Invalidates GoodData caches
@@ -47,6 +48,7 @@ dbt_dev:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]
     - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
 
 # post-merge
 dbt_staging:
@@ -61,6 +63,7 @@ dbt_staging:
       changes: !reference [.dbt_changes, changes]
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
     - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
 
 # merge to prod branch
 dbt_prod:
@@ -76,3 +79,4 @@ dbt_prod:
     # The pipeline scheduler triggers only PROD jobs
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
     - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
