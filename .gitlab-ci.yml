@@ -55,6 +55,11 @@ variables:
     - if: '$RUN_ALL_JOBS == "true"'
       when: manual
 
+.elt_rules:
+  rules:
+    - if: '$FULL_REFRESH == "true"'
+      when: manual
+
 # Separate files for each use case
 # Prevent pipeline to be running if we change one gitlab-ci.yaml file containing all use cases
 include:
