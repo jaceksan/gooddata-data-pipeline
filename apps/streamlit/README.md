@@ -27,10 +27,16 @@ source .env.local
 # --debug provides more messages printed to the console from which you execute this statement
 cd apps/streamlit
 streamlit run app.py -- --debug
+# Enable clear GD caches button
+streamlit run app.py -- --debug gooddata-allow-clear-caches
 ```
 
 The app relies on GoodData instance. Check [top-level README](../../README.md) for how to start GoodData locally from docker-compose.
 
 ## Deploy to cloud
 
-Deployment to [render.com](render.com) cloud is triggered by merge to this public Git repository.
+Deployment to [render.com](render.com) cloud is triggered by merge to this public Git repository:
+- `STAGING` from `main` branch: https://streamlit-gooddata-stg.onrender.com/
+- `PROD` from `prod` branch: https://streamlit-gooddata.onrender.com/
+
+- Additionally, it is possible to trigger the deployment by a render.com hook URL (DEV env, before merge).

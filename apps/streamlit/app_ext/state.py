@@ -1,5 +1,5 @@
 from logging import Logger
-from typing import Union
+from typing import Union, Optional
 
 import streamlit as st
 import pandas as pd
@@ -25,6 +25,8 @@ class AppState:
     def reset_state(self):
         self.logger.debug("RESET STATE")
         st.session_state.page_number = 1
+        if self.get("selected_insight"):
+            st.session_state.selected_insight = DEFAULT_EMPTY_SELECT_OPTION_ID
         if self.get('selected_metrics'):
             st.session_state.selected_metrics = []
         for metric_id in self.get('selected_metric', []):
@@ -43,7 +45,7 @@ class AppState:
         return option_name and option_name != DEFAULT_EMPTY_SELECT_OPTION_ID
 
     @staticmethod
-    def set(option_name: str, value: Union[bool, int, str, list[str]]) -> None:
+    def set(option_name: str, value: Optional[Union[bool, int, str, list[str]]]) -> None:
         st.session_state[option_name] = value
 
     @staticmethod
@@ -65,6 +67,27 @@ class AppState:
             return selected_view_by + [selected_segmented_by]
         else:
             return selected_view_by
+
+    def selected_first_view_by_segmented_by(self) -> list[str]:
+        result = []
+        view_by = next(iter([x for x in self.get("selected_view_by")]))
+        if view_by:
+            result.append(view_by)
+        segmented_by = self.get("selected_segmented_by", None)
+        if segmented_by and segmented_by != DEFAULT_EMPTY_SELECT_OPTION_ID:
+            result.append(segmented_by)
+        return result
+
+    def selected_first_view_by(self) -> list[str]:
+        first = self.selected_first_view_by_segmented_by()
+        if first:
+            return [self.selected_first_view_by_segmented_by()[0]]
+        else:
+            return []
+
+    def selected_first_metric_with_function(self) -> dict[str, str]:
+        selected_first_metric = self.get("selected_metrics")[0]
+        return {selected_first_metric: self.selected_metric_ids_with_functions()[selected_first_metric]}
 
     def selected_metric_ids_with_functions(self) -> dict[str, str]:
         result = {}

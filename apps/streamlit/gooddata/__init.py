@@ -1,6 +1,8 @@
 from time import time
 from logging import Logger
 import re
+from typing import Optional
+
 from gooddata_sdk import (
     ExecutionDefinition, Attribute, SimpleMetric, ObjId,
     PositiveAttributeFilter, NegativeAttributeFilter
@@ -28,9 +30,17 @@ def log_duration(logger: Logger, method_name: str, start: float) -> None:
     logger.info(f"{method_name} duration={duration(start)}")
 
 
-def get_local_id(object_id: str) -> str:
+def get_local_id_metric(object_id: str, metric_func: Optional[str]) -> str:
     re_local_id = re.compile(r'[^a-z0-9]', re.I)
-    return re_local_id.sub('_', object_id)
+    base = re_local_id.sub('_', object_id)
+    if metric_func:
+        return f"{metric_func}_{base}"
+    else:
+        return base
+
+def get_local_id_attribute(object_id: str) -> str:
+    re_local_id = re.compile(r'[^a-z0-9]', re.I)
+    return "a_" + re_local_id.sub('_', object_id)
 
 def get_obj_id_from_str(obj_id: str) -> ObjId:
     parts = obj_id.split("/")
@@ -41,12 +51,18 @@ def generate_metrics_for_exec_def(metrics_with_func: dict[str, str]) -> list[Sim
     for metric_id, metric_func in metrics_with_func.items():
         kwargs = {
             "item": get_obj_id_from_str(metric_id),
-            "local_id": get_local_id(metric_id),
+            "local_id": get_local_id_metric(metric_id, metric_func),
         }
         if metric_func:
             kwargs["aggregation"] = metric_func
         result.append(SimpleMetric(**kwargs))
     return result
+
+def generate_attributes(attribute_ids: list[str]) -> list[Attribute]:
+    return [
+        Attribute(label=get_obj_id_from_str(a), local_id=get_local_id_attribute(a))
+        for a in attribute_ids
+    ]
 
 def generate_filters(filter_values: dict[str, list[str]] = None) -> list[PositiveAttributeFilter | NegativeAttributeFilter]:
     # TODO - NegativeAttributeFilter
@@ -65,8 +81,8 @@ def generate_execution_definition(
     attribute_ids: list[str],
     filter_values: dict[str, list[str]] = None
 ):
-    attributes = [Attribute(label=get_obj_id_from_str(a), local_id=get_local_id(a)) for a in attribute_ids]
-    dim = [get_local_id(a) for a in attribute_ids]
+    attributes = generate_attributes(attribute_ids)
+    dim = [get_local_id_attribute(a) for a in attribute_ids]
     metrics = generate_metrics_for_exec_def(metrics_with_func)
     filters = generate_filters(filter_values)
 
@@ -74,9 +90,11 @@ def generate_execution_definition(
         dimensions = [dim, ["measureGroup"]]
     else:
         dimensions = [dim]
-    return ExecutionDefinition(
+    result = ExecutionDefinition(
         attributes=attributes,
         metrics=metrics,
         filters=filters,
         dimensions=dimensions,
     )
+    print(f"{result.as_api_model()=}")
+    return result
