@@ -1,3 +1,4 @@
+import os
 from logging import Logger
 import streamlit as st
 from app_ext.__init import APP_MODES, AppMode
@@ -46,13 +47,17 @@ def main():
     render_application_mode(app_state)
 
     with st.sidebar.container():
-        cache_columns = st.sidebar.columns(2)
+        column_count = 1
+        if args.gooddata_allow_clear_caches:
+            column_count += 1
+        cache_columns = st.sidebar.columns(column_count)
         with cache_columns[0]:
-            if st.button("Clear GD cache"):
-                invalidate_gd_caches(logger, gd_sdk, st.session_state.workspace_id)
-        with cache_columns[1]:
             if st.button("Clear app cache"):
                 st.cache_data.clear()
+        if args.gooddata_allow_clear_caches:
+            with cache_columns[1]:
+                if st.button("Clear GD cache"):
+                    invalidate_gd_caches(logger, gd_sdk, st.session_state.workspace_id)
 
     with st.sidebar.container():
         if st.button("Clear report def"):

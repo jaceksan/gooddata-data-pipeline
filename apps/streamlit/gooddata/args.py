@@ -24,4 +24,6 @@ def parse_arguments(description: str):
                         help="Override hostname, if necessary. "
                              "When you connect to different hostname than where GoodData is running(proxies)",
                         default=os.getenv("GOODDATA_OVERRIDE_HOST"))
+    parser.add_argument("-gacc", "--gooddata-allow-clear-caches", action='store_true', default=False,
+                        help="Allow button for clearing GoodData caches.")
     return parser.parse_args()
