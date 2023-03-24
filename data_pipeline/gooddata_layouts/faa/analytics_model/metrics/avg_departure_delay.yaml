@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT AVG({fact/dep_delay})
+description: ''
+id: avg_departure_delay
+title: Avg Departure Delay

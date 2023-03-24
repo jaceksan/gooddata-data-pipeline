@@ -1,0 +1,8 @@
+content:
+  format: '#,##0'
+  maql: "SELECT AVG({fact/flight_time})\n  WHERE (\n  SELECT AVG({fact/distance})\n\
+    \    WHERE (\n    SELECT RANK(SUM({fact/dep_delay})) WITHIN({label/manufacturer})\n\
+    \    ) < 5\n  ) > 750"
+description: ''
+id: complex_metric_example
+title: Complex metric example

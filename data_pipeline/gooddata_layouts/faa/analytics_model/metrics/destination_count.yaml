@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({dataset/airports_destination})
+description: ''
+id: destination_count
+title: Destination count

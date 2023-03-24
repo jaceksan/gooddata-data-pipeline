@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: 'SELECT COUNT({dataset/flights}) BY {label/code} ALL OTHER '
+description: ''
+id: flight_count_-_carriers
+title: Flight count - carriers

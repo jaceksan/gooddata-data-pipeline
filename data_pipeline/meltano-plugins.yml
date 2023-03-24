@@ -1,0 +1,21 @@
+version: 1
+default_environment: cicd_dev_local
+project_id: 04722b1d-768e-4e37-bc49-8b59d673bbdd
+plugins:
+  extractors:
+    - name: tap-github
+      variant: meltanolabs
+      pip_url: git+https://github.com/MeltanoLabs/tap-github.git
+    - name: tap-s3-csv
+      variant: transferwise
+      pip_url: pipelinewise-tap-s3-csv
+  loaders:
+    - name: target-jsonl
+      variant: andyh1203
+      pip_url: target-jsonl
+    - name: target-postgres
+      variant: transferwise
+      pip_url: git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
+    - name: target-snowflake
+      variant: transferwise
+      pip_url: pipelinewise-target-snowflake

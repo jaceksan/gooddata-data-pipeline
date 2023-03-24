@@ -1,0 +1,39 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: airport_count
+                    type: metric
+            localIdentifier: 36845878d4b644d0a59fabbc29e01156
+            title: Airport count
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: state_destination
+                type: label
+            localIdentifier: 250cc69ed230447abf4de155d78b749f
+      localIdentifier: view
+  filters:
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: state_destination
+            type: label
+        notIn:
+          values:
+            - ''
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+description: Airports - by state
+id: airports_by_state
+title: Airports - by state

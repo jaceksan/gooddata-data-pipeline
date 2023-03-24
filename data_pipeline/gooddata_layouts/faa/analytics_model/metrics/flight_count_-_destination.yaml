@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: 'SELECT {metric/flight_count_-_top_x} BY {label/code_destination} ALL OTHER '
+description: ''
+id: flight_count_-_destination
+title: Flight count - destination

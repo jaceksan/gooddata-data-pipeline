@@ -1,0 +1,31 @@
+version: 2
+
+# TODO - no way to JOIN with pull_requests so far
+
+models:
+  - name: reviews
+    description: "Reviews"
+    meta:
+      gooddata:
+        model_id: github
+    columns:
+      - name: review_id
+        description: "Review ID"
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: pull_request_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('pull_requests')
+              pk_column_name: pull_request_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: pull_requests
+      - name: created_at
+        description: "Created at"
+      - name: review_state
+        description: "Review state"

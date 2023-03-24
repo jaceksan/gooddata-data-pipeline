@@ -6,10 +6,17 @@ It realizes the following steps:
 - loads data into a warehouse ([Meltano](https://meltano.com/))
 - transforms data in the warehouse in a multi-dimensional model ready for analytics ([dbt](https://www.getdbt.com/))
 - generates semantic model from physical model ([GoodData](https://www.gooddata.com/) model from [dbt](https://www.getdbt.com/) models)
+- deploys analytics model (metrics, insights, dashboards) from locally stored [layout files](data_pipeline/gooddata_layouts/)
+- deploys UI data apps coupled with the data pipeline. Read more details in [apps folder](apps/) 
 
-Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/).
+Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/) (except the data apps).
+Data apps are delivered by [render.com](render.com) service after merge to `main` branch (staging), and after merge to `prod` branch(production).
+
+Generally, you can change the whole data pipeline and UI apps by a single commit, and deliver everything consistently.
 
 ![Demo architecture](docs/MDS.png "Demo architecture")
+
+Latest changes are highlighted by the green color. 
 
 ## If you need help
 This README is just a brief how-to, it does not contain all details. If you need help, do not hesitate to ask in our [Slack community](https://www.gooddata.com/slack/).
@@ -22,32 +29,38 @@ This README is just a brief how-to, it does not contain all details. If you need
 The following articles are based on this project:
 - [How To Build a Modern Data Pipeline](https://medium.com/gooddata-developers/how-to-build-a-modern-data-pipeline-cfdd9d14fbea)
 - [How GoodData Integrates With dbt](https://medium.com/gooddata-developers/how-gooddata-integrates-with-dbt-a0c6f207eca3)
-- TODO - Meltano article
+- [Extending CI/CD data pipeline with Meltano](https://medium.com/gooddata-developers/extending-ci-cd-data-pipeline-with-meltano-7de3bce74f57)
+- [Analytics Inside Virtual Reality: Too Soon?](TODO)
 
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
+It utilizes the [GoodData Community Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available for free in DockerHub.
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
 docker-compose build
-# Start GoodData
-docker-compose up -d gooddata-cn-ce
-# Wait 1-2 minutes to the service successfully starts
+# Start GoodData, and Minio(AWS S3 Meltano state backend)
+docker-compose up -d gooddata-cn-ce minio minio-bootstrap
+# Wait 1-2 minutes to services successfully start
 
-# Bootstrap DB schemas
-docker-compose up -d bootstrap_db
+# Allow https://localhost:8443 in CORS
+# This enables testing of locally started UI apps based on UI.SDK (examples in /apps folder) 
+docker-compose up bootstrap_origins
 
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
-docker-compose up -d extract_load
+# Set AWS S3 credentials to be able to ELT the FAA data (stored in public dataset)
+export AWS_ACCESS_KEY_ID="<my AWS access key>"
+export AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
+docker-compose up extract_load
 
 # Transform model to be ready for analytics, with dbt
 # Also, GoodData models are generated from dbt models and pushed to GoodData  
-docker-compose up -d transform  
+docker-compose up transform  
 
 # Deliver analytics artefacts(metrics, visualizations, dashboards, ...) into GoodData
-docker-compose up -d analytics
+docker-compose up analytics
 ```
 
 Then you can move to Gitlab, forking this repository and run the pipeline against your environments:
@@ -56,12 +69,13 @@ Then you can move to Gitlab, forking this repository and run the pipeline agains
         and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
 - Create a public PostgreSQL or Snowflake instance
   - Personally, I found [bit.io](https://bit.io/) as the only free-forever PostgreSQL offering.
-  - Create required databases (for dev/staging/prod) and schema `meltano` for Meltano state backend.
+  - Create required databases (for dev/staging/prod).
  
 You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
-- GITHUB_TOKEN
+- TAP_GITHUB_AUTH_TOKEN
 - GOODDATA_HOST - host name pointing to the GoodData instance
 - GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
+- MELTANO_STATE_AWS_ACCESS_KEY_ID/MELTANO_STATE_AWS_SECRET_ACCESS_KEY - Meltano stores its state to AWS S3, and needs these credentials
 
 The rest of environment variables (Github repos to be crawled, DB endpoints, ...) can be configured in [.gitlab-ci.yml](.gitlab-ci.yml)(section `variables`).
 
@@ -81,32 +95,10 @@ deactivate
 ```
 
 ### Set environment variables
-```bash
-export TAP_GITHUB_AUTH_TOKEN="<your token>"
-# The folowing variables are valid for local environment started from docker-compose.yaml
-export DBT_PROFILE_DIR="profile"
-export ELT_ENVIRONMENT="cicd_dev_local"
-export MELTANO_TARGET="target-postgres"
-
-unset GOODDATA_UPPER_CASE
-# Set GOODDATA_UPPER_CASE to --gooddata-upper-case when running against Snowflake and DB table/column names are upper-cased
-# export GOODDATA_UPPER_CASE="--gooddata-upper-case"
-export POSTGRES_HOST="localhost"
-export POSTGRES_PORT="5432"
-export POSTGRES_USER="demouser"
-export POSTGRES_PASS=demopass
-export POSTGRES_DBNAME=demo
-
-export INPUT_SCHEMA=cicd_input_stage
-export OUTPUT_SCHEMA=cicd_output_stage
-export DBT_TARGET_TITLE="CI/CD dev (local)"
-export MELTANO_DATABASE_URI="postgresql://$POSTGRES_USER:$POSTGRES_PASS@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DBNAME?options=-csearch_path%3Dmeltano"
-export GOODDATA_WORKSPACE_ID=cicd_demo_development
-export GOODDATA_WORKSPACE_TITLE="CICD demo (dev)"
-```
+See [.env.local](.env.local) example. Fill in sensitive variables.
 
 ### Extract and Load
-Meltano tool is used. Configuration file [meltano.yml](src/meltano.yml) declares everything related.
+Meltano tool is used. Configuration file [meltano.yml](data_pipeline/meltano.yml) declares everything related.
 
 How to run:
 ```bash
@@ -119,7 +111,7 @@ It is running incrementally, it stores its state into a dedicated schema `meltan
 You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 ### Data transformation
-The folder `src/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
+The folder `data_pipeline/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 How to run:
 ```bash
@@ -127,7 +119,7 @@ make transform
 ```
 
 ### Generate GoodData semantic model from dbt models
-Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing generators of GoodData semantic model objects from dbt models.
+Plugin [dbt-gooddata](https://github.com/jaceksan/dbt-gooddata) provides generators of GoodData semantic model objects from dbt models.
 In particular, it allows you to generate so called GoodData PDM (Physical Data Model), LDM(Logical Data Model, mapped to PDM), and metrics.
 It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 
@@ -156,11 +148,11 @@ dbt --profiles-dir profile run-operation generate_source \
 ```
 
 # Analytics
-Folder [dbt-gooddata](src/dbt-gooddata) contains a PoC of dbt plugin providing tools for loading/storing GoodData analytics model (metrics, insights, dashboards).
+Folder [dbt-gooddata](data_pipeline/dbt-gooddata) contains a PoC of dbt plugin providing tools for loading/storing GoodData analytics model (metrics, insights, dashboards).
 It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 
 ## Load analytics model to GoodData
-Analytics model is stored in [gooddata_layouts](src/gooddata_layouts) folder.
+Analytics model is stored in [gooddata_layouts](data_pipeline/gooddata_layouts) folder.
 
 The following command reads the layout, and loads it into the GooData instance:
 ```bash
@@ -170,10 +162,10 @@ make deploy_analytics
 It not only loads the stored layout, but it also reads metrics from dbt models and loads them too.
 
 ## Store analytics model
-Anytime you can fetch analytics model from the GoodData instance and store it to [gooddata_layouts](src/gooddata_layouts) folder.
+Anytime you can fetch analytics model from the GoodData instance and store it to [gooddata_layouts](data_pipeline/gooddata_layouts) folder.
 It makes sense to do some operations by editing stored layout files, but other in GoodData UI applications.
 For instance, it is more convenient to build more complex GoodData MAQL metrics in the Metric Editor UI application.
-Then, to persist such metrics to [gooddata_layouts](src/gooddata_layouts) folder, run the following command:
+Then, to persist such metrics to [gooddata_layouts](data_pipeline/gooddata_layouts) folder, run the following command:
 
 ```bash
 make store_analytics
@@ -195,6 +187,13 @@ Use the following command:
 ```bash
 make test_insights
 ```
+
+## Applications
+
+Applications are stored in [apps](apps/) folder. They are not delivered by the Gitlab pipeline, but by render.com service watching this repo.
+
+### VR demo
+[README](apps/vr_analytics/)
 
 ---
 

@@ -1,0 +1,61 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count
+                    type: metric
+            localIdentifier: d000e710b3dd4704a24d682d01b35ee0
+            title: Flight count
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_distance
+                    type: metric
+            localIdentifier: 2af4bac2edd74efba5e19b1d269dbb1e
+            title: Total distance
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: avg_departure_delay
+                    type: metric
+            localIdentifier: 5a80cd8cdcc84655930ffb25256dc2ea
+            title: Avg Departure Delay
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: dep_time.quarter
+                type: label
+            localIdentifier: b2b2c1fb47f240e2b38f68d4d5262c4d
+      localIdentifier: attribute
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: dep_time.dayOfWeek
+                type: label
+            localIdentifier: 1163a1d93413403dbca8a416c985390e
+      localIdentifier: columns
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: b2b2c1fb47f240e2b38f68d4d5262c4d
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: flight_stats_in_time
+title: Flight stats in time

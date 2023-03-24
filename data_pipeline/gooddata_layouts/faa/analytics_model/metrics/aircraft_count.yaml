@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({dataset/aircraft})
+description: ''
+id: aircraft_count
+title: Aircraft count
