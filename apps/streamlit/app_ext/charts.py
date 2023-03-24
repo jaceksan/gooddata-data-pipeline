@@ -82,7 +82,7 @@ class Charts:
                     "Filter attributes"
                 )
 
-    def render_attribute_filter_values(self) -> None:
+    def render_filter_attribute_values(self) -> None:
         columns = st.columns(len(self.catalog.selected_filter_attributes))
         for i, attribute in enumerate(self.catalog.selected_filter_attributes):
             with columns[i]:
@@ -144,7 +144,7 @@ class Charts:
                 self.render_filter_attributes()
             with columns[1]:
                 if self.app_state.get("selected_filter_attributes"):
-                    self.render_attribute_filter_values()
+                    self.render_filter_attribute_values()
         with st.container():
             columns = st.columns((2, 8))
             with columns[0]:
