@@ -262,6 +262,7 @@ def get_workspaces(_logger: Logger, _sdk: GoodDataSdk) -> list[CatalogWorkspace]
 
 @st.cache_data
 def get_full_catalog(_logger: Logger, _sdk: GoodDataSdk, workspace_id: str) -> CatalogWorkspaceContent:
+    # TODO - extend entities returned by this method and use only this method (instead of get_attributes, ...)
     start = time()
     result = _sdk.catalog_workspace_content.get_full_catalog(workspace_id)
     #valid_objects = result.catalog_with_valid_objects()
