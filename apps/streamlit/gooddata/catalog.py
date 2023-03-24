@@ -330,12 +330,15 @@ def get_title_for_id(objects: list[Insight], object_id: str) -> str:
         if g.id == object_id:
             return g.title
 
-def get_title_for_obj_id(objects: ObjectsWithTitle, object_id: str) -> str:
+def get_title_for_obj_id(objects: ObjectsWithTitle, object_id: str, title_obj_type: bool = False) -> str:
     if object_id == DEFAULT_EMPTY_SELECT_OPTION_ID:
         return DEFAULT_EMPTY_SELECT_OPTION_TITLE
     for g in objects:
         if str(g.obj_id) == object_id:
-            return g.title
+            if title_obj_type:
+                return g.title + f" ({g.type})"
+            else:
+                return g.title
 
 def get_name_for_id(objects: ObjectsWithName, object_id: str) -> str:
     if object_id == DEFAULT_EMPTY_SELECT_OPTION_ID:

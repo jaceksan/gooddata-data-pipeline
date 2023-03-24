@@ -72,7 +72,8 @@ class InsightBuilder:
         with st.sidebar.container():
             self.dropdown.render_multiselect(
                 catalog.filtered_all, "selected_metrics", "Metrics",
-                help_text=catalog.filtered_objects.report_removed_metrics
+                help_text=catalog.filtered_objects.report_removed_metrics,
+                title_obj_type=True,
             )
         with st.sidebar.container():
             self.dropdown.render_multiselect(
