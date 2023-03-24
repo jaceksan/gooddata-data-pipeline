@@ -96,5 +96,4 @@ def generate_execution_definition(
         filters=filters,
         dimensions=dimensions,
     )
-    print(f"{result.as_api_model()=}")
     return result
