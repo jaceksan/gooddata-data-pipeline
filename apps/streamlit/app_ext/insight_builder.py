@@ -47,10 +47,11 @@ class InsightBuilder:
         return False
 
     def update_catalog_by_selected_insight(self, catalog: Catalog, clear_report_def: bool):
-        previous_insight_id = self.app_state.get("previous_insight_id")
+        previous_insight_id = self.app_state.get("previous_selected_insight")
         insight_id = self.app_state.get("selected_insight")
         # Update catalog by selected insight only if the insight picker is used (value is changed)
         if insight_id not in [DEFAULT_EMPTY_SELECT_OPTION_ID, previous_insight_id]:
+            # Set Insight in the dropdown to another value
             metrics, metrics_with_func = catalog.insight_metrics(insight_id)
             self.app_state.set("selected_metrics", [str(x.obj_id) for x in metrics])
             # TODO - how to distinguish view by and segmented by attributes Insight object?
@@ -61,9 +62,8 @@ class InsightBuilder:
             # We overriden selected objects from insight. We have to filter catalog by the insight objects(context)
             catalog.set_filtered_objects()
         elif (previous_insight_id in [x.id for x in catalog.insights] and insight_id == DEFAULT_EMPTY_SELECT_OPTION_ID) or clear_report_def:
-            self.app_state.set("selected_metrics", [])
-            self.app_state.set("selected_view_by", [])
-            self.app_state.set("selected_segmented_by", DEFAULT_EMPTY_SELECT_OPTION_ID)
+            # Unset Insight in the dropdown
+            self.app_state.reset_state()
             catalog.set_filtered_objects()
 
     def render_catalog(self, catalog: Catalog, clear_report_def: bool) -> None:
