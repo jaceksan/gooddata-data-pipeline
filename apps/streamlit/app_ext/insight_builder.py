@@ -99,10 +99,10 @@ class InsightBuilder:
             filter_values[attribute_obj_id] = values
         return filter_values
 
-    def only_date_attributes_selected(self, attributes: list[CatalogAttribute]) -> bool:
+    def only_date_attributes_selected(self, catalog: Catalog) -> bool:
         # Check if only date attributes are selected, without metrics/facts
         # Enumerating date attributes only is tricky, because the date dimension can be connected to various datasets
-        date_attributes = [a.id for a in attributes if a.granularity]
+        date_attributes = catalog.get_date_attributes(catalog.filtered_attributes)
         selected_date_attributes = [a for a in self.app_state.selected_attribute_ids() if a in date_attributes]
         return not self.app_state.get('selected_facts') \
             and not self.app_state.get('selected_metrics') \
@@ -147,7 +147,7 @@ class InsightBuilder:
         )
         charts.render_chart_header_type_stored_insights()
 
-        if self.only_date_attributes_selected(catalog.filtered_attributes):
+        if self.only_date_attributes_selected(catalog):
             st.error("Enumerating DATE attribute(s) only is not yet supported.")
             st.info("Add a non-date attribute or fact/metric.")
         elif self.app_state.is_anything_selected():

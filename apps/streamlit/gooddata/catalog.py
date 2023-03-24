@@ -183,6 +183,14 @@ class Catalog:
     def selected_metrics_with_functions(self) -> dict[str, str]:
         return self.app_state.selected_metric_ids_with_functions()
 
+    def get_date_attributes(self, attributes: Optional[list[CatalogAttribute]] = None) -> Optional[list[CatalogAttribute]]:
+        return [a for a in (attributes or self.all_attributes) if isinstance(a, CatalogAttribute) and a.granularity]
+
+    def get_standard_attributes(self, attributes: Optional[list[CatalogAttribute]] = None) -> Optional[list[CatalogAttribute]]:
+        return [
+            a for a in (attributes or self.all_attributes) if not a.granularity
+        ]
+
     def filter_catalog_by_existing_context(self) -> FilteredObjects:
         selected_attributes = self.app_state.selected_attribute_ids()
         selected_filter_values = self.app_state.selected_filter_attribute_values()
@@ -347,9 +355,6 @@ def get_name_for_id(objects: ObjectsWithName, object_id: str) -> str:
     for g in objects:
         if g.id == object_id:
             return g.name
-
-def get_date_attributes(catalog: CatalogWorkspaceContent) -> list[CatalogAttribute]:
-    return [a for a in get_attributes(catalog) if a.granularity]
 
 def ids_with_default(objects: ObjectsWithOutObjId) -> list[str]:
     return [DEFAULT_EMPTY_SELECT_OPTION_ID] + [str(x.id) for x in objects]

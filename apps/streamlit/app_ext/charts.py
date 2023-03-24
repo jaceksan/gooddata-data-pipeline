@@ -73,7 +73,7 @@ class Charts:
 
     def render_filter_attributes(self):
         # Non DATE attributes. TODO - date filters
-        standard_attributes = [x for x in self.catalog.all_attributes if not x.granularity]
+        standard_attributes = self.catalog.get_standard_attributes()
         if standard_attributes:
             with st.container():
                 self.dropdown.render_multiselect(
