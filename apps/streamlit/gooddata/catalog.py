@@ -183,6 +183,14 @@ class Catalog:
     def selected_metrics_with_functions(self) -> dict[str, str]:
         return self.app_state.selected_metric_ids_with_functions()
 
+    def get_date_attributes(self, attributes: Optional[list[CatalogAttribute]] = None) -> Optional[list[CatalogAttribute]]:
+        return [a for a in (attributes or self.all_attributes) if isinstance(a, CatalogAttribute) and a.granularity]
+
+    def get_standard_attributes(self, attributes: Optional[list[CatalogAttribute]] = None) -> Optional[list[CatalogAttribute]]:
+        return [
+            a for a in (attributes or self.all_attributes) if not a.granularity
+        ]
+
     def filter_catalog_by_existing_context(self) -> FilteredObjects:
         selected_attributes = self.app_state.selected_attribute_ids()
         selected_filter_values = self.app_state.selected_filter_attribute_values()
@@ -262,6 +270,7 @@ def get_workspaces(_logger: Logger, _sdk: GoodDataSdk) -> list[CatalogWorkspace]
 
 @st.cache_data
 def get_full_catalog(_logger: Logger, _sdk: GoodDataSdk, workspace_id: str) -> CatalogWorkspaceContent:
+    # TODO - extend entities returned by this method and use only this method (instead of get_attributes, ...)
     start = time()
     result = _sdk.catalog_workspace_content.get_full_catalog(workspace_id)
     #valid_objects = result.catalog_with_valid_objects()
@@ -330,12 +339,15 @@ def get_title_for_id(objects: list[Insight], object_id: str) -> str:
         if g.id == object_id:
             return g.title
 
-def get_title_for_obj_id(objects: ObjectsWithTitle, object_id: str) -> str:
+def get_title_for_obj_id(objects: ObjectsWithTitle, object_id: str, title_obj_type: bool = False) -> str:
     if object_id == DEFAULT_EMPTY_SELECT_OPTION_ID:
         return DEFAULT_EMPTY_SELECT_OPTION_TITLE
     for g in objects:
         if str(g.obj_id) == object_id:
-            return g.title
+            if title_obj_type:
+                return g.title + f" ({g.type})"
+            else:
+                return g.title
 
 def get_name_for_id(objects: ObjectsWithName, object_id: str) -> str:
     if object_id == DEFAULT_EMPTY_SELECT_OPTION_ID:
@@ -343,9 +355,6 @@ def get_name_for_id(objects: ObjectsWithName, object_id: str) -> str:
     for g in objects:
         if g.id == object_id:
             return g.name
-
-def get_date_attributes(catalog: CatalogWorkspaceContent) -> list[CatalogAttribute]:
-    return [a for a in get_attributes(catalog) if a.granularity]
 
 def ids_with_default(objects: ObjectsWithOutObjId) -> list[str]:
     return [DEFAULT_EMPTY_SELECT_OPTION_ID] + [str(x.id) for x in objects]

@@ -39,4 +39,5 @@ Deployment to [render.com](render.com) cloud is triggered by merge to this publi
 - `STAGING` from `main` branch: https://streamlit-gooddata-stg.onrender.com/
 - `PROD` from `prod` branch: https://streamlit-gooddata.onrender.com/
 
-- Additionally, it is possible to trigger the deployment by a render.com hook URL (DEV env, before merge).
+render.com also provides a feature called `PR previews`. This would be benefitial for deploying DEV app from PRs.
+Unfortunately, it does not seem to work properly, not sure if it is caused by free tier is used.

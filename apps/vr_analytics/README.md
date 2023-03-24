@@ -6,13 +6,6 @@ The goal is to provide data visualizations, ideally in an interactive manner, me
 
 [Here](https://www.youtube.com/watch?v=tpbDEQ6SNek&ab_channel=LarsJuhlJensen) is an example of data visualization, utilizing the A-FRAME framework.
 
-The repository is linked with [render.com](render.com) provider. 
-
-Any merge into the `main` branch triggers the delivery process to staging app.
-The app is connected to staging environment of the CICD data pipeline demo stored in this repository 
-
-Any merge into the `prod` branch triggers the delivery process to production app.
-
 Generally, the app is delivered consistently with the data pipeline. 
 For instance, you can update the model and related insight used in the VR app, and update VR app accordingly, in the same commit.
 The release is fully consistent.
@@ -39,5 +32,11 @@ yarn start
 You can connect the app with any (publicly available) GoodData cloud environment, we provide [GoodData trial](https://www.gooddata.com/trial/),
 just modify the export commands above accordingly.
 
-You can test the app in web browser. Then, you can connect your VR headset to your laptop (internal network),
-or you can deploy the app e.g. in [render.com](render.com) like service and make it publicly available.
+## Deploy to cloud
+
+Deployment to [render.com](render.com) cloud is triggered by merge to this public Git repository:
+- `STAGING` from `main` branch: https://streamlit-gooddata-stg.onrender.com/
+- `PROD` from `prod` branch: https://streamlit-gooddata.onrender.com/
+
+render.com also provides a feature called `PR previews`. This would be benefitial for deploying DEV app from PRs.
+Unfortunately, it does not seem to work properly, not sure if it is caused by free tier is used.

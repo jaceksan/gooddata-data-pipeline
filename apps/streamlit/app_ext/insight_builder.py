@@ -47,10 +47,11 @@ class InsightBuilder:
         return False
 
     def update_catalog_by_selected_insight(self, catalog: Catalog, clear_report_def: bool):
-        previous_insight_id = self.app_state.get("previous_insight_id")
+        previous_insight_id = self.app_state.get("previous_selected_insight")
         insight_id = self.app_state.get("selected_insight")
         # Update catalog by selected insight only if the insight picker is used (value is changed)
         if insight_id not in [DEFAULT_EMPTY_SELECT_OPTION_ID, previous_insight_id]:
+            # Set Insight in the dropdown to another value
             metrics, metrics_with_func = catalog.insight_metrics(insight_id)
             self.app_state.set("selected_metrics", [str(x.obj_id) for x in metrics])
             # TODO - how to distinguish view by and segmented by attributes Insight object?
@@ -61,9 +62,8 @@ class InsightBuilder:
             # We overriden selected objects from insight. We have to filter catalog by the insight objects(context)
             catalog.set_filtered_objects()
         elif (previous_insight_id in [x.id for x in catalog.insights] and insight_id == DEFAULT_EMPTY_SELECT_OPTION_ID) or clear_report_def:
-            self.app_state.set("selected_metrics", [])
-            self.app_state.set("selected_view_by", [])
-            self.app_state.set("selected_segmented_by", DEFAULT_EMPTY_SELECT_OPTION_ID)
+            # Unset Insight in the dropdown
+            self.app_state.reset_state()
             catalog.set_filtered_objects()
 
     def render_catalog(self, catalog: Catalog, clear_report_def: bool) -> None:
@@ -72,7 +72,8 @@ class InsightBuilder:
         with st.sidebar.container():
             self.dropdown.render_multiselect(
                 catalog.filtered_all, "selected_metrics", "Metrics",
-                help_text=catalog.filtered_objects.report_removed_metrics
+                help_text=catalog.filtered_objects.report_removed_metrics,
+                title_obj_type=True,
             )
         with st.sidebar.container():
             self.dropdown.render_multiselect(
@@ -98,10 +99,10 @@ class InsightBuilder:
             filter_values[attribute_obj_id] = values
         return filter_values
 
-    def only_date_attributes_selected(self, attributes: list[CatalogAttribute]) -> bool:
+    def only_date_attributes_selected(self, catalog: Catalog) -> bool:
         # Check if only date attributes are selected, without metrics/facts
         # Enumerating date attributes only is tricky, because the date dimension can be connected to various datasets
-        date_attributes = [a.id for a in attributes if a.granularity]
+        date_attributes = catalog.get_date_attributes(catalog.filtered_attributes)
         selected_date_attributes = [a for a in self.app_state.selected_attribute_ids() if a in date_attributes]
         return not self.app_state.get('selected_facts') \
             and not self.app_state.get('selected_metrics') \
@@ -146,7 +147,7 @@ class InsightBuilder:
         )
         charts.render_chart_header_type_stored_insights()
 
-        if self.only_date_attributes_selected(catalog.filtered_attributes):
+        if self.only_date_attributes_selected(catalog):
             st.error("Enumerating DATE attribute(s) only is not yet supported.")
             st.info("Add a non-date attribute or fact/metric.")
         elif self.app_state.is_anything_selected():

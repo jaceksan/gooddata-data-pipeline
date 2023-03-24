@@ -50,6 +50,10 @@ class Charts:
     def chart_type(self):
         return self.app_state.get("chart_type") or "Table"
 
+
+    def set_previous_selected_insight(self):
+        self.app_state.set("previous_selected_insight", self.app_state.get("previous_selected_insight"))
+
     def render_stored_insights_picker(self) -> None:
         options = ids_with_default(self.catalog.insights)
         self.app_state.set("previous_selected_insight", self.app_state.get("selected_insight"))
@@ -57,7 +61,8 @@ class Charts:
             "label": "Stored reports",
             "options": options,
             "format_func": lambda x: get_title_for_id(self.catalog.insights, x),
-            "key": "selected_insight"
+            "key": "selected_insight",
+            "on_change": self.set_previous_selected_insight
         }
         if self.clear_report_def:
             default_option_index = options.index(DEFAULT_EMPTY_SELECT_OPTION_ID)
@@ -66,14 +71,9 @@ class Charts:
 
         st.selectbox(**kwargs)
 
-        # if self.clear_report_def:
-        #     self.app_state.set("selected_insight", DEFAULT_EMPTY_SELECT_OPTION_ID)
-        # else:
-        #     self.app_state.set("selected_insight", insight_id)
-
     def render_filter_attributes(self):
         # Non DATE attributes. TODO - date filters
-        standard_attributes = [x for x in self.catalog.all_attributes if not x.granularity]
+        standard_attributes = self.catalog.get_standard_attributes()
         if standard_attributes:
             with st.container():
                 self.dropdown.render_multiselect(
@@ -82,7 +82,7 @@ class Charts:
                     "Filter attributes"
                 )
 
-    def render_attribute_filter_values(self) -> None:
+    def render_filter_attribute_values(self) -> None:
         columns = st.columns(len(self.catalog.selected_filter_attributes))
         for i, attribute in enumerate(self.catalog.selected_filter_attributes):
             with columns[i]:
@@ -144,7 +144,7 @@ class Charts:
                 self.render_filter_attributes()
             with columns[1]:
                 if self.app_state.get("selected_filter_attributes"):
-                    self.render_attribute_filter_values()
+                    self.render_filter_attribute_values()
         with st.container():
             columns = st.columns((2, 8))
             with columns[0]:
