@@ -20,6 +20,8 @@
         TARGET_SCHEMA: "${INPUT_SCHEMA_GITHUB}"
       - MELTANO_SOURCE: tap-s3-csv
         TARGET_SCHEMA: "${INPUT_SCHEMA_FAA}"
+      - MELTANO_SOURCE: tap-exchangeratehost
+        TARGET_SCHEMA: "${INPUT_SCHEMA_EXCHANGERATEHOST}"
 # TODO - .meltano is linked to include plugins, artifacts cannot be gathered through links
 #  artifacts:
 #    paths:

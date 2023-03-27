@@ -14,6 +14,9 @@ environments:
           - gooddata/gooddata-python-sdk
           - gooddata/gooddata-ui-sdk
           start_date: '2010-01-01'
+      - name: tap-exchangeratehost
+        config:
+          start_date: '2010-01-01'
 - name: cicd_prod
   config:
     plugins:
@@ -23,6 +26,9 @@ environments:
           repositories:
           - gooddata/gooddata-python-sdk
           - gooddata/gooddata-ui-sdk
+          start_date: '2010-01-01'
+      - name: tap-exchangeratehost
+        config:
           start_date: '2010-01-01'
 plugins:
   extractors:
@@ -145,6 +151,22 @@ plugins:
         date_overrides:
         - dep_time
         delimiter: ','
+# TODO
+#  - name: tap-gitlab
+#    variant: meltanolabs
+#    pip_url: git+https://github.com/MeltanoLabs/tap-gitlab.git
+#    config:
+#      start_date: '2020-01-01'
+#      projects: patrikbraborec/gooddata-data-pipeline
+#    select:
+#    - merge_requests.*
+#    - commits.*
+#    - projects.*
+  - name: tap-exchangeratehost
+    variant: anelendata
+    pip_url: git+https://github.com/jaceksan/tap-exchangeratehost.git
+    config:
+      start_date: 2020-01-01
   loaders:
   - name: target-jsonl
     variant: andyh1203

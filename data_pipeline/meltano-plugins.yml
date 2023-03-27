@@ -9,6 +9,9 @@ plugins:
     - name: tap-s3-csv
       variant: transferwise
       pip_url: pipelinewise-tap-s3-csv
+    - name: tap-exchangeratehost
+      variant: anelendata
+      pip_url: git+https://github.com/jaceksan/tap-exchangeratehost.git
   loaders:
     - name: target-jsonl
       variant: andyh1203
