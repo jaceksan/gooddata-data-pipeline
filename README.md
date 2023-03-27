@@ -50,7 +50,7 @@ docker-compose up bootstrap_origins
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
-# Set AWS S3 credentials to be able to ELT the FAA data (stored in public dataset)
+# Set AWS S3 credentials to be able to ELT the FAA data (stored in a public S3 bucket)
 export AWS_ACCESS_KEY_ID="<my AWS access key>"
 export AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
 docker-compose up extract_load
@@ -144,7 +144,7 @@ This can help you to bootstrap schema.yaml files programmatically. Then, you can
 Example:
 ```bash
 dbt --profiles-dir profile run-operation generate_source \
-  --args "{\"schema_name\": \"$OUTPUT_SCHEMA\", \"generate_columns\": true, \"include_descriptions\": true}"
+  --args "{\"schema_name\": \"$INPUT_SCHEMA_GITHUB\", \"generate_columns\": true, \"include_descriptions\": true}"
 ```
 
 # Analytics
