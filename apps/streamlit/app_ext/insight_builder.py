@@ -148,7 +148,7 @@ class InsightBuilder:
         charts.render_chart_header_type_stored_insights()
 
         if self.only_date_attributes_selected(catalog):
-            st.error("Enumerating DATE attribute(s) only is not yet supported.")
+            st.warning("Enumerating DATE attribute(s) only is not yet supported.")
             st.info("Add a non-date attribute or fact/metric.")
         elif self.app_state.is_anything_selected():
             charts.render_chart_header_filters_metric_func_sort_by()
