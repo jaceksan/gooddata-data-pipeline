@@ -78,7 +78,6 @@ services:
       POSTGRES_PASS: demopass
       POSTGRES_DBNAME: demo
       TARGET_SCHEMA: faa_input_stage
-      TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
       MELTANO_ENV: cicd_dev_local
       MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
       MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
@@ -86,6 +85,30 @@ services:
       MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
       TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
       TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
+
+  extract_load_exchangeratehost:
+    build:
+      context: .
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-exchangeratehost target-postgres
+    environment:
+      POSTGRES_HOST: gooddata-cn-ce
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: demouser
+      POSTGRES_PASS: demopass
+      POSTGRES_DBNAME: demo
+      TARGET_SCHEMA: exchangeratehost_input_stage
+      MELTANO_ENV: cicd_dev_local
+      MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
+      MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
+      MELTANO_STATE_AWS_BUCKET: "meltano"
+      MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
 

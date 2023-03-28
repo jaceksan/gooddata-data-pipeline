@@ -119,7 +119,7 @@ class InsightBuilder:
         else:
             return df
 
-    def get_relevant_attributes_filters(self, chart_type: str) -> tuple[dict[str, str], list[str]]:
+    def get_relevant_metrics_attributes(self, chart_type: str) -> tuple[dict[str, str], list[str]]:
         metrics_with_functions = self.app_state.selected_metric_ids_with_functions()
         attribute_ids = self.app_state.selected_attribute_ids()
         if chart_type == "Donut chart":
@@ -155,7 +155,7 @@ class InsightBuilder:
             gd_frames = self.sdk_wrapper.pandas.data_frames(self.workspace_id)
             # Execute report only with metrics/attributes relevant for the chart type
             # E.g. Donut Chart makes sense with only 1 metric and 1 attribute(view_by)
-            metrics_with_functions, attribute_ids = self.get_relevant_attributes_filters(charts.chart_type)
+            metrics_with_functions, attribute_ids = self.get_relevant_metrics_attributes(charts.chart_type)
             df = execute_custom_insight(
                 self.logger, gd_frames,
                 # Must pass each property separately to utilize st.cache_data feature!
