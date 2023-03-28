@@ -1,13 +1,12 @@
 import altair as alt
 import pandas as pd
-from gooddata_sdk import CatalogAttribute
 from gooddata_sdk.catalog.entity import CatalogEntity
 from gooddata.catalog import metric_column_name
 
 
 class AltairCharts:
     def __init__(
-        self, df: pd.DataFrame, chart_type: str, view_by: CatalogAttribute, metric: CatalogEntity,
+        self, df: pd.DataFrame, chart_type: str, view_by: CatalogEntity, metric: CatalogEntity,
         metrics_with_functions: dict[str, str],
     ) -> None:
         self.df = df
@@ -21,7 +20,7 @@ class AltairCharts:
         metric_func = self.metrics_with_functions[str(self.metric.obj_id)]
         return metric_column_name(self.metric, metric_func)
 
-    def generate_line_bar_chart(self, segment_by: CatalogAttribute):
+    def generate_line_bar_chart(self, segment_by: CatalogEntity):
         kwargs = {
             "x": alt.X(self.view_by.title, title=self.view_by.title),
             "y": alt.Y(self.metric_column, title=self.metric.title, type="quantitative"),

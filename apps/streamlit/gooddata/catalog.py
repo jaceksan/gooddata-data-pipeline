@@ -124,23 +124,36 @@ class Catalog:
     def filtered_all(self) -> ObjectsLdm:
         return [*self.filtered_facts, *self.filtered_metrics, *self.filtered_attributes]
 
+    @staticmethod
+    def get_object(objects: ObjectsLdm, obj_id: str) -> Optional[CatalogEntity]:
+        return next(iter([x for x in objects if str(x.obj_id) == obj_id]), None)
+
     @property
     def selected_metrics(self) -> ObjectsLdm:
-        return [
-            x for x in self.filtered_all
-            if str(x.obj_id) in self.app_state.get("selected_metrics", [])
-        ]
+        result = []
+        for selected_metric_id in self.app_state.get("selected_metrics", []):
+            filtered_object = self.get_object(self.filtered_all, selected_metric_id)
+            if filtered_object:
+                result.append(filtered_object)
+        return result
 
     @property
-    def selected_view_by(self) -> list[CatalogAttribute]:
-        return [x for x in self.filtered_attributes if str(x.obj_id) in self.app_state.get("selected_view_by", [])]
+    def selected_view_by(self) -> ObjectsLdm:
+        result = []
+        for selected_attribute_id in self.app_state.get("selected_view_by", []):
+            filtered_object = self.get_object(self.filtered_attributes, selected_attribute_id)
+            if filtered_object:
+                result.append(filtered_object)
+        return result
 
     @property
-    def selected_segmented_by(self) -> CatalogAttribute:
-        return next(iter([
-            x for x in self.filtered_attributes
-            if str(x.obj_id) == self.app_state.get("selected_segmented_by")
-        ]), None)
+    def selected_segmented_by(self) -> CatalogEntity:
+        result = []
+        for selected_attribute_id in self.app_state.get("selected_segmented_by", []):
+            filtered_object = self.get_object(self.filtered_attributes, selected_attribute_id)
+            if filtered_object:
+                result.append(filtered_object)
+        return next(iter(result), None)
 
     @property
     def selected_filter_attributes(self) -> list[CatalogAttribute]:
