@@ -102,12 +102,12 @@ class InsightBuilder:
     def only_date_attributes_selected(self, catalog: Catalog) -> bool:
         # Check if only date attributes are selected, without metrics/facts
         # Enumerating date attributes only is tricky, because the date dimension can be connected to various datasets
-        date_attributes = catalog.get_date_attributes(catalog.filtered_attributes)
-        selected_date_attributes = [a for a in self.app_state.selected_attribute_ids() if a in date_attributes]
-        return not self.app_state.get('selected_facts') \
-            and not self.app_state.get('selected_metrics') \
+        date_attribute_ids = [str(a.obj_id) for a in catalog.get_date_attributes(catalog.filtered_attributes)]
+        selected_standard_attributes = [a for a in self.app_state.selected_attribute_ids() if a not in date_attribute_ids]
+        selected_date_attributes = [a for a in self.app_state.selected_attribute_ids() if a in date_attribute_ids]
+        return not catalog.selected_metrics \
             and selected_date_attributes \
-            and set(selected_date_attributes).issubset(set(date_attributes))
+            and not selected_standard_attributes
 
     @staticmethod
     def sort_data_frame(
