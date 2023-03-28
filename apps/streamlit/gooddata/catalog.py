@@ -6,13 +6,13 @@ import streamlit as st
 from gooddata_sdk import (
     CatalogMetric, CatalogAttribute, CatalogFact, Insight, CatalogWorkspace,
 )
-from gooddata_sdk import GoodDataSdk, CatalogWorkspaceContent
+from gooddata_sdk import GoodDataSdk, CatalogWorkspaceContent, ObjId
 # TODO - expose this object in sdk.__init.py
 from gooddata_sdk.catalog.entity import CatalogEntity, CatalogNameEntity
 from app_ext.state import AppState
 from gooddata.__init import (
     DEFAULT_EMPTY_SELECT_OPTION_ID, DEFAULT_EMPTY_SELECT_OPTION_TITLE, log_duration, generate_execution_definition,
-    get_local_id
+    get_local_id_metric, SIMPLE_METRIC_AGGREGATION
 )
 
 ObjectsWithTitle = list[Union[CatalogEntity, Insight]]
@@ -84,6 +84,12 @@ class Catalog:
         self.sdk = sdk
         self.workspace_id = workspace_id
         self.app_state = app_state
+        self.insights = get_insights(self.logger, self.sdk, workspace_id)
+        self.filtered_objects = None
+        self.set_filtered_objects()
+
+
+    def set_filtered_objects(self):
         self.filtered_objects = self.filter_catalog_by_existing_context()
 
     @property
@@ -98,6 +104,10 @@ class Catalog:
     def all_attributes(self) -> list[CatalogAttribute]:
         return get_attributes(self.logger, self.sdk, self.workspace_id)
 
+    @property
+    def all(self) -> ObjectsLdm:
+        return [*self.all_facts, *self.all_metrics, *self.all_attributes]
+    
     @property
     def filtered_facts(self) -> list[CatalogFact]:
         return self.filtered_objects.filtered_facts
@@ -155,7 +165,8 @@ class Catalog:
             # Attribute can be as metric (COUNT) or as view_by/segment_by
             # Column name is generated differently for these cases
             if ldm_object.obj_id in [x.obj_id for x in self.selected_metrics]:
-                sort_columns.append(metric_column_name(ldm_object))
+                metric_func = self.selected_metrics_with_functions[str(ldm_object.obj_id)]
+                sort_columns.append(metric_column_name(ldm_object, metric_func))
             else:
                 sort_columns.append(ldm_object.title)
             ascending.append(not selected_desc[str(ldm_object.obj_id)])
@@ -168,15 +179,25 @@ class Catalog:
             result.append(self.selected_segmented_by)
         return result
 
+    @property
+    def selected_metrics_with_functions(self) -> dict[str, str]:
+        return self.app_state.selected_metric_ids_with_functions()
+
+    def get_date_attributes(self, attributes: Optional[list[CatalogAttribute]] = None) -> Optional[list[CatalogAttribute]]:
+        return [a for a in (attributes or self.all_attributes) if isinstance(a, CatalogAttribute) and a.granularity]
+
+    def get_standard_attributes(self, attributes: Optional[list[CatalogAttribute]] = None) -> Optional[list[CatalogAttribute]]:
+        return [
+            a for a in (attributes or self.all_attributes) if not a.granularity
+        ]
+
     def filter_catalog_by_existing_context(self) -> FilteredObjects:
-        selected_metrics_with_functions = self.app_state.selected_metric_ids_with_functions()
         selected_attributes = self.app_state.selected_attribute_ids()
         selected_filter_values = self.app_state.selected_filter_attribute_values()
-
-        if selected_metrics_with_functions or selected_attributes:
+        if self.selected_metrics_with_functions or selected_attributes:
             filtered_objects = compute_valid_catalog_objects(
                 self.logger, self.sdk, self.workspace_id,
-                selected_metrics_with_functions,
+                self.selected_metrics_with_functions,
                 selected_attributes,
                 selected_filter_values,
             )
@@ -203,6 +224,40 @@ class Catalog:
                 filtered_facts=self.all_facts, filtered_metrics=self.all_metrics, filtered_attributes=self.all_attributes,
             )
 
+    def get_insight(self, insight_id: str) -> Optional[Insight]:
+        return next(iter([x for x in self.insights if x.id == insight_id]), None)
+    def insight_metrics(
+        self, insight_id: str
+    ) -> tuple[ObjectsLdm, dict[str, str]]:
+        insight = self.get_insight(insight_id)
+        if insight:
+            result_metrics = []
+            result_metrics_funcs = {}
+            for i, metric in enumerate(insight.metrics):
+                metric_id = metric.item["identifier"]["id"]
+                metric_type = metric.item["identifier"]["type"]
+                obj_id = ObjId(metric_id, metric_type)
+                result_metrics.append(next(iter([x for x in self.all if x.obj_id == obj_id])))
+                # TODO - expose it to InsightMetric object
+                measure_def = metric._metric.get("measureDefinition")
+                if measure_def:
+                    func = metric._metric["measureDefinition"].get("aggregation")
+                    if func and func.upper() in SIMPLE_METRIC_AGGREGATION:
+                        result_metrics_funcs[str(obj_id)] = func.upper()
+                    elif func:
+                        if metric_type == "attribute":
+                            result_metrics_funcs[str(obj_id)] = "COUNT"
+                        else:
+                            result_metrics_funcs[str(obj_id)] = "SUM"
+            return result_metrics, result_metrics_funcs
+
+    def insight_attributes(self, insight_id: str) -> list[CatalogAttribute]:
+        insight = self.get_insight(insight_id)
+        if insight:
+            insight_attributes = [ObjId(x.label_id, "attribute") for x in insight.attributes]
+            return [x for x in self.all_attributes if x.obj_id in insight_attributes]
+        return []
+
 
 # Below are methods annotated by st.cache_data. They cannot be a part of a class yet (not yet supported by Streamlit)
 
@@ -215,6 +270,7 @@ def get_workspaces(_logger: Logger, _sdk: GoodDataSdk) -> list[CatalogWorkspace]
 
 @st.cache_data
 def get_full_catalog(_logger: Logger, _sdk: GoodDataSdk, workspace_id: str) -> CatalogWorkspaceContent:
+    # TODO - extend entities returned by this method and use only this method (instead of get_attributes, ...)
     start = time()
     result = _sdk.catalog_workspace_content.get_full_catalog(workspace_id)
     #valid_objects = result.catalog_with_valid_objects()
@@ -283,12 +339,15 @@ def get_title_for_id(objects: list[Insight], object_id: str) -> str:
         if g.id == object_id:
             return g.title
 
-def get_title_for_obj_id(objects: ObjectsWithTitle, object_id: str) -> str:
+def get_title_for_obj_id(objects: ObjectsWithTitle, object_id: str, title_obj_type: bool = False) -> str:
     if object_id == DEFAULT_EMPTY_SELECT_OPTION_ID:
         return DEFAULT_EMPTY_SELECT_OPTION_TITLE
     for g in objects:
         if str(g.obj_id) == object_id:
-            return g.title
+            if title_obj_type:
+                return g.title + f" ({g.type})"
+            else:
+                return g.title
 
 def get_name_for_id(objects: ObjectsWithName, object_id: str) -> str:
     if object_id == DEFAULT_EMPTY_SELECT_OPTION_ID:
@@ -297,17 +356,14 @@ def get_name_for_id(objects: ObjectsWithName, object_id: str) -> str:
         if g.id == object_id:
             return g.name
 
-def get_date_attributes(catalog: CatalogWorkspaceContent) -> list[CatalogAttribute]:
-    return [a for a in get_attributes(catalog) if a.granularity]
-
 def ids_with_default(objects: ObjectsWithOutObjId) -> list[str]:
     return [DEFAULT_EMPTY_SELECT_OPTION_ID] + [str(x.id) for x in objects]
 
 def obj_ids_with_default(objects: ObjectsAll) -> list[str]:
     return [DEFAULT_EMPTY_SELECT_OPTION_ID] + [str(x.obj_id) for x in objects]
 
-def metric_column_name(ldm_object: CatalogEntity) -> str:
+def metric_column_name(ldm_object: CatalogEntity, metric_func: str) -> str:
     if ldm_object.type in ["fact", "attribute"]:
-        return get_local_id(str(ldm_object.obj_id))
+        return get_local_id_metric(str(ldm_object.obj_id), metric_func)
     else:
         return ldm_object.title

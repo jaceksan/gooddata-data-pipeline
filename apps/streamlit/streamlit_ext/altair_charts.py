@@ -6,15 +6,20 @@ from gooddata.catalog import metric_column_name
 
 
 class AltairCharts:
-    def __init__(self, df: pd.DataFrame, chart_type: str, view_by: CatalogAttribute, metric: CatalogEntity) -> None:
+    def __init__(
+        self, df: pd.DataFrame, chart_type: str, view_by: CatalogAttribute, metric: CatalogEntity,
+        metrics_with_functions: dict[str, str],
+    ) -> None:
         self.df = df
         self.chart_type = chart_type
         self.metric = metric
         self.view_by = view_by
+        self.metrics_with_functions = metrics_with_functions
 
     @property
     def metric_column(self):
-        return metric_column_name(self.metric)
+        metric_func = self.metrics_with_functions[str(self.metric.obj_id)]
+        return metric_column_name(self.metric, metric_func)
 
     def generate_line_bar_chart(self, segment_by: CatalogAttribute):
         kwargs = {

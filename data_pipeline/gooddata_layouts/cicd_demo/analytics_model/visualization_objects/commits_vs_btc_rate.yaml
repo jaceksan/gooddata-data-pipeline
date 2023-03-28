@@ -1,0 +1,52 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: count_commits
+                    type: metric
+            localIdentifier: 2e7d93faa64f46609ecc163888a10511
+            title: Count of commits
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: avg
+                filters: []
+                item:
+                  identifier:
+                    id: btc
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: c25b259c9d654a499ab66ca8195a30c2
+            title: Avg Btc
+      localIdentifier: secondary_measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: created_at.month
+                type: label
+            localIdentifier: c01d4b2d01a94349a639136787f09fc4
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      dualAxis: true
+      primaryChartType: column
+      secondaryChartType: line
+      secondary_yaxis:
+        measures:
+          - c25b259c9d654a499ab66ca8195a30c2
+  sorts: []
+  version: '2'
+  visualizationUrl: local:combo2
+description: ''
+id: commits_vs_btc_rate
+title: Commits vs. BTC rate
