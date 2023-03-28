@@ -53,7 +53,9 @@ export TAP_GITHUB_AUTH_TOKEN="<my github token>"
 # Set AWS S3 credentials to be able to ELT the FAA data (stored in a public S3 bucket)
 export AWS_ACCESS_KEY_ID="<my AWS access key>"
 export AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
-docker-compose up extract_load
+docker-compose up extract_load_github
+docker-compose up extract_load_faa
+docker-compose up extract_load_exchangeratehost
 
 # Transform model to be ready for analytics, with dbt
 # Also, GoodData models are generated from dbt models and pushed to GoodData  
