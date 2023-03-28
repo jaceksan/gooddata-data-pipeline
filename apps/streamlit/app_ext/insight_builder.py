@@ -102,12 +102,12 @@ class InsightBuilder:
     def only_date_attributes_selected(self, catalog: Catalog) -> bool:
         # Check if only date attributes are selected, without metrics/facts
         # Enumerating date attributes only is tricky, because the date dimension can be connected to various datasets
-        date_attributes = catalog.get_date_attributes(catalog.filtered_attributes)
-        selected_date_attributes = [a for a in self.app_state.selected_attribute_ids() if a in date_attributes]
-        return not self.app_state.get('selected_facts') \
-            and not self.app_state.get('selected_metrics') \
+        date_attribute_ids = [str(a.obj_id) for a in catalog.get_date_attributes(catalog.filtered_attributes)]
+        selected_standard_attributes = [a for a in self.app_state.selected_attribute_ids() if a not in date_attribute_ids]
+        selected_date_attributes = [a for a in self.app_state.selected_attribute_ids() if a in date_attribute_ids]
+        return not catalog.selected_metrics \
             and selected_date_attributes \
-            and set(selected_date_attributes).issubset(set(date_attributes))
+            and not selected_standard_attributes
 
     @staticmethod
     def sort_data_frame(
@@ -119,7 +119,7 @@ class InsightBuilder:
         else:
             return df
 
-    def get_relevant_attributes_filters(self, chart_type: str) -> tuple[dict[str, str], list[str]]:
+    def get_relevant_metrics_attributes(self, chart_type: str) -> tuple[dict[str, str], list[str]]:
         metrics_with_functions = self.app_state.selected_metric_ids_with_functions()
         attribute_ids = self.app_state.selected_attribute_ids()
         if chart_type == "Donut chart":
@@ -148,14 +148,14 @@ class InsightBuilder:
         charts.render_chart_header_type_stored_insights()
 
         if self.only_date_attributes_selected(catalog):
-            st.error("Enumerating DATE attribute(s) only is not yet supported.")
+            st.warning("Enumerating DATE attribute(s) only is not yet supported.")
             st.info("Add a non-date attribute or fact/metric.")
         elif self.app_state.is_anything_selected():
             charts.render_chart_header_filters_metric_func_sort_by()
             gd_frames = self.sdk_wrapper.pandas.data_frames(self.workspace_id)
             # Execute report only with metrics/attributes relevant for the chart type
             # E.g. Donut Chart makes sense with only 1 metric and 1 attribute(view_by)
-            metrics_with_functions, attribute_ids = self.get_relevant_attributes_filters(charts.chart_type)
+            metrics_with_functions, attribute_ids = self.get_relevant_metrics_attributes(charts.chart_type)
             df = execute_custom_insight(
                 self.logger, gd_frames,
                 # Must pass each property separately to utilize st.cache_data feature!
