@@ -195,6 +195,9 @@ Applications are stored in [apps](apps/) folder. They are not delivered by the G
 ### VR demo
 [README](apps/vr_analytics/)
 
+### Streamlit demo
+[README](apps/streamlit/)
+
 ---
 
 If you want to learn more about the stack described in the document, do not hesitate to contact us.
