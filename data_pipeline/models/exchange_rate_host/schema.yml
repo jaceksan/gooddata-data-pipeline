@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: exchange_rate
+    description: Exchange rates
+    meta:
+      gooddata:
+        model_id: github
+    columns:
+      - name: created_at
+      - name: usd
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: czk
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: btc
+        meta:
+          gooddata:
+            ldm_type: fact

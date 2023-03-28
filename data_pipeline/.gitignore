@@ -4,3 +4,4 @@ logs/
 .meltano
 .env
 plugins/
+output/

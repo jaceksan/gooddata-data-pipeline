@@ -40,8 +40,12 @@ models:
     faa:
       +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
       +materialized: table
+    exchange_rate_host:
+      +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+      +materialized: table
 
 vars:
   "dbt_date:time_zone": "UTC"
   input_schema_github: "{{ env_var('INPUT_SCHEMA_GITHUB', 'github_input_stage') }}"
   input_schema_faa: "{{ env_var('INPUT_SCHEMA_FAA', 'faa_input_stage') }}"
+  input_schema_exchangeratehost: "{{ env_var('INPUT_SCHEMA_EXCHANGERATEHOST', 'exchangeratehost_input_stage') }}"
