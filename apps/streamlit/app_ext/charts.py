@@ -95,27 +95,32 @@ class Charts:
                 )
 
     def render_metric_functions(self):
-        columns = st.columns(len(self.catalog.selected_metrics))
-        for i, metric in enumerate(self.catalog.selected_metrics):
-            func_list = None
-            default = None
-            if isinstance(metric, CatalogFact):
-                func_list = FACT_AGG_FUNC
-                default = "SUM"
-            elif isinstance(metric, CatalogAttribute):
-                default = "COUNT"
-                func_list = ATTRIBUTE_AGG_FUNC
-            if func_list:
-                select_key = f"selected_metric_function__{metric.obj_id}"
-                kwargs = {
-                    "label": f"{metric.title} function",
-                    "options": func_list,
-                    "key": select_key,
-                }
-                if not self.app_state.get(select_key):
-                    kwargs["index"] = func_list.index(default)
-                with columns[i]:
-                    st.selectbox(**kwargs)
+        selected_metrics = [
+            x for x in self.catalog.selected_metrics
+            if isinstance(x, CatalogFact) or isinstance(x, CatalogAttribute)
+        ]
+        if selected_metrics:
+            columns = st.columns(len(selected_metrics))
+            for i, metric in enumerate(selected_metrics):
+                func_list = None
+                default = None
+                if isinstance(metric, CatalogFact):
+                    func_list = FACT_AGG_FUNC
+                    default = "SUM"
+                elif isinstance(metric, CatalogAttribute):
+                    default = "COUNT"
+                    func_list = ATTRIBUTE_AGG_FUNC
+                if func_list:
+                    select_key = f"selected_metric_function__{metric.obj_id}"
+                    kwargs = {
+                        "label": f"{metric.title} function",
+                        "options": func_list,
+                        "key": select_key,
+                    }
+                    if not self.app_state.get(select_key):
+                        kwargs["index"] = func_list.index(default)
+                    with columns[i]:
+                        st.selectbox(**kwargs)
 
     def render_sort_by(self):
         with st.container():
