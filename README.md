@@ -14,9 +14,9 @@ Data apps are delivered by [render.com](render.com) service after merge to `main
 
 Generally, you can change the whole data pipeline and UI apps by a single commit, and deliver everything consistently.
 
-![Demo architecture](docs/MDS.png "Demo architecture")
+## Architecture picture
 
-Latest changes are highlighted by the green color. 
+![Demo architecture](docs/MDS.png "Demo architecture")
 
 ## If you need help
 This README is just a brief how-to, it does not contain all details. If you need help, do not hesitate to ask in our [Slack community](https://www.gooddata.com/slack/).
