@@ -114,14 +114,15 @@ How to run:
 ```bash
 make extract_load
 ```
+Several jobs are running for each combination of source(tap) and target.
+The output of this stage are multiple DB schemas.
+Schema names are declared in [.env.local](.env.local).
 
-The output of this stage is `cicd_input_stage` schema in the database.
-
-It is running incrementally, it stores its state into a dedicated schema `meltano`.
+Jobs are running incrementally. They store their states into AWS S3 (or local Minio).
 You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 ### Data transformation
-The folder `data_pipeline/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
+The folder `data_pipeline/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from all schemas produced by the previous step to `cicd_output_stage` schema that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 How to run:
 ```bash
