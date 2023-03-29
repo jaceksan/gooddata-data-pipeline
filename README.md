@@ -65,7 +65,15 @@ docker-compose up transform
 docker-compose up analytics
 ```
 
-Then you can move to Gitlab, forking this repository and run the pipeline against your environments:
+Once everthing finishes successfully, you can go to [http://localhost:3000](http://localhost:3000), 
+log in with `demo@example.com`/`demo123`, and start consuming the result of the data pipeline in the form of dashboards.
+
+There is also an alternative consumption experience - you can start data apps stored in [apps](apps/) folder.
+check corresponding README files in sub-folders each representing a particular app.
+
+## Getting started - cloud
+
+Move to Gitlab, fork this repository and run the pipeline against your environments:
 - Create a public GoodData instance
     - Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
         and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
