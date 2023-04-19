@@ -27,6 +27,7 @@
     - $SRC_DATA_PIPELINE/models/**/*
     - $SRC_DATA_PIPELINE/dbt-gooddata/**/*
     - $SRC_DATA_PIPELINE/gooddata_layouts/**/*
+    - $SRC_DATA_PIPELINE/requirements-gooddata.txt
     - .gitlab-ci/gitlab-ci-analytics.yml
 
 ##########################3
