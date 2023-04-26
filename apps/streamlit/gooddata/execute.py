@@ -44,7 +44,7 @@ def execute_custom_insight(
         attribute_ids,
         filter_values
     )
-    df, df_metadata = _frames.for_exec_def(exec_def=execution_definition)
+    df, df_metadata = _frames.for_exec_def(exec_def=execution_definition, page_size=10000)
     df_from_result_id, df_metadata_from_result_id = _frames.for_exec_result_id(
         result_id=df_metadata.execution_response.result_id,
     )
