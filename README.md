@@ -199,6 +199,15 @@ Use the following command:
 make test_insights
 ```
 
+### Geo charts
+It is necessary to upload Mapbox token to GoodData deployments other than GoodData.cloud (SaaS).
+Use helper script for that:
+```bash
+cd data_pipeline
+export MAPBOX_ACCESS_TOKEN="<put your token here>"
+python upload_mapbox_token.py
+```
+
 ## Applications
 
 Applications are stored in [apps](apps/) folder. They are not delivered by the Gitlab pipeline, but by render.com service watching this repo.
