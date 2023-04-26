@@ -242,7 +242,6 @@ def get_full_catalog(_logger: Logger, _sdk: GoodDataSdk, workspace_id: str) -> C
     # Valid Objects function cannot be injected to the result container,
     # it can't be pickled, it can't be cached by Streamlit
     result = _sdk.catalog_workspace_content.get_full_catalog(workspace_id, inject_valid_objects_func=False)
-    #valid_objects = result.catalog_with_valid_objects()
     log_duration(_logger, "get_full_catalog", start)
     return result
 
