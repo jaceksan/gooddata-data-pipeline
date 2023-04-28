@@ -3,7 +3,6 @@ import streamlit as st
 from app_ext.insight_builder import InsightBuilder
 from app_ext.state import AppState
 from gooddata.catalog import get_workspaces, get_name_for_id, get_ids
-from gooddata.execute import invalidate_gd_caches
 from gooddata.sdk_wrapper import GoodDataSdkWrapper
 from gooddata.args import parse_arguments
 from gooddata.logger import get_logger
