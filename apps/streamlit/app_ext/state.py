@@ -57,7 +57,7 @@ class AppState:
             or bool(self.get('selected_view_by')) \
             or bool(self.get('selected_facts'))
 
-    def selected_catalog_all(self):
+    def selected_catalog_all(self) -> list[str]:
         return self.get('selected_metrics', []) + self.selected_attribute_ids()
 
     def selected_attribute_ids(self) -> list[str]:
@@ -85,9 +85,10 @@ class AppState:
         else:
             return []
 
-    def selected_first_metric_with_function(self) -> dict[str, str]:
-        selected_first_metric = self.get("selected_metrics")[0]
-        return {selected_first_metric: self.selected_metric_ids_with_functions()[selected_first_metric]}
+    def selected_first_metric_with_function(self) -> Optional[dict[str, str]]:
+        selected_first_metric = next(iter(self.get("selected_metrics") or []), None)
+        return None if not selected_first_metric \
+            else {selected_first_metric: self.selected_metric_ids_with_functions()[selected_first_metric]}
 
     def selected_metric_ids_with_functions(self) -> dict[str, str]:
         result = {}

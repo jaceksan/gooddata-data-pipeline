@@ -14,9 +14,9 @@ Data apps are delivered by [render.com](render.com) service after merge to `main
 
 Generally, you can change the whole data pipeline and UI apps by a single commit, and deliver everything consistently.
 
-![Demo architecture](docs/MDS.png "Demo architecture")
+## Architecture picture
 
-Latest changes are highlighted by the green color. 
+![Demo architecture](docs/MDS.png "Demo architecture")
 
 ## If you need help
 This README is just a brief how-to, it does not contain all details. If you need help, do not hesitate to ask in our [Slack community](https://www.gooddata.com/slack/).
@@ -65,7 +65,15 @@ docker-compose up transform
 docker-compose up analytics
 ```
 
-Then you can move to Gitlab, forking this repository and run the pipeline against your environments:
+Once everthing finishes successfully, you can go to [http://localhost:3000](http://localhost:3000), 
+log in with `demo@example.com`/`demo123`, and start consuming the result of the data pipeline in the form of dashboards.
+
+There is also an alternative consumption experience - you can start data apps stored in [apps](apps/) folder.
+check corresponding README files in sub-folders each representing a particular app.
+
+## Getting started - cloud
+
+Move to Gitlab, fork this repository and run the pipeline against your environments:
 - Create a public GoodData instance
     - Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
         and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
@@ -106,14 +114,15 @@ How to run:
 ```bash
 make extract_load
 ```
+Several jobs are running for each combination of source(tap) and target.
+The output of this stage are multiple DB schemas.
+Schema names are declared in [.env.local](.env.local).
 
-The output of this stage is `cicd_input_stage` schema in the database.
-
-It is running incrementally, it stores its state into a dedicated schema `meltano`.
+Jobs are running incrementally. They store their states into AWS S3 (or local Minio).
 You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 ### Data transformation
-The folder `data_pipeline/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from `cicd_input_stage` to `cicd_output_stage` that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
+The folder `data_pipeline/models` contains [dbt models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models) to transform data from all schemas produced by the previous step to `cicd_output_stage` schema that is used for analytics of data. You can use `--full-refresh` flag to enforce full refresh of the whole model.
 
 How to run:
 ```bash
@@ -188,6 +197,15 @@ It is possible to test if all insights (visualizations) are possible to execute 
 Use the following command:
 ```bash
 make test_insights
+```
+
+### Geo charts
+It is necessary to upload Mapbox token to GoodData deployments other than GoodData.cloud (SaaS).
+Use helper script for that:
+```bash
+cd data_pipeline
+export MAPBOX_ACCESS_TOKEN="<put your token here>"
+python upload_mapbox_token.py
 ```
 
 ## Applications

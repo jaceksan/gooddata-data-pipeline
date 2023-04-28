@@ -3,8 +3,6 @@ from typing import Optional
 from gooddata_sdk import GoodDataSdk
 import gooddata_pandas as gp
 
-# TODO - hack, cannot be set in a standard way yet. Fix it in SDK and then update it here accordingly.
-gp.result_convertor._DEFAULT_PAGE_SIZE = 10000
 
 class GoodDataSdkWrapper:
     # Timeout=600 because supporting waiting for All-in-one image starts

@@ -9,7 +9,7 @@ from app_ext.state import AppState
 from gooddata.catalog import Catalog
 from gooddata.execute import execute_custom_insight, get_attribute_values, invalidate_gd_caches
 from gooddata.sdk_wrapper import GoodDataSdkWrapper
-from gooddata_sdk import CatalogAttribute
+from gooddata_sdk import CatalogAttribute, CatalogLabel
 
 # Workaround - when we utilize "key" property in multiselect/selectbox,
 #   a warning is produced if we reset the default value in a custom way
@@ -59,30 +59,28 @@ class InsightBuilder:
             self.app_state.set("selected_segmented_by", DEFAULT_EMPTY_SELECT_OPTION_ID)
             for metric_obj_id, metric_func in metrics_with_func.items():
                 self.app_state.set(f"selected_metric_function__{metric_obj_id}", metric_func)
-            # We overriden selected objects from insight. We have to filter catalog by the insight objects(context)
-            catalog.set_filtered_objects()
         elif (previous_insight_id in [x.id for x in catalog.insights] and insight_id == DEFAULT_EMPTY_SELECT_OPTION_ID) or clear_report_def:
             # Unset Insight in the dropdown
             self.app_state.reset_state()
-            catalog.set_filtered_objects()
 
     def render_catalog(self, catalog: Catalog, clear_report_def: bool) -> None:
         self.update_catalog_by_selected_insight(catalog, clear_report_def)
 
         with st.sidebar.container():
             self.dropdown.render_multiselect(
-                catalog.filtered_all, "selected_metrics", "Metrics",
+                # Inject filtered_all, metrics can be created from facts/attributes with functions (SUM, COUNT, ...)
+                catalog.filtered_objects.filtered_all, "selected_metrics", "Metrics",
                 help_text=catalog.filtered_objects.report_removed_metrics,
                 title_obj_type=True,
             )
         with st.sidebar.container():
             self.dropdown.render_multiselect(
-                catalog.filtered_attributes, "selected_view_by", "View By",
+                catalog.filtered_objects.filtered_attributes, "selected_view_by", "View By",
                 help_text=catalog.filtered_objects.report_removed_attributes
             )
         with st.sidebar.container():
             self.dropdown.render_singleselect(
-                catalog.filtered_attributes, "selected_segmented_by", "Segmented By",
+                catalog.filtered_objects.filtered_attributes, "selected_segmented_by", "Segmented By",
                 help_text=catalog.filtered_objects.report_removed_attributes
             )
         if catalog.filtered_objects.count_removed:
@@ -102,7 +100,7 @@ class InsightBuilder:
     def only_date_attributes_selected(self, catalog: Catalog) -> bool:
         # Check if only date attributes are selected, without metrics/facts
         # Enumerating date attributes only is tricky, because the date dimension can be connected to various datasets
-        date_attribute_ids = [str(a.obj_id) for a in catalog.get_date_attributes(catalog.filtered_attributes)]
+        date_attribute_ids = [str(a.obj_id) for a in catalog.full_catalog.date_attributes]
         selected_standard_attributes = [a for a in self.app_state.selected_attribute_ids() if a not in date_attribute_ids]
         selected_date_attributes = [a for a in self.app_state.selected_attribute_ids() if a in date_attribute_ids]
         return not catalog.selected_metrics \
@@ -119,7 +117,11 @@ class InsightBuilder:
         else:
             return df
 
-    def get_relevant_metrics_attributes(self, chart_type: str) -> tuple[dict[str, str], list[str]]:
+    @staticmethod
+    def get_geo_labels(attribute: CatalogAttribute) -> list[CatalogLabel]:
+        return [l for l in attribute.labels if l.value_type in ["GEO_LATITUDE", "GEO_LONGITUDE"]]
+
+    def get_relevant_metrics_attributes(self, chart_type: str, catalog: Catalog) -> tuple[dict[str, str], list[str]]:
         metrics_with_functions = self.app_state.selected_metric_ids_with_functions()
         attribute_ids = self.app_state.selected_attribute_ids()
         if chart_type == "Donut chart":
@@ -128,6 +130,9 @@ class InsightBuilder:
         elif chart_type in ["Line chart", "Bar chart"]:
             metrics_with_functions = self.app_state.selected_first_metric_with_function()
             attribute_ids = self.app_state.selected_first_view_by_segmented_by()
+        elif chart_type in ["Geo chart"]:
+            geo_labels = catalog.selected_view_by_geo_labels
+            attribute_ids = [str(l.obj_id) for l in geo_labels]
         return metrics_with_functions, attribute_ids
 
     def main(self) -> None:
@@ -155,7 +160,7 @@ class InsightBuilder:
             gd_frames = self.sdk_wrapper.pandas.data_frames(self.workspace_id)
             # Execute report only with metrics/attributes relevant for the chart type
             # E.g. Donut Chart makes sense with only 1 metric and 1 attribute(view_by)
-            metrics_with_functions, attribute_ids = self.get_relevant_metrics_attributes(charts.chart_type)
+            metrics_with_functions, attribute_ids = self.get_relevant_metrics_attributes(charts.chart_type, catalog)
             df = execute_custom_insight(
                 self.logger, gd_frames,
                 # Must pass each property separately to utilize st.cache_data feature!
@@ -163,7 +168,6 @@ class InsightBuilder:
                 attribute_ids,
                 self.app_state.selected_filter_attribute_values(),
             )
-            # st.write(df)
             df = self.sort_data_frame(df, catalog)
 
             charts.render_chart(df, metrics_with_functions)
