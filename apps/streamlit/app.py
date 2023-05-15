@@ -33,7 +33,10 @@ def main():
     app_state.debug_state()
     render_workspace_picker(logger, gd_sdk, app_state)
 
-    InsightBuilder(logger, args, sdk_wrapper, app_state).main()
+    if app_state.get("workspace_id") is None:
+        st.warning(f"Your GoodData instance is empty, no workspace is there, there is nothing to analyze.")
+    else:
+        InsightBuilder(logger, args, sdk_wrapper, app_state).main()
 
 
 if __name__ == "__main__":
