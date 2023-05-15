@@ -30,7 +30,8 @@ The following articles are based on this project:
 - [How To Build a Modern Data Pipeline](https://medium.com/gooddata-developers/how-to-build-a-modern-data-pipeline-cfdd9d14fbea)
 - [How GoodData Integrates With dbt](https://medium.com/gooddata-developers/how-gooddata-integrates-with-dbt-a0c6f207eca3)
 - [Extending CI/CD data pipeline with Meltano](https://medium.com/gooddata-developers/extending-ci-cd-data-pipeline-with-meltano-7de3bce74f57)
-- [Analytics Inside Virtual Reality: Too Soon?](TODO)
+- [Analytics Inside Virtual Reality: Too Soon?](https://medium.com/gooddata-developers/analytics-inside-virtual-reality-too-soon-41900dac366b)
+- Streamlit meets Headless BI (TODO)
 
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
