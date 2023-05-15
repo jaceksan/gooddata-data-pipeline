@@ -40,11 +40,28 @@ content:
               properties: {}
               title: Airports - by facility type
               type: insight
-        type: IDashboardLayoutSection
-      - items:
           - size:
               xl:
-                gridWidth: 12
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: dep_time
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: geo_flight_count_and_departure_delay_by_airport
+                  type: visualizationObject
+              title: Geo - flight count and departure delay by airport
+              type: insight
+          - size:
+              xl:
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:

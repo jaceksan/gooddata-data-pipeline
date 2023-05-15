@@ -4,11 +4,12 @@ import pandas as pd
 import streamlit as st
 from app_ext.catalog_dropdown import CatalogDropDown
 from app_ext.state import AppState
-from gooddata_sdk import CatalogAttribute, CatalogFact
+from gooddata_sdk import CatalogAttribute, CatalogFact, CatalogLabel
 
 from gooddata.__init import DEFAULT_EMPTY_SELECT_OPTION_ID
 from gooddata.catalog import Catalog, ids_with_default, get_title_for_id
 from streamlit_ext.altair_charts import AltairCharts
+from streamlit_ext.geo_chart import render_geo_chart
 
 FACT_AGG_FUNC = [
     "SUM",
@@ -39,17 +40,22 @@ class Charts:
         self.clear_report_def = clear_report_def
         self.filter_values = filter_values or []
 
+    @staticmethod
+    def get_geo_labels(attribute: CatalogAttribute) -> list[CatalogLabel]:
+        return [l for l in attribute.labels if l.value_type in ["GEO_LATITUDE", "GEO_LONGITUDE"]]
+
     @property
     def chart_types(self):
         chart_types = ["Table"]
         if self.catalog.selected_view_by and self.catalog.selected_metrics:
             chart_types.extend(["Line chart", "Bar chart", "Donut chart"])
+        if self.catalog.selected_view_by and len(self.get_geo_labels(self.catalog.selected_view_by[0])) == 2:
+            chart_types.extend(["Geo chart"])
         return chart_types
 
     @property
     def chart_type(self):
         return self.app_state.get("chart_type") or "Table"
-
 
     def set_previous_selected_insight(self):
         self.app_state.set("previous_selected_insight", self.app_state.get("previous_selected_insight"))
@@ -73,7 +79,7 @@ class Charts:
 
     def render_filter_attributes(self):
         # Non DATE attributes. TODO - date filters
-        standard_attributes = self.catalog.get_standard_attributes()
+        standard_attributes = self.catalog.filtered_catalog.standard_attributes
         if standard_attributes:
             with st.container():
                 self.dropdown.render_multiselect(
@@ -134,36 +140,52 @@ class Charts:
 
     def render_chart_header_type_stored_insights(self):
         with st.container():
-            columns = st.columns((2, 8))
+            columns = st.columns((2, 4, 2, 2))
             with columns[0]:
                 st.selectbox(label="Chart type", options=self.chart_types, key="chart_type")
             with columns[1]:
                 self.render_stored_insights_picker()
+            with columns[2]:
+                inner_columns = columns[2].columns(2)
+                with inner_columns[0]:
+                    st.checkbox(label="Add filters", key="show_filter_attributes")
+                with inner_columns[1]:
+                    st.checkbox(label="Add sort by", key="show_sort_by")
+
 
     def render_chart_header_filters_metric_func_sort_by(self):
         with st.container():
             self.render_metric_functions()
-        with st.container():
-            columns = st.columns((2, 8))
-            with columns[0]:
-                self.render_filter_attributes()
-            with columns[1]:
-                if self.app_state.get("selected_filter_attributes"):
-                    self.render_filter_attribute_values()
-        with st.container():
-            columns = st.columns((2, 8))
-            with columns[0]:
-                if self.chart_type == "Table":
-                    self.render_sort_by()
-            with columns[1]:
-                if self.catalog.selected_sort_by:
-                    self.render_sort_by_methods()
+        if self.app_state.get("show_filter_attributes"):
+            with st.container():
+                columns = st.columns((2, 8))
+                with columns[0]:
+                    self.render_filter_attributes()
+                with columns[1]:
+                    if self.app_state.get("selected_filter_attributes"):
+                        self.render_filter_attribute_values()
+        if self.app_state.get("show_sort_by"):
+            with st.container():
+                columns = st.columns((2, 8))
+                with columns[0]:
+                    if self.chart_type == "Table":
+                        self.render_sort_by()
+                with columns[1]:
+                    if self.catalog.selected_sort_by:
+                        self.render_sort_by_methods()
 
 
     def display_skipped_entities(self) -> None:
+        skipped_metrics = None
+        skipped_view_by = None
         if self.chart_type != "Table" and (len(self.catalog.selected_metrics) > 1 or len(self.catalog.selected_view_by) > 1):
-            skipped_metrics = [x.title for x in self.catalog.selected_metrics[1:]]
+            if self.chart_type == "Geo chart":
+                skipped_metrics = [x.title for x in self.catalog.selected_metrics[2:]]
+            else:
+                skipped_metrics = [x.title for x in self.catalog.selected_metrics[1:]]
             skipped_view_by = [x.title for x in self.catalog.selected_view_by[1:]]
+
+        if skipped_metrics or skipped_view_by:
             msg = f"The following selected entities cannot be visualized in `{self.chart_type}`:\n"
             if skipped_metrics:
                 msg += f"- Metrics: {', '.join(skipped_metrics)}\n"
@@ -172,22 +194,42 @@ class Charts:
 
             st.info(msg)
 
+    def render_table(self, df: pd.DataFrame) -> None:
+        # TODO - find or implement a robust table component supporting sorting/paging out-of-the-box
+        sub_df = self.app_state.handle_paging(df)
+        #st.dataframe(sub_df, use_container_width=True, height=500)
+        #st.table(sub_df)
+        #st.write(sub_df)
+        # add CSS styling to set the background color of the header row
+        header_style = """
+                    th {
+                        background-color: #0074D9;
+                        color: white;
+                        text-align: center;
+                    }
+                """
+        # display the dataframe with the header row styled using CSS
+        st.write(f'<style>{header_style}</style>', unsafe_allow_html=True)
+        # generate an HTML table without the index column
+        html = sub_df.to_html(index=False, header=True)
+        # display the HTML table using st.markdown()
+        st.markdown(html, unsafe_allow_html=True)
+
     def render_chart(self, df: pd.DataFrame, metrics_with_functions: dict[str, str]) -> None:
-        first_view_by = next(iter(self.catalog.selected_view_by), None)
+        first_view_by = self.catalog.selected_view_by_first
         if first_view_by:
             # Altair charts do not accept df.MultiIndex
             df.reset_index(inplace=True)
         with st.container():
             if self.chart_type == "Table":
-                sub_df = self.app_state.handle_paging(df)
-                # st.dataframe(sub_df, use_container_width=True, height=500)
-                st.write(sub_df)
+                self.render_table(df)
             else:
                 metric_for_chart = next(iter(self.catalog.selected_metrics), None)
                 altair_charts = AltairCharts(
                     df, self.chart_type, first_view_by, metric_for_chart, metrics_with_functions
                 )
                 if self.chart_type in ["Line chart", "Bar chart"]:
+                    self.logger.info(f"{self.catalog.selected_segmented_by=}")
                     st.altair_chart(
                         altair_charts.generate_line_bar_chart(self.catalog.selected_segmented_by),
                         use_container_width=True
@@ -197,4 +239,6 @@ class Charts:
                         altair_charts.generate_donut_chart(),
                         use_container_width=True
                     )
+                elif self.chart_type == "Geo chart":
+                    render_geo_chart(df, self.catalog)
             self.display_skipped_entities()

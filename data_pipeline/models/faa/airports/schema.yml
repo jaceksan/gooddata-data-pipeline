@@ -20,3 +20,15 @@ models:
           gooddata:
             ldm_type: fact
       - name: name
+      - name: latitude
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: GEO_LATITUDE
+            attribute_column: code
+      - name: longitude
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: GEO_LONGITUDE
+            attribute_column: code
