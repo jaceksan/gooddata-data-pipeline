@@ -1,0 +1,53 @@
+content:
+  buckets:
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: latitude_destination
+                type: label
+            localIdentifier: 3537c69056a64afaba7ec215ee26bfe3
+      localIdentifier: location
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: flight_count
+                    type: metric
+            localIdentifier: a6bf792fac3d45dca3704e064e10a6f9
+            title: Flight count
+      localIdentifier: size
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: avg_departure_delay
+                    type: metric
+            localIdentifier: 8132f57ccf784783a4eff636d009214f
+            title: Avg Departure Delay
+      localIdentifier: color
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '1'
+          id: latitude_destination
+      latitude: latitude_destination
+      longitude: longitude_destination
+      points:
+        groupNearbyPoints: false
+      tooltipText: code_destination
+  sorts: []
+  version: '2'
+  visualizationUrl: local:pushpin
+description: ''
+id: geo_flight_count_and_departure_delay_by_airport
+title: Geo - flight count and departure delay by airport

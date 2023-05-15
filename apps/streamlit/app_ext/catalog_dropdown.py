@@ -2,8 +2,8 @@ from typing import Optional
 
 import streamlit as st
 from app_ext.state import AppState
-from gooddata.catalog import ObjectsLdm, get_title_for_obj_id, ObjectsWithTitle
-from gooddata_sdk.catalog.entity import CatalogEntity
+from gooddata.catalog import ObjectsLdm, get_title_for_obj_id
+from gooddata_sdk import AttrCatalogEntity
 from gooddata.__init import DEFAULT_EMPTY_SELECT_OPTION_ID
 
 
@@ -13,7 +13,7 @@ class CatalogDropDown:
 
     @staticmethod
     def get_object_ids(
-            objects: list[CatalogEntity], add_empty=False
+            objects: list[AttrCatalogEntity], add_empty=False
     ) -> list[str]:
         result = []
         if add_empty:

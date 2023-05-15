@@ -164,7 +164,7 @@ plugins:
 #    - projects.*
   - name: tap-exchangeratehost
     variant: anelendata
-    pip_url: git+https://github.com/jaceksan/tap-exchangeratehost.git
+    pip_url: git+https://github.com/anelendata/tap-exchangeratehost.git
     config:
       start_date: 2020-01-01
   loaders:

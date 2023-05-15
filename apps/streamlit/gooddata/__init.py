@@ -48,14 +48,15 @@ def get_obj_id_from_str(obj_id: str) -> ObjId:
 
 def generate_metrics_for_exec_def(metrics_with_func: dict[str, str]) -> list[SimpleMetric]:
     result = []
-    for metric_id, metric_func in metrics_with_func.items():
-        kwargs = {
-            "item": get_obj_id_from_str(metric_id),
-            "local_id": get_local_id_metric(metric_id, metric_func),
-        }
-        if metric_func:
-            kwargs["aggregation"] = metric_func
-        result.append(SimpleMetric(**kwargs))
+    if isinstance(metrics_with_func, dict):
+        for metric_id, metric_func in metrics_with_func.items():
+            kwargs = {
+                "item": get_obj_id_from_str(metric_id),
+                "local_id": get_local_id_metric(metric_id, metric_func),
+            }
+            if metric_func:
+                kwargs["aggregation"] = metric_func
+            result.append(SimpleMetric(**kwargs))
     return result
 
 def generate_attributes(attribute_ids: list[str]) -> list[Attribute]:
