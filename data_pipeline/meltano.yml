@@ -173,7 +173,8 @@ plugins:
     pip_url: target-jsonl
   - name: target-postgres
     variant: transferwise
-    pip_url: git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
+    pip_url: 
+      git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
     config:
       host: ${POSTGRES_HOST}
       port: ${POSTGRES_PORT}
@@ -194,7 +195,6 @@ plugins:
       warehouse: ${SNOWFLAKE_WAREHOUSE}
       default_target_schema: ${TARGET_SCHEMA}
       file_format: PUBLIC.MELTANO_FORMAT
-
 state_backend:
   # TODO - migrate to dedicated user and bucket
   uri: s3://${MELTANO_STATE_AWS_BUCKET}/cicd_demo_meltano_state
