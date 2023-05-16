@@ -97,9 +97,10 @@ Bootstrap developer environment:
 # Creates virtualenv and installs all dependencies
 make dev
 
-# Activate virtualenv
-source .venv/bin/activate
-# You should see a `(.venv)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
+# Activate virtualenv for extract_load part or for transform/analytics parts
+source .venv_lt/bin/activate
+source .venv_t/bin/activate
+# You should see e.g. a `(.venv_el)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
 
 # Deactivate virtual env once you are done
 deactivate
