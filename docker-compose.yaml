@@ -204,6 +204,20 @@ services:
       exit 0;
       "
 
+  vertica:
+    image: vertica/vertica-ce:12.0.4-0
+    environment:
+      APP_DB_USER: "demouser"
+      APP_DB_PASSWORD: "demopass"
+      TZ: "Europe/Prague"
+    ports:
+      - "5433:5433"
+      - "5444:5444"
+    volumes:
+      - vertica-data:/data
+
+
 volumes:
   gooddata-data-pipeline:
   minio-data:
+  vertica-data:
