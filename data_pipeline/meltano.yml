@@ -195,6 +195,18 @@ plugins:
       warehouse: ${SNOWFLAKE_WAREHOUSE}
       default_target_schema: ${TARGET_SCHEMA}
       file_format: PUBLIC.MELTANO_FORMAT
+  - name: target-vertica
+    namespace: target_vertica
+    pip_url: git+https://github.com/jaceksan/pipelinewise-target-vertica.git
+    executable: target-vertica
+    config:
+      host: ${VERTICA_HOST}
+      port: ${VERTICA_PORT}
+      user: ${VERTICA_USER}
+      password: ${VERTICA_PASS}
+      dbname: ${VERTICA_DBNAME}
+      default_target_schema: ${TARGET_SCHEMA}
+      add_metadata_columns: true
 state_backend:
   # TODO - migrate to dedicated user and bucket
   uri: s3://${MELTANO_STATE_AWS_BUCKET}/cicd_demo_meltano_state

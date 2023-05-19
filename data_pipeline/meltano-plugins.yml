@@ -22,3 +22,7 @@ plugins:
     - name: target-snowflake
       variant: transferwise
       pip_url: pipelinewise-target-snowflake
+    - name: target-vertica
+      namespace: target_vertica
+      pip_url: git+https://github.com/jaceksan/pipelinewise-target-vertica.git
+      executable: target-vertica
