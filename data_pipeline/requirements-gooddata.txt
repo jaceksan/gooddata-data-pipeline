@@ -1,1 +1,2 @@
 git+https://github.com/jaceksan/dbt-gooddata.git@0.3.8
+deep-translator==1.11.0
