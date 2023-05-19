@@ -1,0 +1,8 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT AVG( {fact/days_to_solve})
+description: Average days it took to solve pull requests
+id: avg_days_to_solve
+tags:
+  - Pull requests
+title: Average days to solve

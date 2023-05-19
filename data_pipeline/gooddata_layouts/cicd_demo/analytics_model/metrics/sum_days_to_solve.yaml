@@ -1,0 +1,8 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT SUM( {fact/days_to_solve})
+description: Sum of days it took to solve pull requests
+id: sum_days_to_solve
+tags:
+  - Pull requests
+title: Sum days to solve
