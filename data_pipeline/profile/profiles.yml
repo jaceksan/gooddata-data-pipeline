@@ -17,6 +17,18 @@ default:
       password: "{{ env_var('POSTGRES_PASS', 'demopass') }}"
       dbname: "{{ env_var('POSTGRES_DBNAME', 'demo') }}"
       schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
+      vars:
+        incremental_strategy: "insert+update"
+    cicd_dev_local_vertica:
+      title: "CICD demo (dev local)"
+      type: vertica
+      threads: 1
+      host: "{{ env_var('VERTICA_HOST', 'localhost') }}"
+      port: "{{ env_var('VERTICA_PORT', '5433') | int }}"
+      username: "{{ env_var('VERTICA_USER', 'demouser') }}"
+      password: "{{ env_var('VERTICA_PASS', 'demopass') }}"
+      database: "{{ env_var('VERTICA_DBNAME', 'vmart') }}"
+      schema: "{{ env_var('INPUT_SCHEMA', 'cicd_input_stage') }}"
     # Copy & paste below targets, reasons:
     # 1. the env variables must be shared with Meltano, so we cannot hardcode them here
     # 2. we cannot create single target, because its name (dict key) is used as ID of GoodData data source

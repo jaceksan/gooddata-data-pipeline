@@ -6,8 +6,7 @@
     {'columns': ['created_at'], 'unique': false}
   ],
   materialized='incremental',
-  unique_key=['pull_request_number', 'repo_id'],
-  incremental_strategy='delete+insert'
+  unique_key=['pull_request_number', 'repo_id']
 ) }}
 
 -- Helper step, materialize extracted JSON fields first and then JOIN it with other tables
@@ -24,7 +23,8 @@ with using_clause as (
     created_at,
     merged_at,
     closed_at,
-    CAST(json_extract_path_text(to_json("{{ get_db_entity_name('user') }}"), 'id') as INT) as user_id
+    {{ extract_json_value('user', 'id', 'user_id', 'INT') }}
+    --CAST(json_extract_path_text(to_json("{{ get_db_entity_name('user') }}"), 'id') as INT) as user_id
   from {{ var("input_schema_github") }}.pull_requests
   {% if is_incremental() %}
     where created_at > ( select max(created_at) from {{ this }} )
