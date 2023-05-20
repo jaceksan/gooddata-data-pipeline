@@ -5,8 +5,7 @@
     {'columns': ['repo_id'], 'unique': false}
   ],
   materialized='incremental',
-  unique_key='commit_id',
-  incremental_strategy='delete+insert'
+  unique_key='commit_id'
 ) }}
 
 with using_clause as (

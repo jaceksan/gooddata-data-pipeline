@@ -1,0 +1,8 @@
+content:
+  format: '#,##0'
+  maql: SELECT SUM( {fact/comment_count})
+description: Count of commit comments
+id: count_commit_comments
+tags:
+  - Commits
+title: Count of commit comments

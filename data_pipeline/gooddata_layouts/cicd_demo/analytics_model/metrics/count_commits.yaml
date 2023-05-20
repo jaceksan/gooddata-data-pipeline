@@ -1,0 +1,8 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT( {label/commit_id})
+description: Count of commits
+id: count_commits
+tags:
+  - Commits
+title: Count of commits

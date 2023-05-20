@@ -48,6 +48,7 @@ models:
           gooddata:
             ldm_type: date
 
+# TODO - remove it. dbt metrics are going to be deprecated by dbt, we deprecated it in dbt-gooddata too
 metrics:
   - name: sum_stargazers
     label: Sum of stargazers

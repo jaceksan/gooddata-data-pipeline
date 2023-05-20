@@ -1,0 +1,8 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT( {label/pull_request_id}) WHERE  {label/merged_at.day} <> NULL
+description: Count of merged pull requests. "Merged at" must not be empty
+id: count_merged_pull_requests
+tags:
+  - Pull requests
+title: Count of merged pull requests

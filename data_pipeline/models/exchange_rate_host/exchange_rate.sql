@@ -3,8 +3,7 @@
     {'columns': ['created_at'], 'unique': true}
   ],
   materialized='incremental',
-  unique_key='created_at',
-  incremental_strategy='delete+insert'
+  unique_key='created_at'
 ) }}
 
 with using_clause as (

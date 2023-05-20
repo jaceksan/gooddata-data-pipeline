@@ -4,8 +4,7 @@
     {'columns': ['pull_request_id'], 'unique': false}
   ],
   materialized='incremental',
-  unique_key='review_id',
-  incremental_strategy='delete+insert'
+  unique_key='review_id'
 ) }}
 
 with using_clause as (
