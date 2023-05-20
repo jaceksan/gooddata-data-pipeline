@@ -196,9 +196,8 @@ plugins:
       default_target_schema: ${TARGET_SCHEMA}
       file_format: PUBLIC.MELTANO_FORMAT
   - name: target-vertica
-    namespace: target_vertica
-    pip_url: git+https://github.com/jaceksan/pipelinewise-target-vertica.git
-    executable: target-vertica
+    variant: full360
+    pip_url: git+https://github.com/full360/pipelinewise-target-vertica.git
     config:
       host: ${VERTICA_HOST}
       port: ${VERTICA_PORT}
