@@ -115,7 +115,7 @@ ALTER TABLE {{fk_table_relation}} ADD CONSTRAINT {{constraint_name}} FOREIGN KEY
                 {%- endfor -%}
                 {%- set modify_statement_csv = modify_statements | join(", ") -%}
                 {%- set query -%}
-ALTER TABLE {{table_relation}} MODIFY {{ modify_statement_csv }};
+ALTER TABLE {{table_relation}} ALTER {{ modify_statement_csv }};
 {%- endset -%}
                 {%- do log("Creating not null constraint for: " ~ columns_to_change | join(", ") ~ " in " ~ table_relation, info=true) -%}
 {%- do run_query(query) -%}

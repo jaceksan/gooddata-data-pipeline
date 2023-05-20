@@ -23,6 +23,7 @@
 
 .dbt_changes:
   changes:
+    - $SRC_DATA_PIPELINE/macros/**/*
     - $SRC_DATA_PIPELINE/models/**/*
     - $SRC_DATA_PIPELINE/profile/**/*
     - $SRC_DATA_PIPELINE/dbt_project.yml
