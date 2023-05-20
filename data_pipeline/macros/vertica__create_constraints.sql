@@ -96,7 +96,7 @@
     {%- set existing_not_null_col = lookup_cache.not_null_col[table_relation] -%}
 
     {%- set columns_to_change = [] -%}
-    {%- for column_name in column_names if column_name not in existing_not_null_col -%}
+    {%- for column_name in column_names if column_name|upper not in existing_not_null_col -%}
         {%- do columns_to_change.append(column_name) -%}
         {%- do existing_not_null_col.append(column_name) -%}
     {%- endfor -%}
@@ -318,11 +318,12 @@
         {%- set upper_column_list = [] -%}
         {%- for row in results.rows -%}
             {%- do upper_column_list.append(row["column_name"]|upper) -%}
-            {%- if row['is_nullable'] == 'false' -%}
+            {%- if row['is_nullable'] == False -%}
                 {%- do not_null_col.append(row["column_name"]|upper) -%}
             {%- endif -%}
         {%- endfor -%}
         {%- do lookup_cache.table_columns.update({ table_relation: upper_column_list }) -%}
+
         {%- do lookup_cache.not_null_col.update({ table_relation: not_null_col }) -%}
     {%- endif -%}
     {{ return(lookup_cache.table_columns[table_relation]) }}
