@@ -6,17 +6,11 @@
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
   image:
-    name: "$DBT_CUSTOM_IMAGE"
+    name: "$DBT_GOODDATA_IMAGE"
     entrypoint: [""]
   stage: analytics
-  before_script:
-    - cd $SRC_DATA_PIPELINE
-    # dbt packages are installed during build of docker image to workdir
-    - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
-    # Compile to generate manifest.json, which is parsed by dbt-gooddata module to absorb dbt metrics
-    # TODO - deprecate this feature? (Note: dbt acquired Transform metric-store)
-    - dbt compile --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
   script:
+    - cd $SRC_DATA_PIPELINE
     - dbt-gooddata deploy_analytics $GOODDATA_UPPER_CASE
     - dbt-gooddata test_insights
 
@@ -25,7 +19,6 @@
     - $SRC_DATA_PIPELINE/meltano.yml
     - $SRC_DATA_PIPELINE/macros/**/*
     - $SRC_DATA_PIPELINE/models/**/*
-    - $SRC_DATA_PIPELINE/dbt-gooddata/**/*
     - $SRC_DATA_PIPELINE/gooddata_layouts/**/*
     - $SRC_DATA_PIPELINE/requirements-gooddata.txt
     - .gitlab-ci/gitlab-ci-analytics.yml
@@ -38,8 +31,6 @@ gooddata_dev:
   extends:
     - .gooddata
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, dev, GOODDATA_ENVIRONMENT_ID]
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
@@ -51,9 +42,17 @@ gooddata_staging:
   extends:
     - .gooddata
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes: !reference [.gooddata_changes, changes]
+    - !reference [.base_rules, rules]
+
+gooddata_staging_vertica:
+  extends:
+    - .gooddata
+  variables:
+    GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID_VERTICA]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -64,8 +63,6 @@ gooddata_prod:
   extends:
     - .gooddata
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'

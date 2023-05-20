@@ -147,30 +147,18 @@ services:
   analytics:
     build:
       context: .
-      # The same dbt image with dbt-gooddata is sufficient for deploying analytics
-      dockerfile: Dockerfile_dbt
+      dockerfile: Dockerfile_dbt_gooddata
     entrypoint:
       - /bin/bash
       - -c
     command:
       - |
-        dbt compile --profile default --target $$ELT_ENVIRONMENT
         dbt-gooddata deploy_analytics
         dbt-gooddata test_insights
     environment:
-      ELT_ENVIRONMENT: cicd_dev_local
-      POSTGRES_DBNAME: demo
-      POSTGRES_HOST: gooddata-cn-ce
-      GOODDATA_WORKSPACE_ID: cicd_demo_development
-      INPUT_SCHEMA_GITHUB: "github_input_stage"
-      INPUT_SCHEMA_FAA: "faa_input_stage"
-      OUTPUT_SCHEMA: cicd_output_stage
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
     volumes:
-      - ./data_pipeline/macros:/project/macros
-      - ./data_pipeline/models:/project/models
-      - ./data_pipeline/profile/profiles.yml:/root/.dbt/profiles.yml
       - ./data_pipeline/gooddata_layouts:/project/gooddata_layouts
       - ./data_pipeline/gooddata.yml:/project/gooddata.yml
 
