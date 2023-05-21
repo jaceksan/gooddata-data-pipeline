@@ -2,12 +2,17 @@
 
 The demo inside this repository demonstrates e2e data pipeline following best software engineering practices.
 It realizes the following steps:
-- crawls data from sources ([Meltano](https://meltano.com/))
-- loads data into a warehouse ([Meltano](https://meltano.com/))
-- transforms data in the warehouse in a multi-dimensional model ready for analytics ([dbt](https://www.getdbt.com/))
+- crawls data from sources with ([Meltano](https://meltano.com/))
+- loads data into a warehouse with ([Meltano](https://meltano.com/))
+- transforms data in the warehouse in a multi-dimensional model ready for analytics with ([dbt](https://www.getdbt.com/))
 - generates semantic model from physical model ([GoodData](https://www.gooddata.com/) model from [dbt](https://www.getdbt.com/) models)
 - deploys analytics model (metrics, insights, dashboards) from locally stored [layout files](data_pipeline/gooddata_layouts/)
 - deploys UI data apps coupled with the data pipeline. Read more details in [apps folder](apps/) 
+
+Currently, these data warehouse engines are supported:
+- PostgreSQL
+- Vertica
+- Snowflake
 
 Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/) (except the data apps).
 Data apps are delivered by [render.com](render.com) service after merge to `main` branch (staging), and after merge to `prod` branch(production).
@@ -36,6 +41,7 @@ The following articles are based on this project:
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
 It utilizes the [GoodData Community Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available for free in DockerHub.
+Optionally, you can also start [Vertica Community Edition](https://hub.docker.com/r/vertica/vertica-ce).
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
@@ -43,6 +49,8 @@ docker-compose build
 # Start GoodData, and Minio(AWS S3 Meltano state backend)
 docker-compose up -d gooddata-cn-ce minio minio-bootstrap
 # Wait 1-2 minutes to services successfully start
+# Optionally, start Vertica
+docker-compose up -d vertica
 
 # Allow https://localhost:8443 in CORS
 # This enables testing of locally started UI apps based on UI.SDK (examples in /apps folder) 
@@ -66,7 +74,7 @@ docker-compose up transform
 docker-compose up analytics
 ```
 
-Once everthing finishes successfully, you can go to [http://localhost:3000](http://localhost:3000), 
+Once everything finishes successfully, you can go to [http://localhost:3000](http://localhost:3000), 
 log in with `demo@example.com`/`demo123`, and start consuming the result of the data pipeline in the form of dashboards.
 
 There is also an alternative consumption experience - you can start data apps stored in [apps](apps/) folder.
@@ -97,16 +105,24 @@ Bootstrap developer environment:
 # Creates virtualenv and installs all dependencies
 make dev
 
-# Activate virtualenv
-source .venv/bin/activate
-# You should see a `(.venv)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
+# Activate virtualenv for extract_load part or for transform/analytics parts
+source .venv_lt/bin/activate
+source .venv_t/bin/activate
+# You should see e.g. a `(.venv_el)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
 
 # Deactivate virtual env once you are done
 deactivate
 ```
 
 ### Set environment variables
-See [.env.local](.env.local) example. Fill in sensitive variables.
+See [.env.local](.env.local) example. 
+Add sensitive variables to .env.custom.local file.
+
+```bash
+source .env.local
+# For vertica
+source .env.local vertica
+```
 
 ### Extract and Load
 Meltano tool is used. Configuration file [meltano.yml](data_pipeline/meltano.yml) declares everything related.
@@ -138,6 +154,13 @@ It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python
 How to run:
 ```bash
 make deploy_models
+```
+
+For Vertica, we have to customize VERTICA_HOST variable, because Vertica is running inside the docker-compose network.
+When you run e.g. Meltano from localhost, you connect to localhost.
+When GoodData is connecting to Vertica inside the docker network, it must connect to docker hostname of Vertica, which is `vertica`.
+```bash
+VERTICA_HOST="vertica" dbt-gooddata deploy_models
 ```
 
 ## Constraints
@@ -206,7 +229,10 @@ Use helper script for that:
 ```bash
 cd data_pipeline
 export MAPBOX_ACCESS_TOKEN="<put your token here>"
-python upload_mapbox_token.py
+python upload_mapbox_token.py -gw faa_development
+# If localization is used
+python upload_mapbox_token.py -gw faa_development_fr 
+python upload_mapbox_token.py -gw faa_development_chinese__simplified_ 
 ```
 
 ## Applications

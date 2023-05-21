@@ -1,0 +1,8 @@
+content:
+  format: '#,##0'
+  maql: SELECT SUM( {fact/stargazers_count})
+description: Sum of stargazers
+id: sum_stargazers
+tags:
+  - Repos
+title: Sum of stargazers

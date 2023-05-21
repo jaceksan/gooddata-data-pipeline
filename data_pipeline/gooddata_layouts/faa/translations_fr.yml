@@ -1,0 +1,85 @@
+01 - Airports: 01 - Aéroports
+02 - Flights: 02 - Vols
+03 - Carriers: 03 - Transporteurs
+Aircraft: Avion
+Aircraft count: Nombre d'avions
+Aircraft model code: Code de modèle d'avion
+Aircraft models: Modèles d'avions
+Airport count: Nombre d'aéroports
+Airports (destination): Aéroports (destination)
+Airports (origin): Aéroports (origine)
+Airports - by facility type: Aéroports - par type d'installation
+Airports - by region, state and facility type: Aéroports - par région, état et type
+  d'installation
+Airports - by state: Aéroports - par état
+Arr delay: Arr retard
+Avg Departure Delay: Délai de départ moyen
+Avg elevation: Altitude moyenne
+Cancelled: Annulé
+Carrier count: Nombre de transporteurs
+Carriers: Transporteurs
+Carriers - overview: Transporteurs - aperçu
+Code: Code
+Code (destination): Indicatif (destination)
+Code (origin): Code (origine)
+Complex metric example: Exemple de métrique complexe
+Dep delay: Délai de dépôt
+Departure time: Heure de départ
+Destination count: Nombre de destinations
+Distance: Distance
+Diverted: Détourné
+Elevation (destination): Altitude (destination)
+Elevation (origin): Altitude (origine)
+Faa region (destination): Région Faa (destination)
+Faa region (origin): Région Faa (origine)
+Fac type (destination): Type de Fac (destination)
+Fac type (origin): Type de fac (origine)
+Federal Aviation Administration (Development): Administration fédérale de l'aviation
+  (développement)
+Flight count: Nombre de vols
+Flight count - TOP(X): Nombre de vols - TOP(X)
+Flight count - carriers: Nombre de vols - transporteurs
+Flight count - destination: Nombre de vols - destination
+Flight count - overall: Nombre de vols - global
+Flight num: Numéro de vol
+Flight stats in time: Statistiques de vol dans le temps
+Flight stats in time v2: Statistiques de vol dans le temps v2
+Flight time: Temps de vol
+Flights: Vols
+Flights - by carrier: Vols - par transporteur
+Flights - by month: Vols - par mois
+Flights - by origin: Vols - par origine
+Geo - flight count and departure delay by airport: Géo - nombre de vols et retard
+  de départ par aéroport
+Id2: Id2
+Inspired by 1_airports.malloy from Malloy samples: Inspiré par 1_airports.malloy des
+  échantillons Malloy
+Inspired by 2_flights.malloy from Malloy samples: Inspiré par 2_flights.malloy des
+  échantillons Malloy
+Inspired by 3_carrier_analysis.malloy from Malloy samples: Inspiré par 3_carrier_analysis.malloy
+  des échantillons Malloy
+Latitude (destination): Latitude (destination)
+Latitude (origin): Latitude (origine)
+Longitude (destination): Longitude (destination)
+Longitude (origin): Longitude (origine)
+Manufacturer: Fabricant
+Name: Nom
+Name (destination): Nom (destination)
+Name (origin): Nom (origine)
+Nickname: Surnom
+Origin count: Nombre d'origine
+Percentage of carrier flights: Pourcentage de vols des transporteurs
+Percentage of carrier to destination flights: Pourcentage de vols transporteur-destination
+Percentage of current to carrier: Pourcentage du courant vers le transporteur
+Percentage of flights: Pourcentage de vols
+Percentage of flights - expanded: Pourcentage de vols - élargi
+Pivoting Example - Table: Exemple de pivot - Table
+Pivoting Example - TreeMap: Exemple de pivot - TreeMap
+Seats: Des places
+State (destination): État (destination)
+State (origin): Etat (origine)
+Tail num: Numéro de queue
+Taxi in: Taxi dans
+Taxi out: Départ en taxi
+Time - Carriers over time: Temps - Transporteurs au fil du temps
+Total distance: Distance totale

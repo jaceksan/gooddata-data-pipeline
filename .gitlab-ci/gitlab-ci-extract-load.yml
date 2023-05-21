@@ -10,7 +10,6 @@
     entrypoint: [""]
   stage: extract_load
   variables:
-    MELTANO_TARGET: "target-snowflake"
     FULL_REFRESH: "${FULL_REFRESH}"
   parallel:
     matrix:
@@ -51,6 +50,7 @@ extract_load_dev:
   variables:
     ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
     SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
+    MELTANO_TARGET: "target-snowflake"
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.extract_load_changes, changes]
@@ -64,6 +64,21 @@ extract_load_staging:
   variables:
     ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
     SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
+    MELTANO_TARGET: "target-snowflake"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes: !reference [.extract_load_changes, changes]
+    # The pipeline scheduler. Run ELT jobs regularly to load new data.
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+    - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
+
+extract_load_staging_vertica:
+  extends:
+    - .extract_load
+  variables:
+    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
+    MELTANO_TARGET: "target-vertica"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -79,6 +94,7 @@ extract_load_prod:
   variables:
     ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
     SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
+    MELTANO_TARGET: "target-snowflake"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]

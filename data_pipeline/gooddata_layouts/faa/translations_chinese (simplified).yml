@@ -1,0 +1,79 @@
+01 - Airports: 01 - 机场
+02 - Flights: 02 - 航班
+03 - Carriers: 03 - 运营商
+Aircraft: 飞机
+Aircraft count: 飞机数量
+Aircraft model code: 机型代码
+Aircraft models: 飞机模型
+Airport count: 机场计数
+Airports (destination): 机场（目的地）
+Airports (origin): 机场（始发地）
+Airports - by facility type: 机场 - 按设施类型
+Airports - by region, state and facility type: 机场——按地区、州和设施类型
+Airports - by state: 机场 - 按州
+Arr delay: 到达延迟
+Avg Departure Delay: 平均出发延误
+Avg elevation: 平均海拔
+Cancelled: 取消
+Carrier count: 运营商数量
+Carriers: 运营商
+Carriers - overview: 运营商 - 概述
+Code: 代码
+Code (destination): 代码（目的地）
+Code (origin): 代码（来源）
+Complex metric example: 复杂指标示例
+Dep delay: 延迟
+Departure time: 出发时间
+Destination count: 目的地计数
+Distance: 距离
+Diverted: 转移
+Elevation (destination): 海拔（目的地）
+Elevation (origin): 高程（原点）
+Faa region (destination): Faa 地区（目的地）
+Faa region (origin): Faa地区（原产地）
+Fac type (destination): Fac 类型（目的地）
+Fac type (origin): Fac类型（来源）
+Federal Aviation Administration (Development): 美国联邦航空管理局（发展）
+Flight count: 飞行次数
+Flight count - TOP(X): 飞行次数 - TOP(X)
+Flight count - carriers: 航班计数 - 承运人
+Flight count - destination: 航班计数 - 目的地
+Flight count - overall: 飞行次数 - 总体
+Flight num: 航班号
+Flight stats in time: 及时的航班统计
+Flight stats in time v2: 航班统计时间 v2
+Flight time: 飞行时间
+Flights: 航班
+Flights - by carrier: 航班 - 按承运人
+Flights - by month: 航班 - 按月
+Flights - by origin: 航班 - 按出发地
+Geo - flight count and departure delay by airport: 地理 - 航班数量和机场起飞延误
+Id2: 编号2
+Inspired by 1_airports.malloy from Malloy samples: 灵感来自 Malloy 样本中的 1_airports.malloy
+Inspired by 2_flights.malloy from Malloy samples: 灵感来自 Malloy 样本中的 2_flights.malloy
+Inspired by 3_carrier_analysis.malloy from Malloy samples: 灵感来自 Malloy 样本的 3_carrier_analysis.malloy
+Latitude (destination): 纬度（目的地）
+Latitude (origin): 纬度（起点）
+Longitude (destination): 经度（目的地）
+Longitude (origin): 经度（原点）
+Manufacturer: 制造商
+Name: 姓名
+Name (destination): 名称（目的地）
+Name (origin): 名称（来源）
+Nickname: 昵称
+Origin count: 原产地计数
+Percentage of carrier flights: 航空公司航班的百分比
+Percentage of carrier to destination flights: 航空公司到目的地航班的百分比
+Percentage of current to carrier: 载流子电流百分比
+Percentage of flights: 航班百分比
+Percentage of flights - expanded: 航班百分比 - 扩展
+Pivoting Example - Table: 旋转示例 - 表格
+Pivoting Example - TreeMap: 旋转示例 - TreeMap
+Seats: 座位
+State (destination): 州（目的地）
+State (origin): 州（原产地）
+Tail num: 尾号
+Taxi in: 出租车进
+Taxi out: 出租车出去
+Time - Carriers over time: 时间 - 随时间变化的载体
+Total distance: 总距离

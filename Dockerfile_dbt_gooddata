@@ -1,0 +1,16 @@
+ARG PYTHON_IMAGE=python:3.10.11-slim-bullseye
+ARG SRC_DATA_PIPELINE=data_pipeline
+FROM $PYTHON_IMAGE
+
+ARG IMAGES_WORKDIR=/project
+WORKDIR ${IMAGES_WORKDIR}
+
+ARG SRC_DATA_PIPELINE
+
+# TODO - once dbt-gooddata is in PyPI, remove this
+RUN apt update && apt -y install git
+
+COPY ${SRC_DATA_PIPELINE}/requirements-gooddata.txt requirements-gooddata.txt
+RUN pip3 install -r requirements-gooddata.txt
+
+ENTRYPOINT ["dbt-gooddata"]

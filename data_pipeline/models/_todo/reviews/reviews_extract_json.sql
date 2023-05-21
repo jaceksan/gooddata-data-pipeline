@@ -5,8 +5,7 @@
     {'columns': ['pull_request_url'], 'unique': false}
   ],
   materialized='incremental',
-  unique_key='review_id',
-  incremental_strategy='delete+insert'
+  unique_key='review_id'
 ) }}
 
 -- Helper step, materialize extracted JSON fields first and then JOIN it with other tables

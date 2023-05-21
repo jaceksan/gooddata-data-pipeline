@@ -11,10 +11,13 @@ variables:
   DBT_PROFILE_DIR: "profile"
   DBT_PROFILE: "default"
   GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
-  GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   SNOWFLAKE_ACCOUNT: "gooddata"
   SNOWFLAKE_USER: "cicd"
   SNOWFLAKE_WAREHOUSE: "DEMO_WH"
+  VERTICA_HOST: "140.236.88.151"
+  VERTICA_PORT: "5433"
+  VERTICA_USER: "gooddata"
+  VERTICA_DBNAME: "PartPub80DB"
   INPUT_SCHEMA_FAA: "faa_input_stage"
   INPUT_SCHEMA_GITHUB: "github_input_stage"
   INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
@@ -27,6 +30,10 @@ variables:
   DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
   DBT_VERSION: "1.4.1"
   DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION"
+  PYTHON_IMAGE: "python:3.10.11-slim-bullseye"
+  DBT_GOODDATA_IMAGE_BASE: "gooddata-data-pipeline-dbt-gooddata"
+  DBT_GOODDATA_VERSION: "0.3.8"
+  DBT_GOODDATA_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_GOODDATA_IMAGE_BASE:$DBT_GOODDATA_VERSION"
 
 .envs:
   # Meltano, dbt and GoodData environments have 1:1 relationship in this demo
@@ -39,6 +46,8 @@ variables:
     ELT_ENVIRONMENT: "cicd_staging"
     SNOWFLAKE_DBNAME: "CICD_STAGING"
     GOODDATA_ENVIRONMENT_ID: "staging"
+    ELT_ENVIRONMENT_VERTICA: "cicd_staging_vertica"
+    GOODDATA_ENVIRONMENT_ID_VERTICA: "staging_vertica"
   prod:
     ELT_ENVIRONMENT: "cicd_prod"
     SNOWFLAKE_DBNAME: "CICD_PROD"
@@ -67,6 +76,7 @@ include:
   - ".gitlab-ci/gitlab-ci-build-base.yml"
   - ".gitlab-ci/gitlab-ci-build-meltano.yml"
   - ".gitlab-ci/gitlab-ci-build-dbt.yml"
+  - ".gitlab-ci/gitlab-ci-build-dbt-gooddata.yml"
   - ".gitlab-ci/gitlab-ci-extract-load.yml"
   - ".gitlab-ci/gitlab-ci-transform.yml"
   - ".gitlab-ci/gitlab-ci-analytics.yml"

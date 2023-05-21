@@ -1,0 +1,21 @@
+build_dbt_gooddata:
+  extends:
+    - .docker
+  stage: build
+  script:
+    - cd "$CI_PROJECT_DIR"
+    - docker build
+      --build-arg PYTHON_IMAGE=$PYTHON_IMAGE
+      --build-arg IMAGES_WORKDIR=$IMAGES_WORKDIR
+      -f Dockerfile_dbt_gooddata
+      -t $DBT_GOODDATA_IMAGE .
+    - docker push $DBT_GOODDATA_IMAGE
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes:
+        - Dockerfile_dbt_gooddata
+        - $SRC_DATA_PIPELINE/requirements-gooddata.txt
+        - .gitlab-ci/gitlab-ci-build-dbt-gooddata.yml
+        - .gitlab-ci/gitlab-ci-build-base.yml
+        - .gitlab-ci.yml
+    - !reference [.base_rules, rules]

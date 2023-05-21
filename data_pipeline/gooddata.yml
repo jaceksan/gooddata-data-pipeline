@@ -7,6 +7,9 @@ environment_setups:
       - id: staging
         name: Staging
         elt_environment: cicd_staging
+      - id: staging_vertica
+        name: Staging(Vertica)
+        elt_environment: cicd_staging_vertica
       - id: production
         name: Production
         elt_environment: cicd_prod
@@ -22,3 +25,10 @@ data_products:
     environment_setup_id: default
     model_ids:
       - faa
+    localization:
+      from_language: en
+      to:
+        - locale: fr-FR
+          language: fr
+        - locale: zh-Hans
+          language: "chinese (simplified)"

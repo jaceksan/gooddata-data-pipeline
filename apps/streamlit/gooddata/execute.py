@@ -12,7 +12,6 @@ import gooddata_pandas as gp
 from gooddata_sdk import GoodDataSdk
 from gooddata.__init import log_duration, generate_execution_definition
 from gooddata.catalog import get_data_source_id
-from gooddata_api_client.model.elements_request import ElementsRequest
 
 ValidObjectTypes = Union[list[CatalogMetric], list[CatalogAttribute], list[Insight], list[CatalogWorkspace]]
 
@@ -25,10 +24,7 @@ def execute_stored_insight(_logger: Logger, _frames: gp.DataFrameFactory, insigh
 
 @st.cache_data
 def get_attribute_values(_sdk: GoodDataSdk, workspace_id: str, attribute_id: str) -> list[str]:
-    request = ElementsRequest(label=attribute_id)
-    # TODO - fix return type of Paging.next in Backend + add support for this API to SDK
-    values = _sdk.client.actions_api.compute_label_elements_post(workspace_id, request, _check_return_type=False)
-    return [v["title"] for v in values["elements"]]
+    return _sdk.catalog_workspace_content.get_label_elements(workspace_id, attribute_id)
 
 @st.cache_data
 def execute_custom_insight(

@@ -43,6 +43,8 @@ models:
     exchange_rate_host:
       +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
       +materialized: table
+    config:
+      incremental_strategy: "{{ var('incremental_strategy', default='merge') }}"
 
 vars:
   "dbt_date:time_zone": "UTC"
