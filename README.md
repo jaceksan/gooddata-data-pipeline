@@ -63,8 +63,8 @@ docker-compose up bootstrap_origins
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
 # Set AWS S3 credentials to be able to ELT the FAA data (stored in a public S3 bucket)
-export AWS_ACCESS_KEY_ID="<my AWS access key>"
-export AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
+export TAP_S3_CSV_AWS_ACCESS_KEY_ID="<my AWS access key>"
+export TAP_S3_CSV_AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
 docker-compose up extract_load_github
 docker-compose up extract_load_faa
 docker-compose up extract_load_exchangeratehost
