@@ -53,6 +53,23 @@ variables:
     SNOWFLAKE_DBNAME: "CICD_PROD"
     GOODDATA_ENVIRONMENT_ID: "production"
 
+  # alternatively define environments for Cloud versions – dbt Cloud and Meltano Cloud
+  cloud_dev:
+    ELT_ENVIRONMENT: "cicd_cloud_dev"
+    SNOWFLAKE_DBNAME: "CICD_CLOUD_DEV"
+    GOODDATA_ENVIRONMENT_ID: "cloud_development"
+  cloud_staging:
+    ELT_ENVIRONMENT: "cicd_cloud_staging"
+    SNOWFLAKE_DBNAME: "CICD_CLOUD_STAGING"
+    GOODDATA_ENVIRONMENT_ID: "cloud_staging"
+    ELT_ENVIRONMENT_VERTICA: "cicd_cloud_staging_vertica"
+    GOODDATA_ENVIRONMENT_ID_VERTICA: "cloud_staging_vertica"
+  cloud_prod:
+    ELT_ENVIRONMENT: "cicd_cloud_prod"
+    SNOWFLAKE_DBNAME: "CICD_CLOUD_PROD"
+    GOODDATA_ENVIRONMENT_ID: "cloud_production"
+
+
 
 ##########################
 # Job templates
