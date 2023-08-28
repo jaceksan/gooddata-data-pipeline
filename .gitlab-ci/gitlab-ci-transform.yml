@@ -34,7 +34,29 @@
     - .gitlab-ci/gitlab-ci-transform.yml
     - .gitlab-ci.yml
 
-##########################3
+##########################
+# Variables for dbt following dbt Cloud convention (DBT_)
+variables:
+  DBT_INPUT_SCHEMA: $INPUT_SCHEMA
+  DBT_OUTPUT_SCHEMA: $OUTPUT_SCHEMA
+  DBT_INPUT_SCHEMA_GITHUB: $INPUT_SCHEMA_GITHUB
+  DBT_INPUT_SCHEMA_FAA: $INPUT_SCHEMA_FAA
+  DBT_INPUT_SCHEMA_EXCHANGERATEHOST: $INPUT_SCHEMA_EXCHANGERATEHOST
+
+  DBT_SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT
+  DBT_SNOWFLAKE_USER: $SNOWFLAKE_USER
+  DBT_SNOWFLAKE_PASS: $SNOWFLAKE_PASS
+  DBT_SNOWFLAKE_DBNAME: $SNOWFLAKE_DBNAME
+  DBT_SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE
+
+  DBT_VERTICA_HOST: $VERTICA_HOST
+  DBT_VERTICA_PORT: $VERTICA_PORT
+  DBT_VERTICA_USER: $VERTICA_USER
+  DBT_VERTICA_PASS: $VERTICA_PASS
+  DBT_VERTICA_DBNAME: $VERTICA_DBNAME
+
+
+##########################
 # Jobs
 
 # pre-merge
@@ -43,7 +65,7 @@ dbt_dev:
     - .dbt
   variables:
     ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
+    DBT_SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, dev, GOODDATA_ENVIRONMENT_ID]
     GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   rules:
@@ -58,7 +80,7 @@ dbt_staging:
     - .dbt
   variables:
     ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
+    DBT_SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
     GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   rules:
@@ -87,7 +109,7 @@ dbt_prod:
     - .dbt
   variables:
     ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
+    DBT_SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
     GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   rules:

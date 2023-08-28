@@ -1,5 +1,27 @@
 version: '3.8'
 
+x-postgres-vars: &postgres-vars
+  POSTGRES_HOST: gooddata-cn-ce
+  POSTGRES_PORT: 5432
+  POSTGRES_USER: demouser
+  POSTGRES_PASS: demopass
+  POSTGRES_DBNAME: demo
+
+x-dbt-postgres-vars: &dbt-postgres-vars
+  DBT_POSTGRES_HOST: gooddata-cn-ce
+  DBT_POSTGRES_PORT: 5432
+  DBT_POSTGRES_USER: demouser
+  DBT_POSTGRES_PASS: demopass
+  DBT_POSTGRES_DBNAME: demo
+
+x-meltano-vars: &meltano-vars
+  MELTANO_ENV: cicd_dev_local
+  MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
+  MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
+  MELTANO_STATE_AWS_BUCKET: "meltano"
+  MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
+
+
 services:
   gooddata-cn-ce:
     # You can use "dev_latest" tag which points to the latest development version of GD.CN
@@ -47,18 +69,9 @@ services:
     command:
       - meltano --environment $$MELTANO_ENV run tap-github-repo target-postgres tap-github-org target-postgres
     environment:
-      POSTGRES_HOST: gooddata-cn-ce
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: demouser
-      POSTGRES_PASS: demopass
-      POSTGRES_DBNAME: demo
+      <<: [ *postgres-vars, *meltano-vars ]
       TARGET_SCHEMA: github_input_stage
       TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
-      MELTANO_ENV: cicd_dev_local
-      MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
-      MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
-      MELTANO_STATE_AWS_BUCKET: "meltano"
-      MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
 
@@ -72,17 +85,8 @@ services:
     command:
       - meltano --environment $$MELTANO_ENV run tap-s3-csv target-postgres
     environment:
-      POSTGRES_HOST: gooddata-cn-ce
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: demouser
-      POSTGRES_PASS: demopass
-      POSTGRES_DBNAME: demo
+      <<: [ *postgres-vars, *meltano-vars ]
       TARGET_SCHEMA: faa_input_stage
-      MELTANO_ENV: cicd_dev_local
-      MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
-      MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
-      MELTANO_STATE_AWS_BUCKET: "meltano"
-      MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
       TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
       TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
     volumes:
@@ -98,17 +102,8 @@ services:
     command:
       - meltano --environment $$MELTANO_ENV run tap-exchangeratehost target-postgres
     environment:
-      POSTGRES_HOST: gooddata-cn-ce
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: demouser
-      POSTGRES_PASS: demopass
-      POSTGRES_DBNAME: demo
+      <<: [ *postgres-vars, *meltano-vars ]
       TARGET_SCHEMA: exchangeratehost_input_stage
-      MELTANO_ENV: cicd_dev_local
-      MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
-      MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
-      MELTANO_STATE_AWS_BUCKET: "meltano"
-      MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
 
@@ -126,15 +121,11 @@ services:
         dbt-gooddata deploy_models
         dbt-gooddata upload_notification
     environment:
-      POSTGRES_HOST: gooddata-cn-ce
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: demouser
-      POSTGRES_PASS: demopass
-      POSTGRES_DBNAME: demo
-      INPUT_SCHEMA: cicd_input_stage
-      INPUT_SCHEMA_GITHUB: "github_input_stage"
-      INPUT_SCHEMA_FAA: "faa_input_stage"
-      OUTPUT_SCHEMA: cicd_output_stage
+      <<: [ *postgres-vars, *dbt-postgres-vars ]
+      DBT_INPUT_SCHEMA: cicd_input_stage
+      DBT_INPUT_SCHEMA_GITHUB: "github_input_stage"
+      DBT_INPUT_SCHEMA_FAA: "faa_input_stage"
+      DBT_OUTPUT_SCHEMA: cicd_output_stage
       ELT_ENVIRONMENT: cicd_dev_local
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
@@ -175,7 +166,7 @@ services:
       MINIO_ROOT_PASSWORD: minio_abcde_k1234567_secret1234567890123
     command: server --console-address ":19001" /data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
       timeout: 20s
       retries: 3
