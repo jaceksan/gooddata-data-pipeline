@@ -30,6 +30,33 @@ environments:
       - name: tap-exchangeratehost
         config:
           start_date: '2010-01-01'
+- name: cicd_cloud_dev
+- name: cicd_cloud_staging
+  config:
+    plugins:
+      extractors:
+      - name: tap-github-repo
+        config:
+          repositories:
+          - gooddata/gooddata-python-sdk
+          - gooddata/gooddata-ui-sdk
+          start_date: '2010-01-01'
+      - name: tap-exchangeratehost
+        config:
+          start_date: '2010-01-01'
+- name: cicd_cloud_prod
+  config:
+    plugins:
+      extractors:
+      - name: tap-github-repo
+        config:
+          repositories:
+          - gooddata/gooddata-python-sdk
+          - gooddata/gooddata-ui-sdk
+          start_date: '2010-01-01'
+      - name: tap-exchangeratehost
+        config:
+          start_date: '2010-01-01'
 plugins:
   extractors:
   - name: tap-github
