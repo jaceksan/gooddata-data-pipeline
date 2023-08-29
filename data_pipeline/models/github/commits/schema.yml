@@ -61,37 +61,37 @@ models:
             ldm_type: fact
 
 # TODO - remove it. dbt metrics are going to be deprecated by dbt, we deprecated it in dbt-gooddata too
-metrics:
-  - name: count_commits
-    label: Count of commits
-    description: Count of commits
-    model: ref('commits')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0"
-
-    calculation_method: count_distinct
-    expression: commit_id
-
-    timestamp: created_at
-    time_grains: [day, week, month, quarter, year]
-
-  - name: count_commit_comments
-    label: Count of commit comments
-    description: Count of commit comments
-    model: ref('commits')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0"
-
-    calculation_method: sum
-    expression: comment_count
-
-    timestamp: created_at
-    time_grains: [day, week, month, quarter, year]
+# metrics:
+#   - name: count_commits
+#     label: Count of commits
+#     description: Count of commits
+#     model: ref('commits')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0"
+#
+#     calculation_method: count_distinct
+#     expression: commit_id
+#
+#     timestamp: created_at
+#     time_grains: [day, week, month, quarter, year]
+#
+#   - name: count_commit_comments
+#     label: Count of commit comments
+#     description: Count of commit comments
+#     model: ref('commits')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0"
+#
+#     calculation_method: sum
+#     expression: comment_count
+#
+#     timestamp: created_at
+#     time_grains: [day, week, month, quarter, year]
