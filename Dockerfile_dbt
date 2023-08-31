@@ -18,4 +18,8 @@ COPY ${SRC_DATA_PIPELINE}/packages.yml packages.yml
 COPY ${SRC_DATA_PIPELINE}/dbt_project.yml dbt_project.yml
 RUN dbt deps
 
+
+# This is for dbt Cloud purpose
+COPY ${SRC_DATA_PIPELINE}/dbt_cloud.py dbt_cloud.py
+
 ENTRYPOINT ["dbt"]

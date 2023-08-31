@@ -21,6 +21,23 @@
     # Invalidates GoodData caches
     - dbt-gooddata upload_notification
 
+.dbt_cloud:
+  extends:
+    - .base
+  # We build a custom image on top of the official dbt image in this pipeline
+  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
+  image:
+    name: "$DBT_CUSTOM_IMAGE"
+    entrypoint: [""]
+  stage: transform
+  before_script:
+    - cd $SRC_DATA_PIPELINE
+  script:
+    - python dbt_cloud.py
+    - dbt-gooddata deploy_models $GOODDATA_UPPER_CASE
+    # Invalidates GoodData caches
+    - dbt-gooddata upload_notification
+
 .dbt_changes:
   changes:
     - $SRC_DATA_PIPELINE/macros/**/*
@@ -74,6 +91,21 @@ dbt_dev:
     - !reference [.base_rules, rules]
     - !reference [.elt_rules, rules]
 
+# pre-merge dbt Cloud
+dbt_cloud_dev:
+  extends:
+    - .dbt_cloud
+  variables:
+    DBT_JOB_ID: !reference [.envs, cloud_dev, DBT_JOB_ID]
+    ELT_ENVIRONMENT: !reference [.envs, cloud_dev, ELT_ENVIRONMENT]
+    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_dev, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes: !reference [.dbt_changes, changes]
+    - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
+
 # post-merge
 dbt_staging:
   extends:
@@ -82,6 +114,22 @@ dbt_staging:
     ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
     DBT_SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes: !reference [.dbt_changes, changes]
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+    - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
+
+# post-merge dbt Cloud
+dbt_cloud_staging:
+  extends:
+    - .dbt_cloud
+  variables:
+    DBT_JOB_ID: !reference [.envs, cloud_staging, DBT_JOB_ID]
+    ELT_ENVIRONMENT: !reference [.envs, cloud_staging, ELT_ENVIRONMENT]
+    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_staging, GOODDATA_ENVIRONMENT_ID]
     GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
@@ -111,6 +159,23 @@ dbt_prod:
     ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
     DBT_SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      changes: !reference [.dbt_changes, changes]
+    # The pipeline scheduler triggers only PROD jobs
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
+    - !reference [.base_rules, rules]
+    - !reference [.elt_rules, rules]
+
+# merge to prod dbt Cloud
+dbt_cloud_prod:
+  extends:
+    - .dbt_cloud
+  variables:
+    DBT_JOB_ID: !reference [.envs, cloud_prod, DBT_JOB_ID]
+    ELT_ENVIRONMENT: !reference [.envs, cloud_prod, ELT_ENVIRONMENT]
+    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_prod, GOODDATA_ENVIRONMENT_ID]
     GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
