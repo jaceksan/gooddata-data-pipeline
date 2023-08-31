@@ -13,6 +13,16 @@ environment_setups:
       - id: production
         name: Production
         elt_environment: cicd_prod
+      - id: cloud_development
+        name: dbt Cloud Development
+        elt_environment: cicd_cloud_dev
+      - id: cloud_staging
+        name: dbt Cloud Staging
+        elt_environment: cicd_cloud_staging
+      - id: cloud_production
+        name: dbt Cloud Production
+        elt_environment: cicd_cloud_prod
+
 
 data_products:
   - id: cicd_demo

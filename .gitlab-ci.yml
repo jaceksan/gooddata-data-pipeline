@@ -57,6 +57,7 @@ variables:
   cloud_dev:
     ELT_ENVIRONMENT: "cicd_cloud_dev"
     SNOWFLAKE_DBNAME: "CICD_CLOUD_DEV"
+    DBT_JOB_ID: 406899
     GOODDATA_ENVIRONMENT_ID: "cloud_development"
   cloud_staging:
     ELT_ENVIRONMENT: "cicd_cloud_staging"
@@ -64,10 +65,12 @@ variables:
     GOODDATA_ENVIRONMENT_ID: "cloud_staging"
     ELT_ENVIRONMENT_VERTICA: "cicd_cloud_staging_vertica"
     GOODDATA_ENVIRONMENT_ID_VERTICA: "cloud_staging_vertica"
+    DBT_JOB_ID: 408385
   cloud_prod:
     ELT_ENVIRONMENT: "cicd_cloud_prod"
     SNOWFLAKE_DBNAME: "CICD_CLOUD_PROD"
     GOODDATA_ENVIRONMENT_ID: "cloud_production"
+    DBT_JOB_ID: 408386
 
 
 

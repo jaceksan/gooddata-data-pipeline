@@ -37,12 +37,34 @@ gooddata_dev:
       changes: !reference [.gooddata_changes, changes]
     - !reference [.base_rules, rules]
 
+# pre-merge dbt Cloud
+gooddata_cloud_dev:
+  extends:
+    - .gooddata
+  variables:
+    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_dev, GOODDATA_ENVIRONMENT_ID]
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+      changes: !reference [.gooddata_changes, changes]
+    - !reference [.base_rules, rules]
+
 # post-merge
 gooddata_staging:
   extends:
     - .gooddata
   variables:
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      changes: !reference [.gooddata_changes, changes]
+    - !reference [.base_rules, rules]
+
+# post-merge dbt Cloud
+gooddata_cloud_staging:
+  extends:
+    - .gooddata
+  variables:
+    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_staging, GOODDATA_ENVIRONMENT_ID]
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -64,6 +86,17 @@ gooddata_prod:
     - .gooddata
   variables:
     GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+      changes: !reference [.gooddata_changes, changes]
+    - !reference [.base_rules, rules]
+
+# merge to prod branch dbt Cloud
+gooddata_cloud_prod:
+  extends:
+    - .gooddata
+  variables:
+    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_prod, GOODDATA_ENVIRONMENT_ID]
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
