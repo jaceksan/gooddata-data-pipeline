@@ -10,9 +10,6 @@ environments:
       extractors:
       - name: tap-github-repo
         config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
           start_date: '2010-01-01'
       - name: tap-exchangeratehost
         config:
@@ -23,9 +20,6 @@ environments:
       extractors:
       - name: tap-github-repo
         config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
           start_date: '2010-01-01'
       - name: tap-exchangeratehost
         config:
@@ -37,9 +31,6 @@ environments:
       extractors:
       - name: tap-github-repo
         config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
           start_date: '2010-01-01'
       - name: tap-exchangeratehost
         config:
@@ -50,9 +41,6 @@ environments:
       extractors:
       - name: tap-github-repo
         config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
           start_date: '2010-01-01'
       - name: tap-exchangeratehost
         config:
@@ -67,6 +55,9 @@ plugins:
     config:
       repositories:
       - gooddata/gooddata-python-sdk
+      - gooddata/gooddata-ui-sdk
+      - gooddata/gooddata-dashboard-plugins
+      - gooddata/gooddata-public-demos
       start_date: '2022-01-01'
     select:
         # Commits
@@ -123,18 +114,19 @@ plugins:
     - repositories.watchers_count
     - repositories.created_at
     - repositories.updated_at
-        # Users
-    - contributors.avatar_url
-    - contributors.contributions
-    - contributors.gravatar_id
-    - contributors.html_url
-    - contributors.id
-    - contributors.login
-    - contributors.org
-    - contributors.repo_id
-    - contributors.site_admin
-    - contributors.type
-    - contributors.url
+        # Users - we take it from commits. Crawling contributors is very slow (call per repo)
+        #       - TODO - use new Github API?
+#    - contributors.avatar_url
+#    - contributors.contributions
+#    - contributors.gravatar_id
+#    - contributors.html_url
+#    - contributors.id
+#    - contributors.login
+#    - contributors.org
+#    - contributors.repo_id
+#    - contributors.site_admin
+#    - contributors.type
+#    - contributors.url
   - name: tap-s3-csv
     variant: transferwise
     pip_url: pipelinewise-tap-s3-csv
