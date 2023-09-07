@@ -57,6 +57,3 @@ store_analytics:
 
 test_insights:
 	cd $(SRC_DATA_PIPELINE) && dbt-gooddata test_insights
-
-invalidate_analytics_caches:
-	cd $(SRC_DATA_PIPELINE) && dbt-gooddata upload_notification
