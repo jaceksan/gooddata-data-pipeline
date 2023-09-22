@@ -13,6 +13,7 @@ Currently, these data warehouse engines are supported:
 - PostgreSQL
 - Vertica
 - Snowflake
+- MotherDuck (partially, TODO)
 
 Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/) (except the data apps).
 
