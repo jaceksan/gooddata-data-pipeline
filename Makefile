@@ -7,7 +7,7 @@ all:
 
 # TODO - remove this, do not depend on manifest.json
 dbt_compile:
-	cd $(SRC_DATA_PIPELINE) && dbt compile --profiles-dir profile --target $$ELT_ENVIRONMENT
+	cd $(SRC_DATA_PIPELINE) && dbt compile --profiles-dir profile --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
 
 dev:
 	# Create virtualenv
@@ -38,19 +38,28 @@ extract_load_exchange:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_EXCHANGERATEHOST && meltano --environment $$ELT_ENVIRONMENT run tap-exchangeratehost $$MELTANO_TARGET $$FR
 
 transform:
-	cd $(SRC_DATA_PIPELINE) && dbt run --profiles-dir profile --target $$ELT_ENVIRONMENT $$FR
-	cd $(SRC_DATA_PIPELINE) && dbt test --profiles-dir profile --target $$ELT_ENVIRONMENT
+	cd $(SRC_DATA_PIPELINE) && dbt run --profiles-dir profile --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$FR
+	cd $(SRC_DATA_PIPELINE) && dbt test --profiles-dir profile --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+
+transform_cloud:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt dbt_cloud_run --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+
+transform_cloud_stats:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt dbt_cloud_stats --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE --environment-id $$DBT_ENVIRONMENT_ID
 
 invalidate_caches:
 	# Invalidate GoodData caches after new data are delivered
-	cd $(SRC_DATA_PIPELINE) && dbt-gooddata upload_notification
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
 
 deploy_models: dbt_compile
-	cd $(SRC_DATA_PIPELINE) && dbt-gooddata deploy_models $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_models --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+
+deploy_models_cloud:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_models --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_analytics: dbt_compile
-	cd $(SRC_DATA_PIPELINE) && dbt-gooddata deploy_analytics $$GOODDATA_UPPER_CASE
-	cd $(SRC_DATA_PIPELINE) && dbt-gooddata test_insights
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_analytics $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt test_insights
 
 store_analytics:
 	cd $(SRC_DATA_PIPELINE) && dbt-gooddata store_analytics

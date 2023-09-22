@@ -48,9 +48,8 @@ extract_load_dev:
   extends:
     - .extract_load
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-    MELTANO_TARGET: "target-snowflake"
+    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+    SNOWFLAKE_DBNAME: $DEV_SNOWFLAKE_DBNAME
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.extract_load_changes, changes]
@@ -62,9 +61,8 @@ extract_load_cloud_dev:
   extends:
     - .extract_load
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, cloud_dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, cloud_dev, SNOWFLAKE_DBNAME]
-    MELTANO_TARGET: "target-snowflake"
+    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+    SNOWFLAKE_DBNAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
   rules:
       - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
         changes: !reference [.extract_load_changes, changes]
@@ -76,9 +74,8 @@ extract_load_staging:
   extends:
     - .extract_load
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-    MELTANO_TARGET: "target-snowflake"
+    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+    SNOWFLAKE_DBNAME: $STAGING_SNOWFLAKE_DBNAME
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -92,9 +89,8 @@ extract_load_cloud_staging:
   extends:
     - .extract_load
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, cloud_staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, cloud_staging, SNOWFLAKE_DBNAME]
-    MELTANO_TARGET: "target-snowflake"
+    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+    SNOWFLAKE_DBNAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -107,8 +103,7 @@ extract_load_staging_vertica:
   extends:
     - .extract_load
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    MELTANO_TARGET: "target-vertica"
+    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -122,9 +117,8 @@ extract_load_prod:
   extends:
     - .extract_load
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-    MELTANO_TARGET: "target-snowflake"
+    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+    SNOWFLAKE_DBNAME: $PROD_SNOWFLAKE_DBNAME
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -133,14 +127,13 @@ extract_load_prod:
     - !reference [.base_rules, rules]
     - !reference [.elt_rules, rules]
 
-# merge to prod branch
+# merge to prod branch (cloud)
 extract_load_cloud_prod:
   extends:
     - .extract_load
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, cloud_prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, cloud_prod, SNOWFLAKE_DBNAME]
-    MELTANO_TARGET: "target-snowflake"
+    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+    SNOWFLAKE_DBNAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]

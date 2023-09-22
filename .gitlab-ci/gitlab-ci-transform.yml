@@ -4,7 +4,7 @@
   extends:
     - .base
   # We build a custom image on top of the official dbt image in this pipeline
-  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
+  # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
     name: "$DBT_CUSTOM_IMAGE"
     entrypoint: [""]
@@ -15,17 +15,17 @@
     - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
     - if [ "$FULL_REFRESH" == "true" ]; then export FR_ARG="--full-refresh"; else export FR_ARG=""; fi
   script:
-    - dbt run --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT $FR_ARG
-    - dbt test --profiles-dir $DBT_PROFILE_DIR --profile $DBT_PROFILE --target $ELT_ENVIRONMENT
-    - dbt-gooddata deploy_models $GOODDATA_UPPER_CASE
+    - dbt run --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT --target $DBT_TARGET $FR_ARG
+    - dbt test --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt deploy_models $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
     # Invalidates GoodData caches
-    - dbt-gooddata upload_notification
+    - gooddata-dbt upload_notification --profile $ELT_ENVIRONMENT --target $DBT_TARGET
 
 .dbt_cloud:
   extends:
     - .base
   # We build a custom image on top of the official dbt image in this pipeline
-  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
+  # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
     name: "$DBT_CUSTOM_IMAGE"
     entrypoint: [""]
@@ -33,10 +33,12 @@
   before_script:
     - cd $SRC_DATA_PIPELINE
   script:
-    - python dbt_cloud.py
-    - dbt-gooddata deploy_models $GOODDATA_UPPER_CASE
-    # Invalidates GoodData caches
-    - dbt-gooddata upload_notification
+    # Run corresponding job in dbt cloud
+    - gooddata-dbt dbt_cloud_run $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    # Collect dbt metadata from the cloud, generate and deploy corresponding GoodData logical data model
+    - gooddata-dbt deploy_models $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    # Invalidate GoodData caches
+    - gooddata-dbt upload_notification --profile $ELT_ENVIRONMENT --target $DBT_TARGET
 
 .dbt_changes:
   changes:
@@ -51,9 +53,8 @@
     - .gitlab-ci/gitlab-ci-transform.yml
     - .gitlab-ci.yml
 
-##########################
-# Variables for dbt following dbt Cloud convention (DBT_)
 variables:
+  # Variables for dbt following dbt Cloud convention (DBT_)
   DBT_INPUT_SCHEMA: $INPUT_SCHEMA
   DBT_OUTPUT_SCHEMA: $OUTPUT_SCHEMA
   DBT_INPUT_SCHEMA_GITHUB: $INPUT_SCHEMA_GITHUB
@@ -71,7 +72,9 @@ variables:
   DBT_VERTICA_USER: $VERTICA_USER
   DBT_VERTICA_PASS: $VERTICA_PASS
   DBT_VERTICA_DBNAME: $VERTICA_DBNAME
-
+  # Notify by sending comment to the merge request,
+  # if duration of a dbt model exceeds average duration from last X runs by DBT_ALLOWED_DEGRADATION percents
+  DBT_ALLOWED_DEGRADATION: 20
 
 ##########################
 # Jobs
@@ -81,10 +84,9 @@ dbt_dev:
   extends:
     - .dbt
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    DBT_SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, dev, GOODDATA_ENVIRONMENT_ID]
-    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+    DBT_SNOWFLAKE_DBNAME: $DEV_SNOWFLAKE_DBNAME
+    GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]
@@ -96,10 +98,10 @@ dbt_cloud_dev:
   extends:
     - .dbt_cloud
   variables:
-    DBT_JOB_ID: !reference [.envs, cloud_dev, DBT_JOB_ID]
-    ELT_ENVIRONMENT: !reference [.envs, cloud_dev, ELT_ENVIRONMENT]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_dev, GOODDATA_ENVIRONMENT_ID]
-    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+    DBT_JOB_ID: $CLOUD_DEV_DBT_JOB_ID
+    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+    DBT_SNOWFLAKE_DBNAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
+    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]
@@ -111,10 +113,9 @@ dbt_staging:
   extends:
     - .dbt
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    DBT_SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
-    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+    DBT_SNOWFLAKE_DBNAME: $STAGING_SNOWFLAKE_DBNAME
+    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -127,10 +128,10 @@ dbt_cloud_staging:
   extends:
     - .dbt_cloud
   variables:
-    DBT_JOB_ID: !reference [.envs, cloud_staging, DBT_JOB_ID]
-    ELT_ENVIRONMENT: !reference [.envs, cloud_staging, ELT_ENVIRONMENT]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_staging, GOODDATA_ENVIRONMENT_ID]
-    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+    DBT_JOB_ID: $CLOUD_STAGING_DBT_JOB_ID
+    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+    DBT_SNOWFLAKE_DBNAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
+    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -142,8 +143,10 @@ dbt_staging_vertica:
   extends:
     - .dbt
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT_VERTICA]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID_VERTICA]
+    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
+    DBT_TARGET: "vertica"
+    GOODDATA_UPPER_CASE: ""
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -156,10 +159,9 @@ dbt_prod:
   extends:
     - .dbt
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    DBT_SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
-    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+    DBT_SNOWFLAKE_DBNAME: $PROD_SNOWFLAKE_DBNAME
+    GOODDATA_ENVIRONMENT_ID: $PROD_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]
@@ -173,10 +175,10 @@ dbt_cloud_prod:
   extends:
     - .dbt_cloud
   variables:
-    DBT_JOB_ID: !reference [.envs, cloud_prod, DBT_JOB_ID]
-    ELT_ENVIRONMENT: !reference [.envs, cloud_prod, ELT_ENVIRONMENT]
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_prod, GOODDATA_ENVIRONMENT_ID]
-    GOODDATA_UPPER_CASE: "--gooddata-upper-case"
+    DBT_JOB_ID: $CLOUD_PROD_DBT_JOB_ID
+    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+    DBT_SNOWFLAKE_DBNAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
+    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.dbt_changes, changes]

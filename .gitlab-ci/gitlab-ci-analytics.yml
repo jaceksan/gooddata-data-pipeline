@@ -4,15 +4,15 @@
   extends:
     - .base
   # We build a custom image on top of the official dbt image in this pipeline
-  # It contains dbt itself, all required dbt plugins and PoC of dbt-gooddata plugin (not yet in pypi, TODO)
+  # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
     name: "$DBT_GOODDATA_IMAGE"
     entrypoint: [""]
   stage: analytics
   script:
     - cd $SRC_DATA_PIPELINE
-    - dbt-gooddata deploy_analytics $GOODDATA_UPPER_CASE
-    - dbt-gooddata test_insights
+    - gooddata-dbt deploy_analytics $GOODDATA_UPPER_CASE
+    - gooddata-dbt test_insights
 
 .gooddata_changes:
   changes:
@@ -31,7 +31,7 @@ gooddata_dev:
   extends:
     - .gooddata
   variables:
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, dev, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.gooddata_changes, changes]
@@ -42,7 +42,7 @@ gooddata_cloud_dev:
   extends:
     - .gooddata
   variables:
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_dev, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.gooddata_changes, changes]
@@ -53,7 +53,7 @@ gooddata_staging:
   extends:
     - .gooddata
   variables:
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -64,7 +64,7 @@ gooddata_cloud_staging:
   extends:
     - .gooddata
   variables:
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_staging, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -74,7 +74,7 @@ gooddata_staging_vertica:
   extends:
     - .gooddata
   variables:
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, staging, GOODDATA_ENVIRONMENT_ID_VERTICA]
+    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -85,7 +85,7 @@ gooddata_prod:
   extends:
     - .gooddata
   variables:
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, prod, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_ENVIRONMENT_ID: $PROD_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
@@ -96,7 +96,7 @@ gooddata_cloud_prod:
   extends:
     - .gooddata
   variables:
-    GOODDATA_ENVIRONMENT_ID: !reference [.envs, cloud_prod, GOODDATA_ENVIRONMENT_ID]
+    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]
