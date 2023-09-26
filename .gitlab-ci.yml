@@ -8,7 +8,7 @@ stages:
 # Global variables
 variables:
   SRC_DATA_PIPELINE: "data_pipeline"
-  DBT_PROFILE_DIR: "profile"
+  DBT_PROFILES_DIR: "profile"
   MELTANO_TARGET: "target-snowflake"
   DBT_TARGET: "snowflake"
   GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"

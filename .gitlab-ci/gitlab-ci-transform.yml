@@ -1,6 +1,41 @@
 ###################
 # Templates
-.dbt:
+
+.dbt_variables:
+  variables:
+    # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
+    # dbt profiles.yml file in this repo relies on DBT_ prefix.
+    # It means that even jobs not running against dbt cloud rely on DBT_ prefix.
+    # More variables are duplicated later in this file based on what database is used.
+    DBT_OUTPUT_SCHEMA: $OUTPUT_SCHEMA
+    DBT_INPUT_SCHEMA_GITHUB: $INPUT_SCHEMA_GITHUB
+    DBT_INPUT_SCHEMA_FAA: $INPUT_SCHEMA_FAA
+    DBT_INPUT_SCHEMA_EXCHANGERATEHOST: $INPUT_SCHEMA_EXCHANGERATEHOST
+    # Notify by sending comment to the merge request,
+    # if duration of a dbt model exceeds average duration from last X runs by DBT_ALLOWED_DEGRADATION percents
+    DBT_ALLOWED_DEGRADATION: 20
+
+.dbt_variables_snowflake:
+  extends:
+    - .dbt_variables
+  variables:
+    DBT_TARGET: "snowflake"
+    DBT_DB_ACCOUNT: $SNOWFLAKE_ACCOUNT
+    DBT_DB_USER: $SNOWFLAKE_USER
+    DBT_DB_PASS: $SNOWFLAKE_PASS
+    DBT_DB_WAREHOUSE: $SNOWFLAKE_WAREHOUSE
+
+.dbt_variables_vertica:
+  extends:
+    - .dbt_variables
+  variables:
+    DBT_DB_HOST: $VERTICA_HOST
+    DBT_DB_PORT: $VERTICA_PORT
+    DBT_DB_USER: $VERTICA_USER
+    DBT_DB_PASS: $VERTICA_PASS
+    DBT_DB_NAME: $VERTICA_DBNAME
+
+.dbt_exec:
   extends:
     - .base
   # We build a custom image on top of the official dbt image in this pipeline
@@ -21,7 +56,7 @@
     # Invalidates GoodData caches
     - gooddata-dbt upload_notification --profile $ELT_ENVIRONMENT --target $DBT_TARGET
 
-.dbt_cloud:
+.dbt_exec_cloud:
   extends:
     - .base
   # We build a custom image on top of the official dbt image in this pipeline
@@ -53,28 +88,6 @@
     - .gitlab-ci/gitlab-ci-transform.yml
     - .gitlab-ci.yml
 
-variables:
-  # Variables for dbt following dbt Cloud convention (DBT_)
-  DBT_INPUT_SCHEMA: $INPUT_SCHEMA
-  DBT_OUTPUT_SCHEMA: $OUTPUT_SCHEMA
-  DBT_INPUT_SCHEMA_GITHUB: $INPUT_SCHEMA_GITHUB
-  DBT_INPUT_SCHEMA_FAA: $INPUT_SCHEMA_FAA
-  DBT_INPUT_SCHEMA_EXCHANGERATEHOST: $INPUT_SCHEMA_EXCHANGERATEHOST
-
-  DBT_SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT
-  DBT_SNOWFLAKE_USER: $SNOWFLAKE_USER
-  DBT_SNOWFLAKE_PASS: $SNOWFLAKE_PASS
-  DBT_SNOWFLAKE_DBNAME: $SNOWFLAKE_DBNAME
-  DBT_SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE
-
-  DBT_VERTICA_HOST: $VERTICA_HOST
-  DBT_VERTICA_PORT: $VERTICA_PORT
-  DBT_VERTICA_USER: $VERTICA_USER
-  DBT_VERTICA_PASS: $VERTICA_PASS
-  DBT_VERTICA_DBNAME: $VERTICA_DBNAME
-  # Notify by sending comment to the merge request,
-  # if duration of a dbt model exceeds average duration from last X runs by DBT_ALLOWED_DEGRADATION percents
-  DBT_ALLOWED_DEGRADATION: 20
 
 ##########################
 # Jobs
@@ -82,10 +95,11 @@ variables:
 # pre-merge
 dbt_dev:
   extends:
-    - .dbt
+    - .dbt_exec
+    - .dbt_variables_snowflake
   variables:
     ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
-    DBT_SNOWFLAKE_DBNAME: $DEV_SNOWFLAKE_DBNAME
+    DBT_DB_NAME: $DEV_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
@@ -96,11 +110,12 @@ dbt_dev:
 # pre-merge dbt Cloud
 dbt_cloud_dev:
   extends:
-    - .dbt_cloud
+    - .dbt_exec_cloud
+    - .dbt_variables_snowflake
   variables:
     DBT_JOB_ID: $CLOUD_DEV_DBT_JOB_ID
     ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
-    DBT_SNOWFLAKE_DBNAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
+    DBT_DB_NAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
@@ -111,10 +126,11 @@ dbt_cloud_dev:
 # post-merge
 dbt_staging:
   extends:
-    - .dbt
+    - .dbt_exec
+    - .dbt_variables_snowflake
   variables:
     ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
-    DBT_SNOWFLAKE_DBNAME: $STAGING_SNOWFLAKE_DBNAME
+    DBT_DB_NAME: $STAGING_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
@@ -126,11 +142,12 @@ dbt_staging:
 # post-merge dbt Cloud
 dbt_cloud_staging:
   extends:
-    - .dbt_cloud
+    - .dbt_exec_cloud
+    - .dbt_variables_snowflake
   variables:
     DBT_JOB_ID: $CLOUD_STAGING_DBT_JOB_ID
     ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
-    DBT_SNOWFLAKE_DBNAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
+    DBT_DB_NAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
@@ -141,7 +158,8 @@ dbt_cloud_staging:
 
 dbt_staging_vertica:
   extends:
-    - .dbt
+    - .dbt_exec
+    - .dbt_variables_vertica
   variables:
     ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
     GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
@@ -157,10 +175,11 @@ dbt_staging_vertica:
 # merge to prod branch
 dbt_prod:
   extends:
-    - .dbt
+    - .dbt_exec
+    - .dbt_variables_snowflake
   variables:
     ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
-    DBT_SNOWFLAKE_DBNAME: $PROD_SNOWFLAKE_DBNAME
+    DBT_DB_NAME: $PROD_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $PROD_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
@@ -173,11 +192,12 @@ dbt_prod:
 # merge to prod dbt Cloud
 dbt_cloud_prod:
   extends:
-    - .dbt_cloud
+    - .dbt_exec_cloud
+    - .dbt_variables_snowflake
   variables:
     DBT_JOB_ID: $CLOUD_PROD_DBT_JOB_ID
     ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
-    DBT_SNOWFLAKE_DBNAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
+    DBT_DB_NAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
