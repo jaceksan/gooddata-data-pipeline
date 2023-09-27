@@ -51,6 +51,7 @@
     DB_USER: "${VERTICA_USER}"
     DB_PASS: "${VERTICA_PASS}"
     DB_NAME: "${VERTICA_DBNAME}"
+    MELTANO_TARGET: "target-vertica"
 
 .extract_load_changes:
   changes:
