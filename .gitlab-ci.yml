@@ -8,9 +8,12 @@ stages:
 # Global variables
 variables:
   SRC_DATA_PIPELINE: "data_pipeline"
-  DBT_PROFILE_DIR: "profile"
-  DBT_PROFILE: "default"
+  DBT_PROFILES_DIR: "profile"
+  MELTANO_TARGET: "target-snowflake"
+  DBT_TARGET: "snowflake"
   GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
+  # Snowflake objects are upper-case by default. We use Snowflake in most jobs.
+  GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   SNOWFLAKE_ACCOUNT: "gooddata"
   SNOWFLAKE_USER: "cicd"
   SNOWFLAKE_WAREHOUSE: "DEMO_WH"
@@ -28,51 +31,43 @@ variables:
   MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
   MELTANO_STATE_AWS_BUCKET: "gdc-quiver"
   DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
-  DBT_VERSION: "1.4.1"
+  DBT_VERSION: "1.5.0"
   DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION"
   PYTHON_IMAGE: "python:3.10.11-slim-bullseye"
   DBT_GOODDATA_IMAGE_BASE: "gooddata-data-pipeline-dbt-gooddata"
-  DBT_GOODDATA_VERSION: "0.3.8"
+  DBT_GOODDATA_VERSION: "0.3.9"
   DBT_GOODDATA_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_GOODDATA_IMAGE_BASE:$DBT_GOODDATA_VERSION"
-
-.envs:
-  # Meltano, dbt and GoodData environments have 1:1 relationship in this demo
-  # But, you can design you pipeline in any alternative way, e.g. share 1 data source by multiple GoodData workspaces
-  dev:
-    ELT_ENVIRONMENT: "cicd_dev"
-    SNOWFLAKE_DBNAME: "CICD_DEV"
-    GOODDATA_ENVIRONMENT_ID: "development"
-  staging:
-    ELT_ENVIRONMENT: "cicd_staging"
-    SNOWFLAKE_DBNAME: "CICD_STAGING"
-    GOODDATA_ENVIRONMENT_ID: "staging"
-    ELT_ENVIRONMENT_VERTICA: "cicd_staging_vertica"
-    GOODDATA_ENVIRONMENT_ID_VERTICA: "staging_vertica"
-  prod:
-    ELT_ENVIRONMENT: "cicd_prod"
-    SNOWFLAKE_DBNAME: "CICD_PROD"
-    GOODDATA_ENVIRONMENT_ID: "production"
-
-  # alternatively define environments for Cloud versions – dbt Cloud and Meltano Cloud
-  cloud_dev:
-    ELT_ENVIRONMENT: "cicd_cloud_dev"
-    SNOWFLAKE_DBNAME: "CICD_CLOUD_DEV"
-    DBT_JOB_ID: 406899
-    GOODDATA_ENVIRONMENT_ID: "cloud_development"
-  cloud_staging:
-    ELT_ENVIRONMENT: "cicd_cloud_staging"
-    SNOWFLAKE_DBNAME: "CICD_CLOUD_STAGING"
-    GOODDATA_ENVIRONMENT_ID: "cloud_staging"
-    ELT_ENVIRONMENT_VERTICA: "cicd_cloud_staging_vertica"
-    GOODDATA_ENVIRONMENT_ID_VERTICA: "cloud_staging_vertica"
-    DBT_JOB_ID: 408385
-  cloud_prod:
-    ELT_ENVIRONMENT: "cicd_cloud_prod"
-    SNOWFLAKE_DBNAME: "CICD_CLOUD_PROD"
-    GOODDATA_ENVIRONMENT_ID: "cloud_production"
-    DBT_JOB_ID: 408386
-
-
+  ############################################################################################################
+  # Environment-specific vars. Defined here so we can reuse them in extract/load nad transform phases
+  ############################################################################################################
+  # DEV
+  DEV_ELT_ENVIRONMENT: "cicd_dev"
+  DEV_SNOWFLAKE_DBNAME: 'CICD_DEV'
+  DEV_GOODDATA_ENVIRONMENT_ID: "development"
+  # STAGING
+  STAGING_ELT_ENVIRONMENT: "cicd_staging"
+  STAGING_SNOWFLAKE_DBNAME: "CICD_STAGING"
+  STAGING_GOODDATA_ENVIRONMENT_ID: "staging"
+  STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA: "staging_vertica"
+  # PROD
+  PROD_ELT_ENVIRONMENT: "cicd_prod"
+  PROD_SNOWFLAKE_DBNAME: 'CICD_PROD'
+  PROD_GOODDATA_ENVIRONMENT_ID: "production"
+  ############################################################
+  # For version running against cloud service, e.g. dbt cloud
+  # DEV
+  CLOUD_DEV_SNOWFLAKE_DBNAME: 'CICD_CLOUD_DEV'
+  CLOUD_DEV_GOODDATA_ENVIRONMENT_ID: "cloud_development"
+  CLOUD_DEV_DBT_JOB_ID: 406899
+  # STAGING
+  CLOUD_STAGING_SNOWFLAKE_DBNAME: "CICD_CLOUD_STAGING"
+  CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID: "cloud_staging"
+  CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA: "cloud_staging_vertica"
+  CLOUD_STAGING_DBT_JOB_ID: 408385
+  # PROD
+  CLOUD_PROD_SNOWFLAKE_DBNAME: 'CICD_CLOUD_PROD'
+  CLOUD_PROD_GOODDATA_ENVIRONMENT_ID: "cloud_production"
+  CLOUD_PROD_DBT_JOB_ID: 408386
 
 ##########################
 # Job templates

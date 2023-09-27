@@ -9,3 +9,5 @@ dist
 *.iml
 .user.yml
 .env.custom.*
+# profile.yml generated from dbt cloud. For local testing of dbt cloud.
+data_pipeline/profile_cloud

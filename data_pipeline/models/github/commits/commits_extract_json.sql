@@ -19,6 +19,9 @@ with using_clause as (
     {{ extract_json_value('commit', 'comment_count', 'comment_count', 'INT') }},
     commit_timestamp as created_at,
     {{ extract_json_value('author', 'id', 'user_id', 'INT') }},
+    {{ extract_json_value('author', 'login', 'login', 'VARCHAR') }},
+    {{ extract_json_value('author', 'avatar_url', 'user_avatar_url', 'VARCHAR') }},
+    {{ extract_json_value('author', 'html_url', 'user_url', 'VARCHAR') }},
     CAST(repo_id as INT) as repo_id
   from {{ var("input_schema_github") }}.commits
   {% if is_incremental() %}

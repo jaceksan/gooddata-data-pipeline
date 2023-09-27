@@ -13,6 +13,7 @@ Currently, these data warehouse engines are supported:
 - PostgreSQL
 - Vertica
 - Snowflake
+- MotherDuck (partially, TODO)
 
 Delivery into dev/staging/prod environments is orchestrated by [Gitlab](https://gitlab.com/) (except the data apps).
 
@@ -65,6 +66,10 @@ export TAP_GITHUB_AUTH_TOKEN="<my github token>"
 # Set AWS S3 credentials to be able to ELT the FAA data (stored in a public S3 bucket)
 export TAP_S3_CSV_AWS_ACCESS_KEY_ID="<my AWS access key>"
 export TAP_S3_CSV_AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
+# If you use Vertica
+export VERTICA_PASS"<your Vertica password>" 
+# If you use MotherDuck
+export MOTHERDUCK_TOKEN="<your MotherDuck token>" 
 docker-compose up extract_load_github
 docker-compose up extract_load_faa
 docker-compose up extract_load_exchangeratehost
@@ -90,7 +95,6 @@ Move to Gitlab, fork this repository and run the pipeline against your environme
     - Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
         and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
 - Create a public PostgreSQL or Snowflake instance
-  - Personally, I found [bit.io](https://bit.io/) as the only free-forever PostgreSQL offering.
   - Create required databases (for dev/staging/prod).
  
 You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
@@ -98,6 +102,7 @@ You have to set the following (sensitive) environment variables in the Gitlab(se
 - GOODDATA_HOST - host name pointing to the GoodData instance
 - GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
 - MELTANO_STATE_AWS_ACCESS_KEY_ID/MELTANO_STATE_AWS_SECRET_ACCESS_KEY - Meltano stores its state to AWS S3, and needs these credentials
+- GITLAB_TOKEN - to allow Gitlab jobs to send messages to merge requests
 
 The rest of environment variables (Github repos to be crawled, DB endpoints, ...) can be configured in [.gitlab-ci.yml](.gitlab-ci.yml)(section `variables`).
 
@@ -125,6 +130,8 @@ Add sensitive variables to .env.custom.local file.
 source .env.local
 # For vertica
 source .env.local vertica
+# For MotherDuck
+source .env.local motherduck
 ```
 
 ### Extract and Load
@@ -133,6 +140,8 @@ Meltano tool is used. Configuration file [meltano.yml](data_pipeline/meltano.yml
 How to run:
 ```bash
 make extract_load
+# Full refresh
+FR="--full-refresh" make extract_load
 ```
 Several jobs are running for each combination of source(tap) and target.
 The output of this stage are multiple DB schemas.
@@ -147,6 +156,8 @@ The folder `data_pipeline/models` contains [dbt models](https://docs.getdbt.com/
 How to run:
 ```bash
 make transform
+# Full refresh
+FR="--full-refresh" make transform
 ```
 
 ### Generate GoodData semantic model from dbt models

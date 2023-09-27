@@ -1,75 +1,93 @@
-default:
-  target: cicd_dev_local
-  # TODO - use dbt vault for credentials shared by dbt and GoodData once GoodData supports vault for data source credentials
-  # https://dbtvault.readthedocs.io/en/latest/
+# TODO - use dbt vault for credentials shared by dbt and GoodData once GoodData supports vault for data source credentials
+# https://dbtvault.readthedocs.io/en/latest/
+cicd_dev_local:
+  target: postgres
   outputs:
     # Define default values for all env vars to do not have to set them even when they are not needed
     # This is required in the analytics stage, where we have to run dbt compile, but we want to read only metrics
-    cicd_dev_local:
+    postgres:
       # Title is not a standard dbt field. We use it as a title of GoodData data source.
       # If not filled, ID(dict key) is used
       title: "CICD demo (dev local)"
       type: postgres
-      threads: 1
-      host: "{{ env_var('DBT_POSTGRES_HOST', 'localhost') }}"
-      port: "{{ env_var('DBT_POSTGRES_PORT', '5432') | int }}"
-      user: "{{ env_var('DBT_POSTGRES_USER', 'demouser') }}"
-      password: "{{ env_var('DBT_POSTGRES_PASS', 'demopass') }}"
-      dbname: "{{ env_var('DBT_POSTGRES_DBNAME', 'demo') }}"
+      threads: 2
+      host: "{{ env_var('DBT_DB_HOST', 'localhost') }}"
+      port: "{{ env_var('DBT_DB_PORT', '5432') | int }}"
+      user: "{{ env_var('DBT_DB_USER', 'demouser') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'demopass') }}"
+      dbname: "{{ env_var('DBT_DB_NAME', 'demo') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
       vars:
         incremental_strategy: "insert+update"
-    cicd_dev_local_vertica:
+    vertica:
       title: "CICD demo (dev local)"
       type: vertica
-      threads: 1
-      host: "{{ env_var('DBT_VERTICA_HOST', 'localhost') }}"
-      port: "{{ env_var('DBT_VERTICA_PORT', '5433') | int }}"
-      username: "{{ env_var('DBT_VERTICA_USER', 'demouser') }}"
-      password: "{{ env_var('DBT_VERTICA_PASS', 'demopass') }}"
-      database: "{{ env_var('DBT_VERTICA_DBNAME', 'vmart') }}"
-      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
-    # Copy & paste below targets, reasons:
-    # 1. the env variables must be shared with Meltano, so we cannot hardcode them here
-    # 2. we cannot create single target, because its name (dict key) is used as ID of GoodData data source
-    cicd_dev:
+      threads: 2
+      host: "{{ env_var('DBT_DB_HOST', 'xxxx') }}"
+      port: "{{ env_var('DBT_DB_PORT', '1111') | int }}"
+      username: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+# TODO - add support to gooddata-dbt and GoodData in general. dbt run already works.
+#    motherduck:
+#      title: "CICD demo (dev local)"
+#      type: duckdb
+#      path: "md:{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+#      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
+# Copy & paste below targets, reasons:
+# 1. the env variables must be shared with Meltano, so we cannot hardcode them here
+# 2. we cannot create single target, because its name (dict key) is used as ID of GoodData data source
+cicd_dev:
+  target: snowflake
+  outputs:
+    snowflake:
       title: "CICD demo (dev)"
       type: snowflake
-      threads: 1
-      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'gooddata') }}"
-      user: "{{ env_var('DBT_SNOWFLAKE_USER', 'cicd') }}"
-      password: "{{ env_var('DBT_SNOWFLAKE_PASS', 'xxxxx') }}"
-      database: "{{ env_var('DBT_SNOWFLAKE_DBNAME', 'CICD_DEV') }}"
-      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
-      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
-    cicd_staging:
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
+cicd_staging:
+  target: snowflake
+  outputs:
+    snowflake:
       title: "CICD demo (staging)"
       type: snowflake
-      threads: 1
-      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'gooddata') }}"
-      user: "{{ env_var('DBT_SNOWFLAKE_USER', 'cicd') }}"
-      password: "{{ env_var('DBT_SNOWFLAKE_PASS', 'xxxxx') }}"
-      database: "{{ env_var('DBT_SNOWFLAKE_DBNAME', 'CICD_STAGING') }}"
-      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
-      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
     # Vertica alternative
-    cicd_staging_vertica:
+    vertica:
       title: "CICD demo Vertica (staging)"
       type: vertica
-      threads: 1
-      host: "{{ env_var('DBT_VERTICA_HOST', 'localhost') }}"
-      port: "{{ env_var('DBT_VERTICA_PORT', '5433') | int }}"
-      username: "{{ env_var('DBT_VERTICA_USER', 'demouser') }}"
-      password: "{{ env_var('DBT_VERTICA_PASS', 'demopass') }}"
-      database: "{{ env_var('DBT_VERTICA_DBNAME', 'vmart') }}"
-      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
-    cicd_prod:
+      threads: 2
+      host: "{{ env_var('DBT_DB_HOST', 'xxxx') }}"
+      port: "{{ env_var('DBT_DB_PORT', 'xxxx') | int }}"
+      username: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxx') }}"
+      database: "{{ env_var('DBT_DB_DBNAME', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
+cicd_prod:
+  target: snowflake
+  outputs:
+    snowflake:
       title: "CICD demo (prod)"
       type: snowflake
-      threads: 1
-      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'gooddata') }}"
-      user: "{{ env_var('DBT_SNOWFLAKE_USER', 'cicd') }}"
-      password: "{{ env_var('DBT_SNOWFLAKE_PASS', 'xxxxx') }}"
-      database: "{{ env_var('DBT_SNOWFLAKE_DBNAME', 'CICD_PROD') }}"
-      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'DEMO_WH') }}"
-      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"

@@ -15,6 +15,10 @@
 
         CAST(json_extract_path_text(to_json("{{ db_entity_name }}"), '{{ field_name }}') AS {{ data_type }}) AS {{ target_column_name }}
 
+    {%- elif target.type == "duckdb" -%}
+
+        CAST(json_extract_path_text(to_json("{{ db_entity_name }}"), '{{ field_name }}') AS {{ data_type }}) AS {{ target_column_name }}
+
     {%- else -%}
 
         {{ exceptions.raise_compiler_error("Invalid `target.type`. Got: " ~ target.type) }}
