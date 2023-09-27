@@ -13,4 +13,4 @@ RUN apt update && apt -y install git
 COPY ${SRC_DATA_PIPELINE}/requirements-gooddata.txt requirements-gooddata.txt
 RUN pip3 install -r requirements-gooddata.txt
 
-ENTRYPOINT ["dbt-gooddata"]
+ENTRYPOINT ["gooddata-dbt"]

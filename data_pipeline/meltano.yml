@@ -10,9 +10,6 @@ environments:
       extractors:
       - name: tap-github-repo
         config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
           start_date: '2010-01-01'
       - name: tap-exchangeratehost
         config:
@@ -23,13 +20,11 @@ environments:
       extractors:
       - name: tap-github-repo
         config:
-          repositories:
-          - gooddata/gooddata-python-sdk
-          - gooddata/gooddata-ui-sdk
           start_date: '2010-01-01'
       - name: tap-exchangeratehost
         config:
           start_date: '2010-01-01'
+
 plugins:
   extractors:
   - name: tap-github
@@ -40,6 +35,9 @@ plugins:
     config:
       repositories:
       - gooddata/gooddata-python-sdk
+      - gooddata/gooddata-ui-sdk
+      - gooddata/gooddata-dashboard-plugins
+      - gooddata/gooddata-public-demos
       start_date: '2022-01-01'
     select:
         # Commits
@@ -96,18 +94,19 @@ plugins:
     - repositories.watchers_count
     - repositories.created_at
     - repositories.updated_at
-        # Users
-    - contributors.avatar_url
-    - contributors.contributions
-    - contributors.gravatar_id
-    - contributors.html_url
-    - contributors.id
-    - contributors.login
-    - contributors.org
-    - contributors.repo_id
-    - contributors.site_admin
-    - contributors.type
-    - contributors.url
+        # Users - we take it from commits. Crawling contributors is very slow (call per repo)
+        #       - TODO - use new Github API?
+#    - contributors.avatar_url
+#    - contributors.contributions
+#    - contributors.gravatar_id
+#    - contributors.html_url
+#    - contributors.id
+#    - contributors.login
+#    - contributors.org
+#    - contributors.repo_id
+#    - contributors.site_admin
+#    - contributors.type
+#    - contributors.url
   - name: tap-s3-csv
     variant: transferwise
     pip_url: pipelinewise-tap-s3-csv
@@ -176,11 +175,11 @@ plugins:
     pip_url: 
       git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
     config:
-      host: ${POSTGRES_HOST}
-      port: ${POSTGRES_PORT}
-      user: ${POSTGRES_USER}
-      password: ${POSTGRES_PASS}
-      dbname: ${POSTGRES_DBNAME}
+      host: ${DB_HOST}
+      port: ${DB_PORT}
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      dbname: ${DB_NAME}
       default_target_schema: ${TARGET_SCHEMA}
       add_metadata_columns: true
       dialect+driver: postgresql+psycopg2
@@ -188,22 +187,30 @@ plugins:
     variant: transferwise
     pip_url: pipelinewise-target-snowflake
     config:
-      account: ${SNOWFLAKE_ACCOUNT}
-      dbname: ${SNOWFLAKE_DBNAME}
-      user: ${SNOWFLAKE_USER}
-      password: ${SNOWFLAKE_PASS}
-      warehouse: ${SNOWFLAKE_WAREHOUSE}
+      account: ${DB_ACCOUNT}
+      dbname: ${DB_NAME}
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      warehouse: ${DB_WAREHOUSE}
       default_target_schema: ${TARGET_SCHEMA}
       file_format: PUBLIC.MELTANO_FORMAT
   - name: target-vertica
     variant: full360
     pip_url: git+https://github.com/full360/pipelinewise-target-vertica.git
     config:
-      host: ${VERTICA_HOST}
-      port: ${VERTICA_PORT}
-      user: ${VERTICA_USER}
-      password: ${VERTICA_PASS}
-      dbname: ${VERTICA_DBNAME}
+      host: ${DB_HOST}
+      port: ${DB_PORT}
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      dbname: ${DB_NAME}
+      default_target_schema: ${TARGET_SCHEMA}
+      add_metadata_columns: true
+  - name: target-duckdb
+    variant: jwills
+    pip_url: git+https://github.com/jwills/target-duckdb.git@refs/pull/26/head
+    config:
+      path: "md:${DB_NAME}"
+      token: ${MOTHERDUCK_TOKEN}
       default_target_schema: ${TARGET_SCHEMA}
       add_metadata_columns: true
 state_backend:

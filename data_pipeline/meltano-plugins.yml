@@ -25,3 +25,6 @@ plugins:
     - name: target-vertica
       variant: full360
       pip_url: git+https://github.com/full360/pipelinewise-target-vertica.git
+    - name: target-duckdb
+      variant: jwills
+      pip_url: git+https://github.com/jwills/target-duckdb.git@refs/pull/26/head
