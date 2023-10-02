@@ -62,7 +62,7 @@ deploy_analytics: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt test_insights
 
 store_analytics:
-	cd $(SRC_DATA_PIPELINE) && dbt-gooddata store_analytics
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt store_analytics
 
 test_insights:
-	cd $(SRC_DATA_PIPELINE) && dbt-gooddata test_insights
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt test_insights
