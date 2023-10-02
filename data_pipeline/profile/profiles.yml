@@ -17,8 +17,6 @@ cicd_dev_local:
       password: "{{ env_var('DBT_DB_PASS', 'demopass') }}"
       dbname: "{{ env_var('DBT_DB_NAME', 'demo') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
-      vars:
-        incremental_strategy: "insert+update"
     vertica:
       title: "CICD demo (dev local)"
       type: vertica

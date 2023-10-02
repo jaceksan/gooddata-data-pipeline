@@ -31,13 +31,13 @@ clean-targets:         # directories to be removed by `dbt clean`
 # These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 models:
-  +incremental_strategy: "{{ var('incremental_strategy', default='merge') }}"
   +materialized: table
   cicd_demo:
     _todo:
       +enabled: false
     github:
       +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+      +incremental_strategy: "{{ env_var('DBT_INCREMENTAL_STRATEGY', 'merge') }}"
     faa:
       +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
