@@ -1,7 +1,7 @@
-with pulls_repo_ids as (
+with commits_repo_ids as (
     select distinct
       repo_id
-    from {{ ref('pull_requests_extract_json') }}
+    from {{ ref('commits_extract_json') }}
 ),
 
 repos as (
@@ -23,7 +23,7 @@ final as (
     from repos r
     -- Filter only repos, for which we collected at least one pull request
     where exists (
-      select 1 from pulls_repo_ids p where p.repo_id = r.repo_id
+      select 1 from commits_repo_ids p where p.repo_id = r.repo_id
     )
 )
 
