@@ -40,11 +40,13 @@ models:
       +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
     faa:
       +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
-    exchange_rate_host:
-      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+#    exchange_rate_host:
+#      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
 
 vars:
   "dbt_date:time_zone": "UTC"
   input_schema_github: "{{ env_var('DBT_INPUT_SCHEMA_GITHUB', 'github_input_stage') }}"
   input_schema_faa: "{{ env_var('DBT_INPUT_SCHEMA_FAA', 'faa_input_stage') }}"
-  input_schema_exchangeratehost: "{{ env_var('DBT_INPUT_SCHEMA_EXCHANGERATEHOST', 'exchangeratehost_input_stage') }}"
+  # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+#  input_schema_exchangeratehost: "{{ env_var('DBT_INPUT_SCHEMA_EXCHANGERATEHOST', 'exchangeratehost_input_stage') }}"

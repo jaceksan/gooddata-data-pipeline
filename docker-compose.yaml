@@ -93,20 +93,21 @@ services:
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
 
-  extract_load_exchangeratehost:
-    build:
-      context: .
-      dockerfile: Dockerfile_meltano
-    entrypoint:
-      - /bin/bash
-      - -c
-    command:
-      - meltano --environment $$MELTANO_ENV run tap-exchangeratehost target-postgres
-    environment:
-      <<: [ *postgres-vars, *meltano-vars ]
-      TARGET_SCHEMA: exchangeratehost_input_stage
-    volumes:
-      - ./data_pipeline/meltano.yml:/project/meltano.yml
+# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+#  extract_load_exchangeratehost:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile_meltano
+#    entrypoint:
+#      - /bin/bash
+#      - -c
+#    command:
+#      - meltano --environment $$MELTANO_ENV run tap-exchangeratehost target-postgres
+#    environment:
+#      <<: [ *postgres-vars, *meltano-vars ]
+#      TARGET_SCHEMA: exchangeratehost_input_stage
+#    volumes:
+#      - ./data_pipeline/meltano.yml:/project/meltano.yml
 
   transform:
     build:

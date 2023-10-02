@@ -82,7 +82,7 @@ content:
       - items:
           - size:
               xl:
-                gridWidth: 4
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -101,7 +101,7 @@ content:
               type: insight
           - size:
               xl:
-                gridWidth: 4
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -117,25 +117,6 @@ content:
                   type: visualizationObject
               properties: {}
               title: Created commits / Month
-              type: insight
-          - size:
-              xl:
-                gridHeight: 22
-                gridWidth: 4
-            type: IDashboardLayoutItem
-            widget:
-              dateDataSet:
-                identifier:
-                  id: created_at
-                  type: dataset
-              description: ''
-              drills: []
-              ignoreDashboardFilters: []
-              insight:
-                identifier:
-                  id: commits_vs_btc_rate
-                  type: visualizationObject
-              title: Commits vs. BTC rate
               type: insight
           - size:
               xl:
