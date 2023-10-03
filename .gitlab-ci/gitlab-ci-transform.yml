@@ -14,6 +14,7 @@
     # Notify by sending comment to the merge request,
     # if duration of a dbt model exceeds average duration from last X runs by DBT_ALLOWED_DEGRADATION percents
     DBT_ALLOWED_DEGRADATION: 20
+    DBT_INCREMENTAL_STRATEGY: "merge"
 
 .dbt_variables_snowflake:
   extends:
