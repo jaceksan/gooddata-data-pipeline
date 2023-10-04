@@ -1,18 +1,18 @@
 version: '3.8'
 
 x-postgres-vars: &postgres-vars
-  POSTGRES_HOST: gooddata-cn-ce
-  POSTGRES_PORT: 5432
-  POSTGRES_USER: demouser
-  POSTGRES_PASS: demopass
-  POSTGRES_DBNAME: demo
+  DB_HOST: gooddata-cn-ce
+  DB_PORT: 5432
+  DB_USER: demouser
+  DB_PASS: demopass
+  DB_NAME: demo
 
 x-dbt-postgres-vars: &dbt-postgres-vars
-  DBT_POSTGRES_HOST: gooddata-cn-ce
-  DBT_POSTGRES_PORT: 5432
-  DBT_POSTGRES_USER: demouser
-  DBT_POSTGRES_PASS: demopass
-  DBT_POSTGRES_DBNAME: demo
+  DBT_DB_HOST: gooddata-cn-ce
+  DBT_DB_PORT: 5432
+  DBT_DB_USER: demouser
+  DBT_DB_PASS: demopass
+  DBT_DB_NAME: demo
 
 x-meltano-vars: &meltano-vars
   MELTANO_ENV: cicd_dev_local
@@ -118,17 +118,19 @@ services:
       - -c
     command:
       - |
-        dbt run --profile default --target $$ELT_ENVIRONMENT
-        dbt test --profile default --target $$ELT_ENVIRONMENT
-        dbt-gooddata deploy_models
-        dbt-gooddata upload_notification
+        dbt run --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+        dbt test --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+        gooddata-dbt deploy_models --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+        gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
     environment:
-      <<: [ *postgres-vars, *dbt-postgres-vars ]
+      <<: [ *dbt-postgres-vars ]
       DBT_INPUT_SCHEMA: cicd_input_stage
       DBT_INPUT_SCHEMA_GITHUB: "github_input_stage"
       DBT_INPUT_SCHEMA_FAA: "faa_input_stage"
       DBT_OUTPUT_SCHEMA: cicd_output_stage
       ELT_ENVIRONMENT: cicd_dev_local
+      DBT_TARGET: "postgres"
+      DBT_INCREMENTAL_STRATEGY: "delete+insert"
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
     volumes:
@@ -146,8 +148,8 @@ services:
       - -c
     command:
       - |
-        dbt-gooddata deploy_analytics
-        dbt-gooddata test_insights
+        gooddata-dbt deploy_analytics
+        gooddata-dbt test_insights
     environment:
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
