@@ -25,7 +25,7 @@ x-meltano-vars: &meltano-vars
 services:
   gooddata-cn-ce:
     # You can use "dev_latest" tag which points to the latest development version of GD.CN
-    image: gooddata/gooddata-cn-ce:2.4
+    image: gooddata/gooddata-cn-ce:2.5
     ports:
       - "3000:3000"
       - "5432:5432"
@@ -157,7 +157,7 @@ services:
 
   # Minio serves as AWS S3 state backend for extract_load (Meltano)
   minio:
-    image: minio/minio:RELEASE.2023-02-27T18-10-45Z
+    image: minio/minio:RELEASE.2023-09-30T07-02-29Z
     volumes:
       - minio-data:/data
     ports:
@@ -174,7 +174,7 @@ services:
       retries: 3
 
   minio-bootstrap:
-    image: minio/mc:RELEASE.2023-02-28T00-12-59Z
+    image: minio/mc:RELEASE.2023-09-29T16-41-22Z
     depends_on:
       - minio
     entrypoint: >
