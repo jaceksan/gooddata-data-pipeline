@@ -27,7 +27,7 @@ variables:
   OUTPUT_SCHEMA: "cicd_output_stage"
   IMAGES_WORKDIR: "/project"
   MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
-  MELTANO_VERSION: "v2.16.0-python3.10"
+  MELTANO_VERSION: "v3.1.0-python3.11"
   MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
   MELTANO_STATE_AWS_BUCKET: "gdc-quiver"
   DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
