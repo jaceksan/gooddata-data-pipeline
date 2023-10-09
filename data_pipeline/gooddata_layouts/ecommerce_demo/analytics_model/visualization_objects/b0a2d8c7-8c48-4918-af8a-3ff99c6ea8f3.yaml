@@ -1,0 +1,30 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: 95fd2bcdedf54dfc95f7ffac080ffffb
+            title: Gross Profit
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: 3127fb986968460782161cda4a629738
+      localIdentifier: view
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:pyramid
+description: ''
+id: b0a2d8c7-8c48-4918-af8a-3ff99c6ea8f3
+title: Product Category Breakdown

@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({label/order_id},{label/order_line_id})
+description: Total number of orders in any status
+id: of_orders
+title: '# of Orders'

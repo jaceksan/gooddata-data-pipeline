@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT {metric/active_customers} - {metric/return_customers_monthly}
+description: Number of new customers. Needs to be broken down by date Month/Year
+id: new_customers_monthly
+title: New Customers Monthly

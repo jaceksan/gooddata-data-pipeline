@@ -1,0 +1,49 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: active_customers
+                    type: metric
+            format: '[=null]0;
+
+              [>=0]#,#0;
+
+              [<0]-#,#0'
+            localIdentifier: 13f2358c2d2040fe8849757b2a5ddddf
+            title: Active Customers
+      localIdentifier: measures
+    - items:
+        - measure:
+            alias: Previous period
+            definition:
+              previousPeriodMeasure:
+                dateDataSets:
+                  - dataSet:
+                      identifier:
+                        id: customer_created_date
+                        type: dataset
+                    periodsAgo: 1
+                measureIdentifier: 13f2358c2d2040fe8849757b2a5ddddf
+            localIdentifier: 13f2358c2d2040fe8849757b2a5ddddf_previous_period
+      localIdentifier: secondary_measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: customer_created_date
+            type: dataset
+        from: 0
+        granularity: GDC.time.month
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: New Customers
+id: a347814a-a893-4354-915d-29699b92a6d7
+title: New Customers

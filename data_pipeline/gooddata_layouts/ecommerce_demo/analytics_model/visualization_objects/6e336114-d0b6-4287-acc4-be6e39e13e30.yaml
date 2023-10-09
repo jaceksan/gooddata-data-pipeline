@@ -1,0 +1,37 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: true
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            format: '#,##0.00%'
+            localIdentifier: 100691d163aa4d53be0fc7e1a048190b
+            title: '% Net Sales'
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: e9a530f404de422a960d646baa0a5a7f
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      dataLabels:
+        visible: auto
+      legend:
+        position: right
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: Net Sales by Product Category
+id: 6e336114-d0b6-4287-acc4-be6e39e13e30
+title: Net Sales by Product Category

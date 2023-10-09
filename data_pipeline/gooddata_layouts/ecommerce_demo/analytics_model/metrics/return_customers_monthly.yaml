@@ -1,0 +1,8 @@
+content:
+  format: '#,##0'
+  maql: "SELECT COUNT({label/customer_id}, {label/order_line_id}) \nWHERE {label/customer_created_date.month}\
+    \ < {label/date.month}"
+description: Customers that registered in one of the previous months. Needs to be
+  broken down by date Month/Year.
+id: return_customers_monthly
+title: Return Customers Monthly

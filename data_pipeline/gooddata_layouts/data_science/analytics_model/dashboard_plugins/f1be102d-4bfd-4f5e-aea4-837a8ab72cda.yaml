@@ -1,0 +1,6 @@
+content:
+  url: https://gdc-dev-dashboard-plugins.s3.amazonaws.com/internal/gartner/cross-filtering-plugin/dp_cross_filtering_plugin.mjs
+  version: '2'
+description: ''
+id: f1be102d-4bfd-4f5e-aea4-837a8ab72cda
+title: cross-filtering-plugin

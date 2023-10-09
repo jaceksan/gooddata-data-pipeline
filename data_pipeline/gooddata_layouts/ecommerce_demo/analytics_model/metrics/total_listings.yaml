@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({label/product_id},{label/order_line_id})
+description: ''
+id: total_listings
+title: Total Listings

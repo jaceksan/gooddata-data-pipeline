@@ -1,0 +1,28 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_customers
+                    type: metric
+            localIdentifier: 3f6b57f22b034a088ac2f174eff9773f
+            title: Total Customers
+      localIdentifier: measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: customer_created_date
+            type: dataset
+        granularity: GDC.time.year
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: Total customers
+id: 9f2a657a-22e1-4791-8216-7a354bb8de5d
+title: Total Customers

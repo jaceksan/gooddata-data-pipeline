@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: eshop_customers
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: username
+      - name: first_name
+      - name: last_name
+      - name: email
+      - name: gender
+        meta:
+          gooddata:
+            id: eshop_customers.gender
+      - name: country
+        description: Gender
+        meta:
+          gooddata:
+            id: eshop_customers.country
+      - name: visits
+      - name: nps
+      - name: clv

@@ -1,0 +1,44 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_orders
+                    type: metric
+            localIdentifier: eb334cab51954b9f83184eead11308bc
+            title: Net Orders
+      localIdentifier: measures
+    - items:
+        - measure:
+            alias: Previous period
+            definition:
+              previousPeriodMeasure:
+                dateDataSets:
+                  - dataSet:
+                      identifier:
+                        id: date
+                        type: dataset
+                    periodsAgo: 1
+                measureIdentifier: eb334cab51954b9f83184eead11308bc
+            localIdentifier: eb334cab51954b9f83184eead11308bc_previous_period
+      localIdentifier: secondary_measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: 0
+        granularity: GDC.time.month
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: Orders Paid
+id: 3ac5e106-b43e-4c87-9ef0-9315e02282bd
+title: Orders Paid

@@ -1,0 +1,60 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: average_price_of_products
+                    type: metric
+            localIdentifier: 0f489725fe26493fb5fdc3d2367c21ed
+            title: Average Price of Products
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: a279058ddf724659b6b7cad14bd63404
+            title: Gross Profit
+      localIdentifier: secondary_measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: order_amount
+                    type: metric
+            localIdentifier: 7e4fe02cd17d4da38ec6d464646bbbb1
+            title: Order Amount
+      localIdentifier: tertiary_measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_brand
+                type: label
+            localIdentifier: 458f2a55e1ca457883ff36141c84dc48
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      dataLabels:
+        visible: false
+      legend:
+        enabled: false
+        position: right
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bubble
+description: Brands by Gross Profit and Avg Price of Product
+id: 405034d6-ab9c-462a-a88e-3172598adc65
+title: Brands by Gross Profit and Avg Price of Product

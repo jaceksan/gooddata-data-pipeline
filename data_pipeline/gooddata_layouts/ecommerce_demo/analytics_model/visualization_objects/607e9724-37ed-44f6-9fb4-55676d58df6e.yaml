@@ -1,0 +1,43 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 09d1a954b824448dabccc750d223c519
+            title: Net Sales
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Customer
+            displayForm:
+              identifier:
+                id: customer_name
+                type: label
+            localIdentifier: 0b6cc41384054a5496ab4d40962a62fb
+      localIdentifier: view
+  filters:
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: customer_id
+            type: label
+        notIn:
+          uris: []
+    - rankingFilter:
+        measure:
+          localIdentifier: 09d1a954b824448dabccc750d223c519
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+description: Top 10 Spenders
+id: 607e9724-37ed-44f6-9fb4-55676d58df6e
+title: Top 10 Spenders

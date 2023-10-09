@@ -1,0 +1,32 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 0e278c12-3975-45ec-85d6-401f4b92eb6d
+      type: filterContext
+  layout:
+    sections:
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 5
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 0c02ff4c-a24e-415d-8551-d6afaa5ae9a1
+                  type: visualizationObject
+              properties: {}
+              title: Avg Annual income
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  plugins: []
+  version: '2'
+description: ''
+id: 84e8fc90-11cd-4986-a836-d082e712ff95
+title: Alerts

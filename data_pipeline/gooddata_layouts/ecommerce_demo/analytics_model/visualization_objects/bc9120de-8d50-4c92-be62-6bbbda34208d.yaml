@@ -1,0 +1,69 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Created
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: of_orders
+                    type: metric
+            localIdentifier: 191126ea62f344d582828f2e380f07a0
+            title: '# of Orders'
+        - measure:
+            alias: Processed
+            definition:
+              measureDefinition:
+                filters:
+                  - negativeAttributeFilter:
+                      displayForm:
+                        identifier:
+                          id: order_status
+                          type: label
+                      notIn:
+                        values:
+                          - Canceled
+                          - In Cart
+                item:
+                  identifier:
+                    id: of_orders
+                    type: metric
+            localIdentifier: 87856c760d7b41e08fd5f2652107d8e9
+            title: '# of Orders (Order status: All except Canceled, In Cart)'
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: delivered
+                    type: metric
+            localIdentifier: dfff54c52b2545b3b3aa96e8c3bd06ef
+            title: Delivered
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '2'
+          id: dfff54c52b2545b3b3aa96e8c3bd06ef
+        - color:
+            type: guid
+            value: '1'
+          id: 191126ea62f344d582828f2e380f07a0
+        - color:
+            type: guid
+            value: '4'
+          id: 87856c760d7b41e08fd5f2652107d8e9
+      dataLabels:
+        percentsVisible: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:funnel
+description: ''
+id: bc9120de-8d50-4c92-be62-6bbbda34208d
+title: Order Status

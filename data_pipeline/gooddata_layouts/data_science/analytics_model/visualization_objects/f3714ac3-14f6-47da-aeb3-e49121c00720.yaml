@@ -1,0 +1,43 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Humidity
+            definition:
+              measureDefinition:
+                aggregation: sum
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: ma
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 2380293b35bc4ced9b168e457ed937e0
+            title: Sum of Ma
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Timestamp - Hour
+            displayForm:
+              identifier:
+                id: saledate.quarter
+                type: label
+            localIdentifier: 44c491444f6e4fa9adebd4bf0b9e5522
+      localIdentifier: view
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: saledate
+            type: dataset
+        from: -6
+        granularity: GDC.time.year
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+description: ''
+id: f3714ac3-14f6-47da-aeb3-e49121c00720
+title: 'MA by year #forecast'

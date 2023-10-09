@@ -1,0 +1,6 @@
+content:
+  url: https://gdc-dev-dashboard-plugins.s3.amazonaws.com/internal/gartner/combo-range-plugin/dp_combo_range_plugin.mjs
+  version: '2'
+description: ''
+id: 2e0433a4-6083-48c7-b363-14e345738114
+title: combo-range-plugin

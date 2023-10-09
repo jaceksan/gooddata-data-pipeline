@@ -1,0 +1,50 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_orders
+                    type: metric
+            localIdentifier: 62f0f79a45b04db8bb2933cd5e877917
+            title: Net Orders
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 59dfdd9221b9422d8b0b20863eaa2d7c
+            title: Net Sales
+      localIdentifier: secondary_measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_brand
+                type: label
+            localIdentifier: 1c237b9ea2464dc2aa360658e9595d42
+      localIdentifier: attribute
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '1'
+          id: 62f0f79a45b04db8bb2933cd5e877917
+      dataLabels:
+        visible: auto
+  sorts: []
+  version: '2'
+  visualizationUrl: local:scatter
+description: Net Sales vs Orders
+id: 2da13424-2a6b-4ed4-916c-9bbc002fdd1b
+title: Net Sales vs Orders

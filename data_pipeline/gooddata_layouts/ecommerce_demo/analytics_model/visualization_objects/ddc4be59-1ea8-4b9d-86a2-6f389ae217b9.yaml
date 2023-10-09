@@ -1,0 +1,62 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: e9e9de69c09e4905940392828545c8dd
+            title: Net Sales
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_orders
+                    type: metric
+            localIdentifier: a9ad19d6e5e946bf81e75eaffcd92a36
+            title: Net Orders
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: date.day
+                type: label
+            localIdentifier: acbc5974a2844148b6026b3db51e001e
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_country
+                type: label
+            localIdentifier: eb1469d315af48868f538f2c2005ee06
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: 4199c955c96c407dae71e103bef4bbe9
+      localIdentifier: attribute
+      totals:
+        - attributeIdentifier: 4199c955c96c407dae71e103bef4bbe9
+          measureIdentifier: e9e9de69c09e4905940392828545c8dd
+          type: sum
+        - attributeIdentifier: 4199c955c96c407dae71e103bef4bbe9
+          measureIdentifier: a9ad19d6e5e946bf81e75eaffcd92a36
+          type: sum
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: acbc5974a2844148b6026b3db51e001e
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: ddc4be59-1ea8-4b9d-86a2-6f389ae217b9
+title: Revenue Trend Detail

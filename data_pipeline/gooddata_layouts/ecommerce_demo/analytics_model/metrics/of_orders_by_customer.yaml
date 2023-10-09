@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT SUM({metric/of_orders}) BY {dataset/customer}
+description: ''
+id: of_orders_by_customer
+title: '# of Orders by Customer'

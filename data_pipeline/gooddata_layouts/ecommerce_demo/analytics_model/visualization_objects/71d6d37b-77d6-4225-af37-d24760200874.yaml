@@ -1,0 +1,84 @@
+content:
+  buckets:
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: geo__customer_city__city_pushpin_latitude
+                type: label
+            localIdentifier: b7a83e3cb635430ea4dbd9a14b171180
+      localIdentifier: location
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: of_orders
+                    type: metric
+            localIdentifier: 2b7ab1a2bf774b8e9a3bcf777bd6fad7
+            title: '# of Orders'
+      localIdentifier: size
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: active_customers
+                    type: metric
+            localIdentifier: 335619935f6247b0a4e8d36cf5f33599
+            title: Active Customers
+      localIdentifier: color
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_country
+                type: label
+            localIdentifier: 7bba774f143741618337921e5529a572
+      localIdentifier: segment
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: customer_created_date
+            type: dataset
+        from: -1
+        granularity: GDC.time.month
+        to: -1
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: customer_country
+            type: label
+        notIn:
+          uris: []
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: customer_age
+            type: label
+        notIn:
+          uris: []
+  properties:
+    controls:
+      latitude: geo__customer_city__city_pushpin_latitude
+      legend:
+        position: top
+      longitude: geo__customer_city__city_pushpin_longitude
+      points:
+        groupNearbyPoints: true
+        maxSize: normal
+        minSize: default
+      tooltipText: customer_city
+      viewport:
+        area: continent_na
+  sorts: []
+  version: '2'
+  visualizationUrl: local:pushpin
+description: ''
+id: 71d6d37b-77d6-4225-af37-d24760200874
+title: Orders by Customer City

@@ -1,0 +1,6 @@
+content:
+  format: $#,##0.00
+  maql: SELECT AVG({fact/order_unit_price})
+description: ''
+id: average_price_of_products
+title: Average Price of Products

@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: home_rentals
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: location
+      - name: neighborhood
+      - name: number_of_rooms
+      - name: number_of_bathrooms
+      - name: square_feets
+        description: Square footage
+      - name: days_on_market
+      - name: initial_price
+      - name: rental_price

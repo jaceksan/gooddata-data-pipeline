@@ -1,0 +1,57 @@
+plugins:
+  extractors:
+  - name: tap-s3-csv-ecommerce-demo
+    inherit_from: tap-s3-csv
+    config:
+      bucket: gdc-tiger-test-data-eu-central
+      start_date: '2020-01-01'
+      tables:
+      - search_prefix: all_files/v1/ecommerce-demo
+        search_pattern: customer.csv
+        table_name: customer
+        key_properties:
+        - customer_id
+        date_overrides:
+        - customer_created_date
+        delimiter: ','
+      - search_prefix: all_files/v1/ecommerce-demo
+        search_pattern: monthlyinventory.csv
+        table_name: monthlyinventory
+        key_properties:
+        - monthly_inventory_id
+        date_overrides:
+        - inventory_month
+        - date
+        delimiter: ','
+      - search_prefix: all_files/v1/ecommerce-demo
+        search_pattern: order_lines.csv
+        table_name: order_lines
+        key_properties:
+          - order_line_id
+        date_overrides:
+          - date
+          - order_date
+        delimiter: ','
+      - search_prefix: all_files/v1/ecommerce-demo
+        search_pattern: orders.csv
+        table_name: orders
+        key_properties:
+          - order_id
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/ecommerce-demo
+        search_pattern: product.csv
+        table_name: product
+        key_properties:
+        - product_id
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/ecommerce-demo
+        search_pattern: returns.csv
+        table_name: returns
+        key_properties:
+          - return_id
+        date_overrides:
+          - date
+          - return_date
+        delimiter: ','

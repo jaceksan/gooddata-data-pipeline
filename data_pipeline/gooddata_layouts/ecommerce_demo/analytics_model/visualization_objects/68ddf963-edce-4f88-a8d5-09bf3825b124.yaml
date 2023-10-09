@@ -1,0 +1,95 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_sales
+                    type: metric
+            localIdentifier: 62ebb5d9f12f49e99989edaa1bfaf4e4
+            title: Total Sales
+        - measure:
+            alias: Total Discounts
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: negative_total_discounts
+                    type: metric
+            format: '[>=1000000000000]$#,,,,.0 T;
+
+              [>=1000000000]$#,,,.0 B;
+
+              [>=1000000]$#,,.0 M;
+
+              [>=1000]$#,.0 K;
+
+              [>=0]$#,##0;
+
+              [<=-1000000000000]-$#,,,,.0 T;
+
+              [<=-1000000000]-$#,,,.0 B;
+
+              [<=-1000000]-$#,,.0 M;
+
+              [<=-1000]-$#,.0 K;
+
+              [<0]-$#,##0'
+            localIdentifier: 3eaf69ac7b2b49f98df951eeae22d343
+            title: Total Discounts N
+        - measure:
+            alias: Total Returns
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: negative_total_return
+                    type: metric
+            format: '[>=1000000000000]$#,,,,.0 T;
+
+              [>=1000000000]$#,,,.0 B;
+
+              [>=1000000]$#,,.0 M;
+
+              [>=1000]$#,.0 K;
+
+              [>=0]$#,##0;
+
+              [<=-1000000000000]-$#,,,,.0 T;
+
+              [<=-1000000000]-$#,,,.0 B;
+
+              [<=-1000000]-$#,,.0 M;
+
+              [<=-1000]-$#,.0 K;
+
+              [<0]-$#,##0'
+            localIdentifier: 7a0e188fbb1543498b839a9598936fce
+            title: Total Returns N
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      legend:
+        enabled: true
+        position: top
+      total:
+        enabled: true
+        measures: []
+        name: Net Sales
+      xaxis:
+        rotation: auto
+        visible: true
+      yaxis:
+        labelsEnabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:waterfall
+description: Sales Goal
+id: 68ddf963-edce-4f88-a8d5-09bf3825b124
+title: Net Sales Breakdown

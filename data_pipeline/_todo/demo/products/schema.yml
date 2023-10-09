@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: products
+    meta:
+      gooddata:
+        model_id: demo
+    columns:
+      - name: product_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: product_name
+      - name: category
+        description: "Product category"
+        meta:
+          gooddata:
+            id: products.category

@@ -17,8 +17,14 @@
         TARGET_SCHEMA: "${INPUT_SCHEMA_GITHUB}"
       - MELTANO_SOURCE: tap-github-org
         TARGET_SCHEMA: "${INPUT_SCHEMA_GITHUB}"
-      - MELTANO_SOURCE: tap-s3-csv
+      - MELTANO_SOURCE: tap-s3-csv-faa
         TARGET_SCHEMA: "${INPUT_SCHEMA_FAA}"
+      - MELTANO_SOURCE: tap-s3-csv-faa
+        TARGET_SCHEMA: "${INPUT_SCHEMA_FAA}"
+      - MELTANO_SOURCE: tap-s3-csv-ecommerce-demo
+        TARGET_SCHEMA: "${INPUT_SCHEMA_ECOMMERCE_DEMO}"
+      - MELTANO_SOURCE: tap-s3-csv-data-science
+        TARGET_SCHEMA: "${INPUT_SCHEMA_DATA_SCIENCE}"
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
 #      - do not forget to move corresponding dbt models from _todo folder back to main folder
 #      - MELTANO_SOURCE: tap-exchangeratehost

@@ -1,0 +1,66 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: d612ec37e5a04727bb20def0935e4fab
+            title: Net Sales
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: ff456d9200d34b0aa1e2bd5e8bff6b99
+            title: Gross Profit
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit_margin
+                    type: metric
+            localIdentifier: 28cee096bf4141a29ffe0bc41806e4c3
+            title: Gross Profit Margin
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_country
+                type: label
+            localIdentifier: 525c659241bb4d6fbe2ab74aa37150f1
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: a6b19dd405cb4c1da462426af2f298ba
+      localIdentifier: attribute
+      totals:
+        - attributeIdentifier: a6b19dd405cb4c1da462426af2f298ba
+          measureIdentifier: d612ec37e5a04727bb20def0935e4fab
+          type: sum
+        - attributeIdentifier: a6b19dd405cb4c1da462426af2f298ba
+          measureIdentifier: ff456d9200d34b0aa1e2bd5e8bff6b99
+          type: sum
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: 525c659241bb4d6fbe2ab74aa37150f1
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Sales detail
+id: 469e8936-ca67-4987-8c70-0e35be24be4d
+title: Sales detail

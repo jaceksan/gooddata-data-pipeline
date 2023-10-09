@@ -1,0 +1,24 @@
+content:
+  format: '[>=1000000000000]$#,,,,.0 T;
+
+    [>=1000000000]$#,,,.0 B;
+
+    [>=1000000]$#,,.0 M;
+
+    [>=1000]$#,.0 K;
+
+    [>=0]$#,##0;
+
+    [<=-1000000000000]-$#,,,,.0 T;
+
+    [<=-1000000000]-$#,,,.0 B;
+
+    [<=-1000000]-$#,,.0 M;
+
+    [<=-1000]-$#,.0 K;
+
+    [<0]-$#,##0'
+  maql: SELECT {metric/total_sales} - IFNULL({metric/total_discounts}, 0) - IFNULL({metric/total_returns},0)
+description: The sum of all transacted orders adjusted by discounts and returns
+id: net_sales
+title: Net Sales

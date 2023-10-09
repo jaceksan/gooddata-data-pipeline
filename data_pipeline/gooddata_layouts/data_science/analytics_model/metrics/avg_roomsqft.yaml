@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT AVG({fact/square_feets} / {fact/number_of_rooms})
+description: ''
+id: avg_roomsqft
+title: Avg room sqft

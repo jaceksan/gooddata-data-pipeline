@@ -17,8 +17,7 @@ plugins:
       variant: andyh1203
       pip_url: target-jsonl
     - name: target-postgres
-      variant: transferwise
-      pip_url: git+https://github.com/transferwise/pipelinewise-target-postgres/@refs/pull/106/head
+      variant: meltanolabs
     - name: target-snowflake
       variant: transferwise
       pip_url: pipelinewise-target-snowflake

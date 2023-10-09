@@ -1,0 +1,62 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Net Sales - year ago
+            definition:
+              popMeasureDefinition:
+                measureIdentifier: 442792c638df4c0283af94d95a1d3612
+                popAttribute:
+                  identifier:
+                    id: date.year
+                    type: attribute
+            localIdentifier: 442792c638df4c0283af94d95a1d3612_pop
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 442792c638df4c0283af94d95a1d3612
+            title: Net Sales
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Date
+            displayForm:
+              identifier:
+                id: date.day
+                type: label
+            localIdentifier: 1b9548824b3d4ade9666659cf8cda074
+      localIdentifier: view
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: -11
+        granularity: GDC.time.month
+        to: 0
+  properties:
+    controls:
+      dataLabels:
+        totalsVisible: auto
+        visible: auto
+      grid:
+        enabled: true
+      legend:
+        enabled: true
+      xaxis:
+        labelsEnabled: true
+        rotation: auto
+        visible: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:column
+description: Net sales over time
+id: 60dd3592-1322-4260-aaad-bd51cdcb1343
+title: Net Sales Over Time

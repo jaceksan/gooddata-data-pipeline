@@ -1,0 +1,45 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Population
+            definition:
+              measureDefinition:
+                aggregation: sum
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: census.population
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 62456b28efe54c4592a57880394f07b3
+            title: Sum of Population
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: timestamp.year
+                type: label
+            localIdentifier: 849bc687fdba4737a8e22a64ecf12048
+      localIdentifier: attribute
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: continent
+                type: label
+            localIdentifier: 38b5a6bd36894c4fbe37e8d1794f7f2e
+      localIdentifier: columns
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: 849bc687fdba4737a8e22a64ecf12048
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: 7f2b72d0-5241-4c9c-b242-75edcf652cbe
+title: 'Population by continent through years #bar-race'
