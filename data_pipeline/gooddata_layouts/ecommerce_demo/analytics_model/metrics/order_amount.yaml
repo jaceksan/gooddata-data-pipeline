@@ -1,0 +1,24 @@
+content:
+  format: '[>=1000000000000]$#,,,,.0 T;
+
+    [>=1000000000]$#,,,.0 B;
+
+    [>=1000000]$#,,.0 M;
+
+    [>=1000]$#,.0 K;
+
+    [>=0]$#,##0;
+
+    [<=-1000000000000]-$#,,,,.0 T;
+
+    [<=-1000000000]-$#,,,.0 B;
+
+    [<=-1000000]-$#,,.0 M;
+
+    [<=-1000]-$#,.0 K;
+
+    [<0]-$#,##0'
+  maql: SELECT SUM({fact/order_unit_quantity}*{fact/order_unit_price})
+description: Total order amount irrespective of order status
+id: order_amount
+title: Order Amount

@@ -1,0 +1,11 @@
+content:
+  filters:
+    - dateFilter:
+        from: -1
+        granularity: GDC.time.week_us
+        to: -1
+        type: relative
+  version: '2'
+description: ''
+id: 5d4aeb81-5208-4014-a685-9d12512f8d33
+title: filterContext

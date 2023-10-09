@@ -1,0 +1,47 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: order_amount
+                    type: metric
+            localIdentifier: f2f1692ea773413c848581b42690ebd2
+            title: Order Amount
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: f9153e2686434163861385ec841b9132
+      localIdentifier: attribute_from
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_rating
+                type: label
+            localIdentifier: 9a9521c9579b4a31aa1d3ea7a077febf
+      localIdentifier: attribute_to
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: f2f1692ea773413c848581b42690ebd2
+        operator: TOP
+        value: 10
+  properties:
+    controls:
+      legend:
+        enabled: false
+        position: top
+  sorts: []
+  version: '2'
+  visualizationUrl: local:sankey
+description: ''
+id: 06f23fe2-edcf-4b6c-9163-8fa26c8ef45f
+title: Product Category Rating

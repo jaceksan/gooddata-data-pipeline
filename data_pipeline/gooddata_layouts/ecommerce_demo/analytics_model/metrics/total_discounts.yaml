@@ -1,0 +1,6 @@
+content:
+  format: $#,##0.00
+  maql: SELECT SUM({fact/order_unit_discount}) WHERE {label/order_status}= "Processed"
+description: The sum of all discounts
+id: total_discounts
+title: Total Discounts

@@ -1,0 +1,47 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 026ea78496f142d2b5037a6f066156e7
+            title: Net Sales
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: 4aec3042fbc2497ca400a0b3ab1f8a0b
+      localIdentifier: view
+    - items:
+        - attribute:
+            alias: Month of Year
+            displayForm:
+              identifier:
+                id: date.monthOfYear
+                type: label
+            localIdentifier: 32a5035c52194cf59413f3b18feef281
+      localIdentifier: stack
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: -1
+        granularity: GDC.time.year
+        to: -1
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:heatmap
+description: Net Sales by Product Category Seasonality
+id: 09a05f3f-d0cd-423a-8844-eba4ba7ca0c4
+title: Net Sales by Product Category Seasonality

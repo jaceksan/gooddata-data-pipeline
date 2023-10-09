@@ -1,0 +1,32 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: rental_price
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: b3b0291290ba45018ed5e7e67aeeebf8
+            title: Sum of Rental price
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: location
+                type: label
+            localIdentifier: bb7995f356c340d1a8d420827ba94ea1
+      localIdentifier: view
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: ''
+id: 9ddcc5cd-3264-415a-b8f9-3826449a2853
+title: Locations by rental price

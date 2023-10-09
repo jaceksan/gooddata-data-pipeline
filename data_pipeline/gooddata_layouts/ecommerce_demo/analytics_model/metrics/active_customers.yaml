@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT IFNULL(COUNT({label/customer_id}, {label/order_line_id}),0)
+description: Number of customers that transacted
+id: active_customers
+title: Active Customers

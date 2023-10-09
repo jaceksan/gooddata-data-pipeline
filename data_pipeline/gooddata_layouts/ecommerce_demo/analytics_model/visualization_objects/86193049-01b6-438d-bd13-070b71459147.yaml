@@ -1,0 +1,42 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_sales
+                    type: metric
+            localIdentifier: fc431fb642e34ede94d6042beb42921e
+            title: Total Sales
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters:
+                  - relativeDateFilter:
+                      dataSet:
+                        identifier:
+                          id: order_date
+                          type: dataset
+                      from: -1
+                      granularity: GDC.time.month
+                      to: -1
+                item:
+                  identifier:
+                    id: total_sales
+                    type: metric
+            localIdentifier: 21387dd75d2f4331a2cb18e1de6e391d
+            title: 'Total Sales, Order date: Last month'
+      localIdentifier: secondary_measures
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: Total Sales
+id: 86193049-01b6-438d-bd13-070b71459147
+title: Total Sales

@@ -1,0 +1,40 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: monthlycharges
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: eb4c76ca973444139265bae87f990bc7
+            title: Sum of Monthlycharges
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: paymentmethod
+                type: label
+            localIdentifier: 192352f2b52841d99dda15e93a7160d1
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: internetservice
+                type: label
+            localIdentifier: 1231df8de776448eb1ee6ff74cc05135
+      localIdentifier: stack
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+description: ''
+id: 5dc5d12f-869f-4a99-bfc3-d30e0bb8b0e7
+title: Key driver analysis

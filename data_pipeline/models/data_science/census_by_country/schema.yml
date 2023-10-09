@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: census_by_country
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: timestamp
+      - name: country
+        description: Country
+        meta:
+          gooddata:
+            id: census_by_country.country
+      - name: population
+        description: Population of the country
+        meta:
+          gooddata:
+            id: census_by_country.population

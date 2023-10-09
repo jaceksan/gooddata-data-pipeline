@@ -12,6 +12,7 @@ variables:
   MELTANO_TARGET: "target-snowflake"
   DBT_TARGET: "snowflake"
   GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
+  GOODDATA_TOKEN: "$GOODDATA_TOKEN_DEFAULT"
   # Snowflake objects are upper-case by default. We use Snowflake in most jobs.
   GOODDATA_UPPER_CASE: "--gooddata-upper-case"
   SNOWFLAKE_ACCOUNT: "gooddata"
@@ -24,6 +25,8 @@ variables:
   INPUT_SCHEMA_FAA: "faa_input_stage"
   INPUT_SCHEMA_GITHUB: "github_input_stage"
   INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
+  INPUT_SCHEMA_ECOMMERCE_DEMO: "ecommerce_demo_input_stage"
+  INPUT_SCHEMA_DATA_SCIENCE: "data_science_input_stage"
   OUTPUT_SCHEMA: "cicd_output_stage"
   IMAGES_WORKDIR: "/project"
   MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"

@@ -1,0 +1,44 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_sales
+                    type: metric
+            localIdentifier: 0c6dbb7da7c84aabb1b2ae868ca93d08
+            title: Total Sales
+      localIdentifier: measures
+    - items:
+        - measure:
+            alias: Previous period
+            definition:
+              previousPeriodMeasure:
+                dateDataSets:
+                  - dataSet:
+                      identifier:
+                        id: date
+                        type: dataset
+                    periodsAgo: 1
+                measureIdentifier: 0c6dbb7da7c84aabb1b2ae868ca93d08
+            localIdentifier: 0c6dbb7da7c84aabb1b2ae868ca93d08_previous_period
+      localIdentifier: secondary_measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: 0
+        granularity: GDC.time.month
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: Total Sales
+id: adf2b786-32bd-4864-b251-7e2cfe9a006f
+title: Total Sales

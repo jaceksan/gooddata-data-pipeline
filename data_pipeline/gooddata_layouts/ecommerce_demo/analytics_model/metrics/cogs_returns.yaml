@@ -1,0 +1,6 @@
+content:
+  format: $#,##0.00
+  maql: SELECT SUM({fact/return_unit_cost}*{fact/return_unit_quantity})
+description: Cost of goods returned
+id: cogs_returns
+title: COGS [Returns]

@@ -1,0 +1,67 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: '# of Units'
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: order_unit_quantity
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 467a516bc9b14c0598a77281b7576809
+            title: Sum of Order unit quantity
+        - measure:
+            alias: Per unit price
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: order_unit_price
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 73d90f0963f947b5b625bce12838092e
+            title: Sum of Order unit price
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: order_id
+                type: label
+            localIdentifier: c2cec2a421094d98aacdd2dcdd249b79
+        - attribute:
+            displayForm:
+              identifier:
+                id: order_line_id
+                type: label
+            localIdentifier: 2b0cc07c4b48482189b8f0af4693714a
+        - attribute:
+            displayForm:
+              identifier:
+                id: order_status
+                type: label
+            localIdentifier: 094b21053a194b8f92e0be5ee9b6d43e
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_name
+                type: label
+            localIdentifier: 37d54a9da27d4038a1a7178820ce1a69
+      localIdentifier: attribute
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: c2cec2a421094d98aacdd2dcdd249b79
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Order details
+id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+title: Order Details

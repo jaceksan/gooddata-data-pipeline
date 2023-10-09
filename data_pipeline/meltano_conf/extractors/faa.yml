@@ -3,6 +3,8 @@ plugins:
   - name: tap-s3-csv
     variant: transferwise
     pip_url: pipelinewise-tap-s3-csv
+  - name: tap-s3-csv-faa
+    inherit_from: tap-s3-csv
     config:
       bucket: gdc-tiger-test-data-eu-central
       start_date: '2020-01-01'

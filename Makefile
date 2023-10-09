@@ -25,7 +25,9 @@ dev:
 
 extract_load:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_GITHUB && meltano --environment $$ELT_ENVIRONMENT run tap-github-repo $$MELTANO_TARGET tap-github-org $$MELTANO_TARGET $$FR
-	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_FAA && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv $$MELTANO_TARGET $$FR
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_FAA && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-faa $$MELTANO_TARGET $$FR
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_ECOMMERCE_DEMO && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-ecommerce-demo $$MELTANO_TARGET $$FR
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_DATA_SCIENCE && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-data-science $$MELTANO_TARGET $$FR
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
 #	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_EXCHANGERATEHOST && meltano --environment $$ELT_ENVIRONMENT run tap-exchangeratehost $$MELTANO_TARGET $$FR
 
@@ -33,7 +35,13 @@ extract_load_github:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_GITHUB && meltano --environment $$ELT_ENVIRONMENT run tap-github-repo $$MELTANO_TARGET tap-github-org $$MELTANO_TARGET $$FR
 
 extract_load_faa:
-	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_FAA && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv $$MELTANO_TARGET $$FR
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_FAA && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-faa $$MELTANO_TARGET $$FR
+
+extract_load_ecommerce_demo:
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_ECOMMERCE_DEMO && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-ecommerce-demo $$MELTANO_TARGET $$FR
+
+extract_load_data_science:
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_DATA_SCIENCE && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-data-science $$MELTANO_TARGET $$FR
 
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
 #extract_load_exchange:

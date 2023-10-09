@@ -1,0 +1,40 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: avg
+                filters: []
+                item:
+                  identifier:
+                    id: initial_price
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: ec008250fc3646988a8a771eac1e7f8d
+            title: Avg Initial price
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: neighborhood
+                type: label
+            localIdentifier: cabfbde1fc384a3684459897dfc447d5
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: location
+                type: label
+            localIdentifier: 1b8841ca682e4a75947675fe83189544
+      localIdentifier: segment
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:treemap
+description: ''
+id: 3d3a9118-1382-4d0d-a22c-894eff88f992
+title: Initial price per number of room and neighborhood

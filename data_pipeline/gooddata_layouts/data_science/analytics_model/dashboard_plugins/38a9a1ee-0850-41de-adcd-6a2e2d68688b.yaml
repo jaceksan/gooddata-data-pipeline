@@ -1,0 +1,6 @@
+content:
+  url: https://gdc-dev-dashboard-plugins.s3.amazonaws.com/internal/pdo/jupyter-forecast/dp_jupyter_forecast.mjs
+  version: '2'
+description: ''
+id: 38a9a1ee-0850-41de-adcd-6a2e2d68688b
+title: jupyter-forecast

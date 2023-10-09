@@ -1,0 +1,80 @@
+content:
+  filterContextRef:
+    identifier:
+      id: b1294e9b-7ffe-4f9c-afc9-29c2804392cb
+      type: filterContext
+  layout:
+    sections:
+      - header:
+          description: Charts that support combo range navigation.
+          title: Combo range navigation
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: timestamp
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: baa1d13f-d046-4e7b-b553-066bc5d1165f
+                  type: visualizationObject
+              properties: {}
+              title: Temperature by a minute
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          description: Some other charts so the dashboard looks nicer.
+          title: Others
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 3d3a9118-1382-4d0d-a22c-894eff88f992
+                  type: visualizationObject
+              properties: {}
+              title: Initial price per number of room and neighborhood
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 5dc5d12f-869f-4a99-bfc3-d30e0bb8b0e7
+                  type: visualizationObject
+              properties: {}
+              title: Key driver analysis
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  plugins:
+    - plugin:
+        identifier:
+          id: 2e0433a4-6083-48c7-b363-14e345738114
+          type: dashboardPlugin
+      version: '2'
+  version: '2'
+description: ''
+id: 2826d697-81d5-4303-9124-af6002abd6e9
+title: Combo range

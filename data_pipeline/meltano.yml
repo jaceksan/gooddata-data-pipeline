@@ -27,7 +27,10 @@ environments:
 
 include_paths:
   - "./meltano_conf/extractors/github.yml"
+  # FAA must be first tap-csv like extractor, it contains the base extractor from which others inherit
   - "./meltano_conf/extractors/faa.yml"
+  - "./meltano_conf/extractors/ecommerce_demo.yml"
+  - "./meltano_conf/extractors/data_science.yml"
   - "./meltano_conf/extractors/exchangerate.yml"
 # TODO  - "./meltano_conf/extractors/gitlab.yml"
   - "./meltano_conf/loaders/loaders.yml"

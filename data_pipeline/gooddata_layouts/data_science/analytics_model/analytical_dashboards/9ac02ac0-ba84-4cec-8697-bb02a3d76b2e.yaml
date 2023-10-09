@@ -1,0 +1,64 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 0058209a-0772-4f55-8fa2-5f5873839325
+      type: filterContext
+  layout:
+    sections:
+      - header:
+          description: The chart animates data of World's continents from year 2010
+            to 2020
+          title: Animated bar race chart
+        items:
+          - size:
+              xl:
+                gridHeight: 32
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: timestamp
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: fd58f12b-19bd-400b-b150-68d78a03e61f
+                  type: visualizationObject
+              properties: {}
+              title: Population by country through years
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: timestamp
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 7f2b72d0-5241-4c9c-b242-75edcf652cbe
+                  type: visualizationObject
+              properties: {}
+              title: Population by continent through years (in millions of people)
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  plugins:
+    - plugin:
+        identifier:
+          id: 7e0a0704-ffab-4ac2-b14e-f065dd6408ba
+          type: dashboardPlugin
+      version: '2'
+  version: '2'
+description: ''
+id: 9ac02ac0-ba84-4cec-8697-bb02a3d76b2e
+title: Bar race

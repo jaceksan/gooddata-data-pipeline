@@ -1,0 +1,6 @@
+content:
+  format: '#,##0%'
+  maql: SELECT SUM({fact/order_unit_quantity}) / (SUM({fact/order_unit_quantity})+SUM({fact/monthly_quantity_bom}))
+description: ''
+id: sell_through
+title: '% Sell Through'

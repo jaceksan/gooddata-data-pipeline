@@ -1,0 +1,7 @@
+content:
+  format: $#,##0.00
+  maql: SELECT SUM({fact/order_unit_cost}*{fact/order_unit_quantity}) WHERE {label/order_status}
+    = "Processed"
+description: Cost of goods sold
+id: cogs_orders
+title: COGS [Orders]

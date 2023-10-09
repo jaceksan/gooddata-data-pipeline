@@ -25,7 +25,7 @@ x-meltano-vars: &meltano-vars
 services:
   gooddata-cn-ce:
     # You can use "dev_latest" tag which points to the latest development version of GD.CN
-    image: gooddata/gooddata-cn-ce:2.5
+    image: gooddata/gooddata-cn-ce:dev_latest
     ports:
       - "3000:3000"
       - "5432:5432"
@@ -35,7 +35,7 @@ services:
       LICENSE_AND_PRIVACY_POLICY_ACCEPTED: "YES"
       APP_LOGLEVEL: "INFO"
       GDC_FEATURES_VALUES_ENABLE_METRIC_SQL_AND_DATA_EXPLAIN: 'ENABLED'
-      LIMIT_MAX_RESULT_XTAB_DIMENSION: 100000
+      LIMIT_MAX_RESULT_XTAB_DIMENSION: 200000
       GDC_FEATURES_VALUES_ENABLE_PDM_REMOVAL_DEPRECATION_PHASE: "true"
 
   bootstrap_origins:
@@ -88,6 +88,40 @@ services:
     environment:
       <<: [ *postgres-vars, *meltano-vars ]
       TARGET_SCHEMA: faa_input_stage
+      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
+      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
+
+  extract_load_ecommerce_demo:
+    build:
+      context: .
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-s3-csv-ecommerce-demo target-postgres
+    environment:
+      <<: [ *postgres-vars, *meltano-vars ]
+      TARGET_SCHEMA: ecommerce_demo_input_stage
+      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
+      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
+
+  extract_load_data_science:
+    build:
+      context: .
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-s3-csv-data-science target-postgres
+    environment:
+      <<: [ *postgres-vars, *meltano-vars ]
+      TARGET_SCHEMA: data_science_input_stage
       TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
       TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
     volumes:

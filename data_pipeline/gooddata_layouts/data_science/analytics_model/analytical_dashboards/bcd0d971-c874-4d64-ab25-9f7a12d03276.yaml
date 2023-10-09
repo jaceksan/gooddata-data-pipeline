@@ -1,0 +1,82 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 36e5bb68-dfad-4281-ae29-3e785b8fab12
+      type: filterContext
+  layout:
+    sections:
+      - header:
+          description: My charts in the first section
+          title: First section
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 9ddcc5cd-3264-415a-b8f9-3826449a2853
+                  type: visualizationObject
+              title: Locations by rental price
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 5dc5d12f-869f-4a99-bfc3-d30e0bb8b0e7
+                  type: visualizationObject
+              title: Key driver analysis
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          description: Here are more charts ❤️
+          title: Some other charts
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 3d3a9118-1382-4d0d-a22c-894eff88f992
+                  type: visualizationObject
+              title: Initial price per number of room and neighborhood
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 53f204e3-a41c-43e9-bec0-d1ad8490513c
+                  type: visualizationObject
+              title: 'Spending score vs income per customer #cluster'
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: bcd0d971-c874-4d64-ab25-9f7a12d03276
+title: Just a dashboard

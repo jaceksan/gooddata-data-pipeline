@@ -1,0 +1,35 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_orders
+                    type: metric
+            localIdentifier: aff217f5be79438aa7053d7e15c7a3a7
+            title: Net Orders
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_name
+                type: label
+            localIdentifier: f8b013634b8d4d56b68031bcd8ce7b63
+      localIdentifier: view
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: aff217f5be79438aa7053d7e15c7a3a7
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+description: Top 10 Sellers
+id: 603bbd58-ea50-4607-ad20-418bd95c06c8
+title: Top 10 Sellers

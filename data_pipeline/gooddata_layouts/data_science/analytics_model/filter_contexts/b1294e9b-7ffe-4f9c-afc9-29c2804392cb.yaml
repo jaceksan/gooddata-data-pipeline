@@ -1,0 +1,11 @@
+content:
+  filters:
+    - dateFilter:
+        from: 2013-08-18 00:00
+        granularity: GDC.time.date
+        to: 2013-08-25 23:59
+        type: absolute
+  version: '2'
+description: ''
+id: b1294e9b-7ffe-4f9c-afc9-29c2804392cb
+title: filterContext

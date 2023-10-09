@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT -1 * {metric/total_discounts}
+description: ''
+id: negative_total_discounts
+title: Total Discounts N

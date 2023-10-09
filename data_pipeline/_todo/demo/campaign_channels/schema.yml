@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: campaign_channels
+    meta:
+      gooddata:
+        model_id: demo
+    columns:
+      - name: campaign_channel_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: campaign_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('campaigns')
+              pk_column_name: campaign_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: campaigns
+      - name: category
+        description: "Campaign channel category"
+        meta:
+          gooddata:
+            id: campaign_channels.category
+      - name: type
+      - name: budget
+      - name: spend
