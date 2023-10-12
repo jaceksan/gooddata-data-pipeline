@@ -22,6 +22,17 @@ environment_setups:
       - id: cloud_production
         name: dbt Cloud Production
         elt_environment: cicd_cloud_prod
+  - id: simple
+    environments:
+      - id: development
+        name: Development
+        elt_environment: cicd_dev
+      - id: staging
+        name: Staging
+        elt_environment: cicd_staging
+      - id: production
+        name: Production
+        elt_environment: cicd_prod
 
 
 data_products:
@@ -44,7 +55,7 @@ data_products:
           language: "chinese (simplified)"
   - id: ecommerce_demo
     name: Ecommerce demo
-    environment_setup_id: default
+    environment_setup_id: simple
     model_ids:
       - ecommerce_demo
     # TODO - this insight cannot be calculated by Python SDK:
@@ -55,7 +66,7 @@ data_products:
       - "1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6"
   - id: data_science
     name: Data science
-    environment_setup_id: default
+    environment_setup_id: simple
     model_ids:
       - data_science
 
