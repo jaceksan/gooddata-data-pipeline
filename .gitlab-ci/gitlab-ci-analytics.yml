@@ -21,7 +21,7 @@
     - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
   script:
     - gooddata-dbt deploy_analytics $GOODDATA_UPPER_CASE
-    - if [ -n "$TEST_INSIGHTS" ]; then gooddata-dbt test_insights; else echo "Skipping insights tests"; fi
+    - gooddata-dbt test_insights
 
 .gooddata_changes:
   changes:
