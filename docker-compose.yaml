@@ -75,6 +75,7 @@ services:
       TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
 
   extract_load_faa:
     build:
@@ -92,6 +93,7 @@ services:
       TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
 
   extract_load_ecommerce_demo:
     build:
@@ -109,6 +111,7 @@ services:
       TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
 
   extract_load_data_science:
     build:
@@ -126,6 +129,7 @@ services:
       TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
 
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
 #  extract_load_exchangeratehost:
