@@ -1,0 +1,15 @@
+local:
+  host: "http://localhost:3000"
+  token: "YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
+
+demo_cicd:
+  host: "https://demo-cicd.cloud.gooddata.com"
+  token: "<token>"
+
+gartner_demo:
+  host: "https://demo.fast-track.stg11.panther.intgdc.com"
+  token: "<token>"
+
+gartner_demo_se:
+  host: "https://demo-se.fast-track.stg11.panther.intgdc.com"
+  token: "<token>"

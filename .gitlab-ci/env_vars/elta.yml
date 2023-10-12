@@ -3,8 +3,7 @@
     DBT_PROFILES_DIR: "profile"
     MELTANO_TARGET: "target-snowflake"
     DBT_TARGET: "snowflake"
-    GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
-    GOODDATA_TOKEN: "$GOODDATA_TOKEN_DEFAULT"
+    GOODDATA_PROFILES: "demo_cicd gartner_demo gartner_demo_se"
     # Snowflake objects are upper-case by default. We use Snowflake in most jobs.
     GOODDATA_UPPER_CASE: "--gooddata-upper-case"
     SNOWFLAKE_ACCOUNT: "gooddata"

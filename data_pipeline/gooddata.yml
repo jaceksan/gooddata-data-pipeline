@@ -42,3 +42,37 @@ data_products:
           language: fr
         - locale: zh-Hans
           language: "chinese (simplified)"
+  - id: ecommerce_demo
+    name: Ecommerce demo
+    environment_setup_id: default
+    model_ids:
+      - ecommerce_demo
+  - id: data_science
+    name: Data science
+    environment_setup_id: default
+    model_ids:
+      - data_science
+
+organizations:
+  - gooddata_profile: local
+    data_product_ids:
+      - cicd_demo
+      - faa
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: demo_cicd
+    data_product_ids:
+      - cicd_demo
+      - faa
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: gartner_demo
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: gartner_demo_se
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science

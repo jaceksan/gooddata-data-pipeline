@@ -28,6 +28,8 @@
     entrypoint: [""]
   stage: transform
   before_script:
+    - mkdir -p ~/.gooddata
+    - cp $GOODDATA_PROFILES_FILE ~/.gooddata/profiles.yaml
     - cd $SRC_DATA_PIPELINE
     # dbt packages are installed during build of docker image to workdir
     - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages

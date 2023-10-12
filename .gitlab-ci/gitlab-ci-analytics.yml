@@ -13,6 +13,8 @@
     TEST_INSIGHTS: "1"
   stage: analytics
   before_script:
+    - mkdir -p ~/.gooddata
+    - cp $GOODDATA_PROFILES_FILE ~/.gooddata/profiles.yaml
     - cd $SRC_DATA_PIPELINE
     # dbt packages are installed during build of docker image to workdir
     - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
@@ -35,9 +37,6 @@
   extends:
     - .gooddata
   variables:
-    GOODDATA_CONFIG: "gooddata_closed_beta.yml"
-    GOODDATA_HOST: "https://demo.fast-track.stg11.panther.intgdc.com"
-    GOODDATA_TOKEN: "$GOODDATA_TOKEN_CLOSED_BETA"
     # TODO - there is one insight which test fails with dim>100_000 rows.
     #   The insight (with resultSpec) does not exceed it, just the underlying raw cache. Fix it.
     TEST_INSIGHTS: ""
