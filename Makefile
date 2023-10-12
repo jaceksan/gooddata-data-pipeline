@@ -19,7 +19,7 @@ dev:
 	python3.10 -m venv .venv_t --upgrade-deps
 	# Install dbt and required plugins
 	.venv_t/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-dbt.txt
-	.venv_t/bin/dbt deps --project-dir $(SRC_DATA_PIPELINE)
+	.venv_t/bin/dbt deps --project-dir $(SRC_DATA_PIPELINE) --profiles-dir $(SRC_DATA_PIPELINE)/profile
 	# Install dbt-gooddata plugin and related dependencies
 	.venv_t/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-gooddata.txt
 
