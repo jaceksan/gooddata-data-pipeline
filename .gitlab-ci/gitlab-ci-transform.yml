@@ -53,8 +53,6 @@
     name: "$DBT_CUSTOM_IMAGE"
     entrypoint: [""]
   stage: transform
-  variables:
-    GOODDATA_PROFILES: "demo_cicd"
   before_script:
     - mkdir -p ~/.gooddata
     - cp $GOODDATA_PROFILES_FILE ~/.gooddata/profiles.yaml
