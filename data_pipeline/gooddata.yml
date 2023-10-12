@@ -66,12 +66,12 @@ organizations:
       - faa
       - ecommerce_demo
       - data_science
-  - gooddata_profile: gartner_demo
+  - gooddata_profile: closed_beta
     data_product_ids:
       - cicd_demo
       - ecommerce_demo
       - data_science
-  - gooddata_profile: gartner_demo_se
+  - gooddata_profile: closed_beta_se
     data_product_ids:
       - cicd_demo
       - ecommerce_demo

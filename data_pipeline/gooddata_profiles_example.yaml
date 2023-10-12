@@ -6,10 +6,10 @@ demo_cicd:
   host: "https://demo-cicd.cloud.gooddata.com"
   token: "<token>"
 
-gartner_demo:
+closed_beta:
   host: "https://demo.fast-track.stg11.panther.intgdc.com"
   token: "<token>"
 
-gartner_demo_se:
+closed_beta_se:
   host: "https://demo-se.fast-track.stg11.panther.intgdc.com"
   token: "<token>"
