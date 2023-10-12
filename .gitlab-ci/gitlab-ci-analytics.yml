@@ -4,6 +4,7 @@
   extends:
     - .base
     - .vars-image-gooddata
+    - .vars-elta
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:

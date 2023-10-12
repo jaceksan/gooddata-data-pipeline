@@ -4,6 +4,7 @@
   extends:
     - .base
     - .vars-image-meltano
+    - .vars-elta
   # We build a custom image on top of the official Meltano image in this pipeline
   # It contains Meltano itself, and all extractors/loaders
   image:

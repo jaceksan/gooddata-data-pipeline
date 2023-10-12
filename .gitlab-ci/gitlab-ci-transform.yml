@@ -21,6 +21,7 @@
   extends:
     - .base
     - .vars-image-dbt
+    - .vars-elta
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
@@ -45,6 +46,7 @@
   extends:
     - .base
     - .vars-image-dbt
+    - .vars-elta
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
