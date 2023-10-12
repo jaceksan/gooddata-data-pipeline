@@ -3,6 +3,7 @@
 .extract_load:
   extends:
     - .base
+    - .vars-image-meltano
   # We build a custom image on top of the official Meltano image in this pipeline
   # It contains Meltano itself, and all extractors/loaders
   image:
@@ -66,6 +67,8 @@
     - $SRC_DATA_PIPELINE/meltano.yml
     - $SRC_DATA_PIPELINE/requirements-meltano.txt
     - .gitlab-ci/gitlab-ci-extract-load.yml
+    - .gitlab-ci/env_vars/image-meltano.yml
+    - .gitlab-ci/env_vars/elta.yml
     - .gitlab-ci.yml
 
 ##########################3

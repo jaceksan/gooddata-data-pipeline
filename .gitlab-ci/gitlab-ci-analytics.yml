@@ -3,6 +3,7 @@
 .gooddata:
   extends:
     - .base
+    - .vars-image-gooddata
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
@@ -11,8 +12,11 @@
   variables:
     TEST_INSIGHTS: "1"
   stage: analytics
-  script:
+  before_script:
     - cd $SRC_DATA_PIPELINE
+    # dbt packages are installed during build of docker image to workdir
+    - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
+  script:
     - gooddata-dbt deploy_analytics $GOODDATA_UPPER_CASE
     - if [ -n "$TEST_INSIGHTS" ]; then gooddata-dbt test_insights; else echo "Skipping insights tests"; fi
 
@@ -23,6 +27,8 @@
     - $SRC_DATA_PIPELINE/models/**/*
     - $SRC_DATA_PIPELINE/gooddata_layouts/**/*
     - $SRC_DATA_PIPELINE/requirements-gooddata.txt
+    - .gitlab-ci/env_vars/image-gooddata.yml
+    - .gitlab-ci/env_vars/elta.yml
     - .gitlab-ci/gitlab-ci-analytics.yml
 
 .gooddata_closed_beta:
