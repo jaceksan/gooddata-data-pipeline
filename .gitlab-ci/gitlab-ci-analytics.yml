@@ -3,6 +3,8 @@
 .gooddata:
   extends:
     - .base
+    - .vars-image-gooddata
+    - .vars-elta
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
@@ -11,10 +13,15 @@
   variables:
     TEST_INSIGHTS: "1"
   stage: analytics
-  script:
+  before_script:
+    - mkdir -p ~/.gooddata
+    - cp $GOODDATA_PROFILES_FILE ~/.gooddata/profiles.yaml
     - cd $SRC_DATA_PIPELINE
+    # dbt packages are installed during build of docker image to workdir
+    - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
+  script:
     - gooddata-dbt deploy_analytics $GOODDATA_UPPER_CASE
-    - if [ -n "$TEST_INSIGHTS" ]; then gooddata-dbt test_insights; else echo "Skipping insights tests"; fi
+    - gooddata-dbt test_insights
 
 .gooddata_changes:
   changes:
@@ -23,18 +30,9 @@
     - $SRC_DATA_PIPELINE/models/**/*
     - $SRC_DATA_PIPELINE/gooddata_layouts/**/*
     - $SRC_DATA_PIPELINE/requirements-gooddata.txt
+    - .gitlab-ci/env_vars/image-gooddata.yml
+    - .gitlab-ci/env_vars/elta.yml
     - .gitlab-ci/gitlab-ci-analytics.yml
-
-.gooddata_closed_beta:
-  extends:
-    - .gooddata
-  variables:
-    GOODDATA_CONFIG: "gooddata_closed_beta.yml"
-    GOODDATA_HOST: "https://demo.fast-track.stg11.panther.intgdc.com"
-    GOODDATA_TOKEN: "$GOODDATA_TOKEN_CLOSED_BETA"
-    # TODO - there is one insight which test fails with dim>100_000 rows.
-    #   The insight (with resultSpec) does not exceed it, just the underlying raw cache. Fix it.
-    TEST_INSIGHTS: ""
 
 ##########################3
 # Jobs
@@ -110,42 +108,6 @@ gooddata_cloud_prod:
     - .gooddata
   variables:
     GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
-
-####################################################################3
-# Closed Beta env
-
-# pre-merge
-gooddata_closed_beta_dev:
-  extends:
-    - .gooddata_closed_beta
-  variables:
-    GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
-
-# post-merge
-gooddata_closed_beta_staging:
-  extends:
-    - .gooddata_closed_beta
-  variables:
-    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
-
-# merge to prod branch
-gooddata_closed_beta_prod:
-  extends:
-    - .gooddata_closed_beta
-  variables:
-    GOODDATA_ENVIRONMENT_ID: $PROD_GOODDATA_ENVIRONMENT_ID
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.gooddata_changes, changes]

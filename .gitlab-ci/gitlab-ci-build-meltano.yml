@@ -1,6 +1,7 @@
 build_meltano:
   extends:
     - .docker
+    - .vars-image-meltano
   stage: build
   script:
     - cd "$CI_PROJECT_DIR"
@@ -18,5 +19,6 @@ build_meltano:
         - $SRC_DATA_PIPELINE/meltano-plugins.yml
         - .gitlab-ci/gitlab-ci-build-meltano.yml
         - .gitlab-ci/gitlab-ci-build-base.yml
+        - .gitlab-ci/env_vars/image-meltano.yml
         - .gitlab-ci.yml
     - !reference [.base_rules, rules]
