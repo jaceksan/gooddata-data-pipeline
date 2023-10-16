@@ -82,10 +82,12 @@ organizations:
   - gooddata_profile: closed_beta
     data_product_ids:
       - cicd_demo
-      - ecommerce_demo
-      - data_science
+# TODO - uncomment once the env is fixed
+#      - ecommerce_demo
+#      - data_science
   - gooddata_profile: closed_beta_se
     data_product_ids:
       - cicd_demo
-      - ecommerce_demo
-      - data_science
+# TODO - uncomment once the env is fixed
+#      - ecommerce_demo
+#      - data_science
