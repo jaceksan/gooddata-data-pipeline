@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: workflow_runs
+    meta:
+      gooddata:
+        model_id: github
+    columns:
+      - name: workflow_run_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: repo_id
+        data_type: "INT"
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('repos')
+              pk_column_name: repo_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: repos
+      - name: workflow_run_url
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: HYPERLINK
+            attribute_column: workflow_run_id
+      - name: workflow_run_event
+      - name: workflow_run_status
+      - name: created_at
+      - name: updated_at
+      - name: workflow_run_duration
+        meta:
+          gooddata:
+            ldm_type: fact

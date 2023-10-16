@@ -34,6 +34,7 @@ plugins:
     - pull_requests.merged_at
     - pull_requests.closed_at
     - pull_requests.user*
+    - workflow_runs.*
         # TODO - no way to JOIN reviews with pull requests (so far).
         # pull_request_url is filled, but no counterpart column in pull_requests
         # commmit_id works, but no way to join commits and pull_requests

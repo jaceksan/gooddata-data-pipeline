@@ -1,0 +1,43 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: avg_days_to_solve
+                    type: metric
+            localIdentifier: 3d5a890a090d496f8cfedbae742f1475
+            title: Average days to solve
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              previousPeriodMeasure:
+                dateDataSets:
+                  - dataSet:
+                      identifier:
+                        id: created_at
+                        type: dataset
+                    periodsAgo: 1
+                measureIdentifier: 3d5a890a090d496f8cfedbae742f1475
+            localIdentifier: 3d5a890a090d496f8cfedbae742f1475_previous_period
+      localIdentifier: secondary_measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: created_at
+            type: dataset
+        from: 0
+        granularity: GDC.time.month
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: ''
+id: b49132db-1609-4939-9383-9180809a4aa1
+title: Days to solve summary
