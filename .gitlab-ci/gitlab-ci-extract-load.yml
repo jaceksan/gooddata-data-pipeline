@@ -66,6 +66,7 @@
 .extract_load_changes:
   changes:
     - $SRC_DATA_PIPELINE/meltano.yml
+    - $SRC_DATA_PIPELINE/meltano_conf/**/*
     - $SRC_DATA_PIPELINE/requirements-meltano.txt
     - .gitlab-ci/gitlab-ci-extract-load.yml
     - .gitlab-ci/env_vars/image-meltano.yml
