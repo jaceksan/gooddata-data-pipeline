@@ -9,7 +9,7 @@ content:
         items:
           - size:
               xl:
-                gridHeight: 22
+                gridHeight: 11
                 gridWidth: 5
             type: IDashboardLayoutItem
             widget:
@@ -22,6 +22,71 @@ content:
                   type: visualizationObject
               properties: {}
               title: Avg Annual income
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 7
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 22d89dfc-dbb3-43fe-893d-ee658a8252e0
+                  type: visualizationObject
+              properties: {}
+              title: Avg Rental price
+              type: insight
+        type: IDashboardLayoutSection
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 8
+                gridWidth: 2
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: timestamp
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 47115d11-e976-48f7-85cb-5747ced242c9
+                  type: visualizationObject
+              properties: {}
+              title: Avg temp
+              type: insight
+          - size:
+              xl:
+                gridHeight: 8
+                gridWidth: 2
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: timestamp
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 94f266a6-cf4c-477e-8d08-44ef2edd380d
+                  type: visualizationObject
+              properties: {}
+              title: Population
               type: insight
         type: IDashboardLayoutSection
     type: IDashboardLayout

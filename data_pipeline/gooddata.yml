@@ -79,14 +79,13 @@ organizations:
     data_product_ids:
       - cicd_demo
       - faa
-  # TODO - uncomment once the env is fixed
-#  - gooddata_profile: closed_beta
-#    data_product_ids:
-#      - cicd_demo
-#      - ecommerce_demo
-#      - data_science
-#  - gooddata_profile: closed_beta_se
-#    data_product_ids:
-#      - cicd_demo
-#      - ecommerce_demo
-#      - data_science
+  - gooddata_profile: closed_beta
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: closed_beta_se
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science

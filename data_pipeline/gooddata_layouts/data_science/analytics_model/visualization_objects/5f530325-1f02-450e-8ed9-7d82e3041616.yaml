@@ -1,0 +1,78 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Population
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: census_by_country.population
+                    type: fact
+            format: '[>=1000000000000]#,,,,.0 T;
+
+              [>=1000000000]#,,,.0 B;
+
+              [>=1000000]#,,.0 M;
+
+              [>=1000]#,.0 K;
+
+              [>=0]#,##0;
+
+              [<=-1000000000000]-#,,,,.0 T;
+
+              [<=-1000000000]-#,,,.0 B;
+
+              [<=-1000000]-#,,.0 M;
+
+              [<=-1000]-#,.0 K;
+
+              [<0]-#,##0'
+            localIdentifier: 391b3423c1914f2abf75b5badbad94b4
+            title: Sum of Population
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: census_by_country.country
+                type: label
+            localIdentifier: 3a4dc356307141b4be98ed90900493b4
+      localIdentifier: attribute
+    - items:
+        - attribute:
+            alias: Year
+            displayForm:
+              identifier:
+                id: timestamp.year
+                type: label
+            localIdentifier: fc3a76bb344344d1a877aac5976ea913
+      localIdentifier: columns
+  filters:
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: census_by_country.country
+            type: label
+        notIn:
+          values:
+            - World
+    - rankingFilter:
+        attributes:
+          - localIdentifier: 3a4dc356307141b4be98ed90900493b4
+        measure:
+          localIdentifier: 391b3423c1914f2abf75b5badbad94b4
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: 3a4dc356307141b4be98ed90900493b4
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: 5f530325-1f02-450e-8ed9-7d82e3041616
+title: 'Bar race by country switched #bar-race'

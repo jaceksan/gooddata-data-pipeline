@@ -1,17 +1,16 @@
 content:
   filterContextRef:
     identifier:
-      id: c101d4a0-b872-44fb-b19a-3b560106e4f9
+      id: 2eacc753-59ba-4ba0-bf9f-acdbf2803829
       type: filterContext
   layout:
     sections:
-      - header:
-          title: Anomaly Detection
+      - header: {}
         items:
           - size:
               xl:
                 gridHeight: 22
-                gridWidth: 12
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               description: ''
@@ -19,21 +18,18 @@ content:
               ignoreDashboardFilters: []
               insight:
                 identifier:
-                  id: dbc9b027-e8b2-4583-8ae4-6a442711232b
+                  id: 6d884317-d3eb-480f-9518-b7160dbeb64c
                   type: visualizationObject
               properties: {}
-              title: Temperature anomalies
+              title: Rental price by location and neighborhood
               type: insight
         type: IDashboardLayoutSection
-      - header:
-          description: Any chart can be here, key driver analysis should work for
-            all the charts that have a metric.
-          title: Key driver analysis
+      - header: {}
         items:
           - size:
               xl:
                 gridHeight: 22
-                gridWidth: 12
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               description: ''
@@ -47,67 +43,7 @@ content:
               title: Key driver analysis
               type: insight
         type: IDashboardLayoutSection
-      - header:
-          description: These charts are able to apply cluster analysis.
-          title: Cluster analysis charts
-        items:
-          - size:
-              xl:
-                gridHeight: 22
-                gridWidth: 12
-            type: IDashboardLayoutItem
-            widget:
-              description: ''
-              drills: []
-              ignoreDashboardFilters: []
-              insight:
-                identifier:
-                  id: 53f204e3-a41c-43e9-bec0-d1ad8490513c
-                  type: visualizationObject
-              properties: {}
-              title: Spending score vs income per customer
-              type: insight
-        type: IDashboardLayoutSection
-      - header:
-          description: These charts are able to to apply forecast prediction.
-          title: Forecast
-        items:
-          - size:
-              xl:
-                gridHeight: 32
-                gridWidth: 4
-            type: IDashboardLayoutItem
-            widget:
-              description: ''
-              drills: []
-              ignoreDashboardFilters: []
-              insight:
-                identifier:
-                  id: f3714ac3-14f6-47da-aeb3-e49121c00720
-                  type: visualizationObject
-              properties: {}
-              title: Humidity by month
-              type: insight
-          - size:
-              xl:
-                gridHeight: 22
-                gridWidth: 8
-            type: IDashboardLayoutItem
-            widget:
-              description: ''
-              drills: []
-              ignoreDashboardFilters: []
-              insight:
-                identifier:
-                  id: 99ef91a3-28b4-4433-973c-0d5167c2bd3b
-                  type: visualizationObject
-              properties: {}
-              title: Price by quarter
-              type: insight
-        type: IDashboardLayoutSection
-      - header:
-          description: Just some other charts so the dashboard looks pretty and busy.
-          title: Other charts
+      - header: {}
         items:
           - size:
               xl:
@@ -120,20 +56,52 @@ content:
               ignoreDashboardFilters: []
               insight:
                 identifier:
-                  id: 3d3a9118-1382-4d0d-a22c-894eff88f992
+                  id: 1cc1b3a7-e711-424a-a4f8-f6bf17774103
                   type: visualizationObject
               properties: {}
-              title: Initial price per number of room and neighborhood
+              title: Initial price by location and neighborhood
+              type: insight
+        type: IDashboardLayoutSection
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 9ddcc5cd-3264-415a-b8f9-3826449a2853
+                  type: visualizationObject
+              properties: {}
+              title: Locations by rental price
+              type: insight
+        type: IDashboardLayoutSection
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 53f204e3-a41c-43e9-bec0-d1ad8490513c
+                  type: visualizationObject
+              properties: {}
+              title: 'Spending score vs income per customer #cluster'
               type: insight
         type: IDashboardLayoutSection
     type: IDashboardLayout
-  plugins:
-    - plugin:
-        identifier:
-          id: f2dc1c49-5d15-4d6a-8101-899a83a76647
-          type: dashboardPlugin
-      version: '2'
   version: '2'
 description: ''
-id: 312be1f4-baf3-49d0-a936-b0b23b2c3ca6
-title: ML Model Building
+id: 2aed987e-9896-439b-955e-202952980f78
+title: Long dashboard
