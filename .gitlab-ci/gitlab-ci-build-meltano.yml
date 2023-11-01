@@ -17,6 +17,7 @@ build_meltano:
         - Dockerfile_meltano
         - $SRC_DATA_PIPELINE/requirements-meltano.txt
         - $SRC_DATA_PIPELINE/meltano-plugins.yml
+        - $SRC_DATA_PIPELINE/plugins/**/*.lock
         - .gitlab-ci/gitlab-ci-build-meltano.yml
         - .gitlab-ci/gitlab-ci-build-base.yml
         - .gitlab-ci/env_vars/image-meltano.yml
