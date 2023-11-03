@@ -101,20 +101,20 @@ dbt_dev:
     - !reference [.elt_rules, rules]
 
 # pre-merge dbt Cloud
-dbt_cloud_dev:
-  extends:
-    - .dbt_exec_cloud
-    - .dbt_variables_snowflake
-  variables:
-    DBT_JOB_ID: $CLOUD_DEV_DBT_JOB_ID
-    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
-    DBT_DB_NAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes: !reference [.dbt_changes, changes]
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_cloud_dev:
+#  extends:
+#    - .dbt_exec_cloud
+#    - .dbt_variables_snowflake
+#  variables:
+#    DBT_JOB_ID: $CLOUD_DEV_DBT_JOB_ID
+#    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+#    DBT_DB_NAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+#      changes: !reference [.dbt_changes, changes]
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
 
 # post-merge
 dbt_staging:
@@ -133,37 +133,37 @@ dbt_staging:
     - !reference [.elt_rules, rules]
 
 # post-merge dbt Cloud
-dbt_cloud_staging:
-  extends:
-    - .dbt_exec_cloud
-    - .dbt_variables_snowflake
-  variables:
-    DBT_JOB_ID: $CLOUD_STAGING_DBT_JOB_ID
-    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
-    DBT_DB_NAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_cloud_staging:
+#  extends:
+#    - .dbt_exec_cloud
+#    - .dbt_variables_snowflake
+#  variables:
+#    DBT_JOB_ID: $CLOUD_STAGING_DBT_JOB_ID
+#    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+#    DBT_DB_NAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.dbt_changes, changes]
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
 
-dbt_staging_vertica:
-  extends:
-    - .dbt_exec
-    - .dbt_variables_vertica
-  variables:
-    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
-    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
-    DBT_TARGET: "vertica"
-    GOODDATA_UPPER_CASE: ""
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_staging_vertica:
+#  extends:
+#    - .dbt_exec
+#    - .dbt_variables_vertica
+#  variables:
+#    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+#    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
+#    DBT_TARGET: "vertica"
+#    GOODDATA_UPPER_CASE: ""
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.dbt_changes, changes]
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
 
 # merge to prod branch
 dbt_prod:
@@ -183,19 +183,19 @@ dbt_prod:
     - !reference [.elt_rules, rules]
 
 # merge to prod dbt Cloud
-dbt_cloud_prod:
-  extends:
-    - .dbt_exec_cloud
-    - .dbt_variables_snowflake
-  variables:
-    DBT_JOB_ID: $CLOUD_PROD_DBT_JOB_ID
-    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
-    DBT_DB_NAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    # The pipeline scheduler triggers only PROD jobs
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_cloud_prod:
+#  extends:
+#    - .dbt_exec_cloud
+#    - .dbt_variables_snowflake
+#  variables:
+#    DBT_JOB_ID: $CLOUD_PROD_DBT_JOB_ID
+#    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+#    DBT_DB_NAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.dbt_changes, changes]
+#    # The pipeline scheduler triggers only PROD jobs
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
