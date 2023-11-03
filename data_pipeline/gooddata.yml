@@ -75,6 +75,8 @@ organizations:
     data_product_ids:
       - cicd_demo
       - faa
+      - ecommerce_demo
+      - data_science
   - gooddata_profile: demo_cicd
     data_product_ids:
       - cicd_demo
