@@ -88,6 +88,9 @@ extract_load_dev:
     - !reference [.elt_rules, rules]
 
 # pre-merge Cloud
+# TODO - before enabling this job, fix the the following bug:
+#  meltano.yml contains only one environment for both non-cloud and cloud environments
+#  envs then share the same state.lock file, so only one loads an increment, the other does nothing
 #extract_load_cloud_dev:
 #  extends:
 #    - .extract_load_snowflake
