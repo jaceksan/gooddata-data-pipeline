@@ -158,7 +158,9 @@ services:
       - |
         dbt run --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
         dbt test --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
-        gooddata-dbt deploy_models --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+        gooddata-dbt provision_workspaces
+        gooddata-dbt register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+        gooddata-dbt deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
         gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
     environment:
       <<: [ *dbt-postgres-vars ]

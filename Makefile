@@ -55,17 +55,30 @@ transform_cloud:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt dbt_cloud_run --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 transform_cloud_stats:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt dbt_cloud_stats --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE --environment-id $$DBT_ENVIRONMENT_ID
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt dbt_cloud_stats --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE --gooddata-environment-id $$DBT_ENVIRONMENT_ID
 
 invalidate_caches:
 	# Invalidate GoodData caches after new data are delivered
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
 
 deploy_models: dbt_compile
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_models --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt provision_workspaces
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+
+provision_workspaces:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt provision_workspaces
+
+register_data_sources:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+
+deploy_ldm:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_models_cloud:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_models --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt provision_workspaces
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt register_data_sources --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_ldm --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_analytics: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_analytics $$GOODDATA_UPPER_CASE
