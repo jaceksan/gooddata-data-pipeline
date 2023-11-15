@@ -1,0 +1,35 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: census_by_country.population
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: c2a4314be95f4d32be9374c4690fda7a
+            title: Sum of Population
+      localIdentifier: measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: timestamp
+            type: dataset
+        from: -5
+        granularity: GDC.time.year
+        to: 0
+  properties:
+    controls:
+      comparison:
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: ''
+id: 94f266a6-cf4c-477e-8d08-44ef2edd380d
+title: Population

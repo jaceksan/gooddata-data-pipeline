@@ -6,7 +6,7 @@ plugins:
   - name: tap-s3-csv-faa
     inherit_from: tap-s3-csv
     config:
-      bucket: gdc-tiger-test-data-eu-central
+      bucket: jacek-blueprint-data-pipeline
       start_date: '2020-01-01'
       tables:
       - search_prefix: all_files/v1/faa

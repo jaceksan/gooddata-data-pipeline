@@ -43,21 +43,27 @@ gooddata_dev:
     - .gooddata
   variables:
     GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
+  before_script:
+    - cd $SRC_DATA_PIPELINE
+    # dbt packages are installed during build of docker image to workdir
+    - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
+  script:
+    - echo TODO - introduce gooddata-dbt --dry-run option
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.gooddata_changes, changes]
     - !reference [.base_rules, rules]
 
 # pre-merge dbt Cloud
-gooddata_cloud_dev:
-  extends:
-    - .gooddata
-  variables:
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
+#gooddata_cloud_dev:
+#  extends:
+#    - .gooddata
+#  variables:
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+#      changes: !reference [.gooddata_changes, changes]
+#    - !reference [.base_rules, rules]
 
 # post-merge
 gooddata_staging:
@@ -71,25 +77,25 @@ gooddata_staging:
     - !reference [.base_rules, rules]
 
 # post-merge dbt Cloud
-gooddata_cloud_staging:
-  extends:
-    - .gooddata
-  variables:
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
-
-gooddata_staging_vertica:
-  extends:
-    - .gooddata
-  variables:
-    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
+#gooddata_cloud_staging:
+#  extends:
+#    - .gooddata
+#  variables:
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.gooddata_changes, changes]
+#    - !reference [.base_rules, rules]
+#
+#gooddata_staging_vertica:
+#  extends:
+#    - .gooddata
+#  variables:
+#    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.gooddata_changes, changes]
+#    - !reference [.base_rules, rules]
 
 # merge to prod branch
 gooddata_prod:
@@ -103,12 +109,12 @@ gooddata_prod:
     - !reference [.base_rules, rules]
 
 # merge to prod branch dbt Cloud
-gooddata_cloud_prod:
-  extends:
-    - .gooddata
-  variables:
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.gooddata_changes, changes]
-    - !reference [.base_rules, rules]
+#gooddata_cloud_prod:
+#  extends:
+#    - .gooddata
+#  variables:
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.gooddata_changes, changes]
+#    - !reference [.base_rules, rules]

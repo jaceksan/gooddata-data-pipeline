@@ -3,7 +3,7 @@ plugins:
   - name: tap-s3-csv-ecommerce-demo
     inherit_from: tap-s3-csv
     config:
-      bucket: gdc-tiger-test-data-eu-central
+      bucket: jacek-blueprint-data-pipeline
       start_date: '2020-01-01'
       tables:
       - search_prefix: all_files/v1/ecommerce-demo
@@ -27,16 +27,16 @@ plugins:
         search_pattern: order_lines.csv
         table_name: order_lines
         key_properties:
-          - order_line_id
+        - order_line_id
         date_overrides:
-          - date
-          - order_date
+        - date
+        - order_date
         delimiter: ','
       - search_prefix: all_files/v1/ecommerce-demo
         search_pattern: orders.csv
         table_name: orders
         key_properties:
-          - order_id
+        - order_id
         date_overrides: []
         delimiter: ','
       - search_prefix: all_files/v1/ecommerce-demo
@@ -50,8 +50,8 @@ plugins:
         search_pattern: returns.csv
         table_name: returns
         key_properties:
-          - return_id
+        - return_id
         date_overrides:
-          - date
-          - return_date
+        - date
+        - return_date
         delimiter: ','

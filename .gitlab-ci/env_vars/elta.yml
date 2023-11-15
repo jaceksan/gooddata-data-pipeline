@@ -19,7 +19,7 @@
     INPUT_SCHEMA_ECOMMERCE_DEMO: "ecommerce_demo_input_stage"
     INPUT_SCHEMA_DATA_SCIENCE: "data_science_input_stage"
     OUTPUT_SCHEMA: "cicd_output_stage"
-    MELTANO_STATE_AWS_BUCKET: "gdc-quiver"
+    MELTANO_STATE_AWS_BUCKET: "jacek-blueprint-data-pipeline"
     ############################################################################################################
     # Environment-specific vars. Defined here so we can reuse them in extract/load nad transform phases
     ############################################################################################################
