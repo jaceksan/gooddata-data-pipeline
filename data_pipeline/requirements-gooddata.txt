@@ -1,4 +1,2 @@
-# TODO - replace with pip packages once the next release is out
-git+https://github.com/gooddata/gooddata-python-sdk.git#egg=gooddata-dbt&subdirectory=gooddata-dbt
-git+https://github.com/gooddata/gooddata-python-sdk.git#egg=gooddata-sdk&subdirectory=gooddata-sdk
+gooddata-dbt==1.8.1.dev1
 deep-translator==1.11.4
