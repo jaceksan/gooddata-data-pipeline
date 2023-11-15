@@ -2,4 +2,6 @@
   variables:
     DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
     DBT_VERSION: "1.5.0"
-    DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION"
+    # Bump to _gd1 to absorb new gooddata-dbt version
+    # Next time we don't need it, I added dependency on gooddata-dbt version gitlab job
+    DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION_gd1"
