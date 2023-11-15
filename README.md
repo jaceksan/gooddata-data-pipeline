@@ -44,8 +44,17 @@ The following articles are based on this project:
 
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
-It utilizes the [GoodData Community Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available for free in DockerHub.
+It utilizes the [GoodData Container Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available in DockerHub.
 Optionally, you can also start [Vertica Community Edition](https://hub.docker.com/r/vertica/vertica-ce).
+
+*WARNING:* 
+Since version 3.0.0, the GoodData.CN Community Edition will be renamed to GoodData.CN Container Edition, and will require a license key for its run.
+If you are a GoodData customer, you can use the same license key as for the production deployment.
+If not, please, contact us in our [Slack Community](https://www.gooddata.com/slack/).
+
+*Personal note:*
+I was fighting with the above decision for a long time, but finally, I lost. I encourage you to ask for a return of a free Community Edition in the Slack community.
+The more people ask, the more chances we have to get it back.
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
