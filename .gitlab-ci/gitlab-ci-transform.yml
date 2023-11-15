@@ -38,7 +38,9 @@
   script:
     - dbt run --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT --target $DBT_TARGET $FR_ARG
     - dbt test --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT --target $DBT_TARGET
-    - gooddata-dbt deploy_models $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt provision_workspaces
+    - gooddata-dbt register_data_sources $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt deploy_ldm $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
     # Invalidates GoodData caches
     - gooddata-dbt upload_notification --profile $ELT_ENVIRONMENT --target $DBT_TARGET
 
