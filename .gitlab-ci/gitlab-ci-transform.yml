@@ -94,6 +94,14 @@ dbt_dev:
     ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
     DBT_DB_NAME: $DEV_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
+  before_script:
+    - cd $SRC_DATA_PIPELINE
+    # dbt packages are installed during build of docker image to workdir
+    - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
+  script:
+    # We cannot run full-blown script before merge, because someone could create an MR and echo sensitive credentials
+    - dbt parse --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT
+    # TODO - introduce gooddata-dbt --dry-run option
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]

@@ -81,6 +81,19 @@ extract_load_dev:
   variables:
     ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
     DB_NAME: $DEV_SNOWFLAKE_DBNAME
+  # We cannot run full-blown script before merge, because someone could create an MR and echo sensitive credentials
+  # Override it to trigger only 1 job and save Gitlab minutes
+  parallel:
+    matrix:
+      - MELTANO_SOURCE: tap-github-repo
+        TARGET_SCHEMA: "${INPUT_SCHEMA_GITHUB}"
+  before_script:
+    - cd $SRC_DATA_PIPELINE
+    # Meltano plugins are installed during build of docker image to workdir
+    - ln -s ${IMAGES_WORKDIR}/.meltano .meltano
+  script:
+    # We cannot run full-blown script before merge, because someone could create an MR and echo sensitive credentials
+    - meltano --environment $ELT_ENVIRONMENT compile
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.extract_load_changes, changes]
