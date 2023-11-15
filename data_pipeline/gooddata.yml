@@ -91,3 +91,6 @@ organizations:
       - cicd_demo
       - ecommerce_demo
       - data_science
+
+global_properties:
+  test_insights_parallelism: 4
