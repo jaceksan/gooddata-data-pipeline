@@ -1,0 +1,87 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Product Cost
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: average_product_cost
+                    type: metric
+            localIdentifier: 1d22f19681064b4fbe1c05fc70ce6623
+            title: Average Product Cost
+        - measure:
+            alias: Product Price
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: average_price_of_products
+                    type: metric
+            localIdentifier: b5cc7fb27ceb40c885d07578fb8714c5
+            title: Average Price of Products
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_orders
+                    type: metric
+            localIdentifier: 72c7bc6ea2664cf5aa29b5a97666588e
+            title: Net Orders
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_sales
+                    type: metric
+            localIdentifier: c77090e7e5f3413f96c083a53565dac4
+            title: Total Sales
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: 250f9109376649b48eb37226f7bbee43
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_brand
+                type: label
+            localIdentifier: a91f246c2a77417cb1315211e4c32781
+      localIdentifier: attribute
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_created_date.year
+                type: label
+            localIdentifier: 2c18d8a1f90c4df88276034d83f078ba
+      localIdentifier: columns
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: customer_created_date
+            type: dataset
+        from: -20
+        granularity: GDC.time.year
+        to: 0
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: 250f9109376649b48eb37226f7bbee43
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: 509384d4-aab3-4052-b201-441e2d9c1a31
+title: Product Sales Breakdown

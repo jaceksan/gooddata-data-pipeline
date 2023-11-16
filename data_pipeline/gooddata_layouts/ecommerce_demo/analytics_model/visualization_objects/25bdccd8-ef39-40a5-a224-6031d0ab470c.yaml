@@ -1,0 +1,79 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: 43d47ba6d22c4447ab42f0c6dd779531
+            title: Gross Profit
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_discounts
+                    type: metric
+            localIdentifier: 68d98accca8341409b32d7cb867997d4
+            title: Total Discounts
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_returns
+                    type: metric
+            localIdentifier: 85fc5c81563548dda143affb4a4fd1bd
+            title: Total Returns
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: cogs
+                    type: metric
+            localIdentifier: e35dbadd507744e98c0219fc53ff3887
+            title: COGS
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: date.month
+                type: label
+            localIdentifier: 47169ff5ce3b4193922b4f9b41199a2a
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '2'
+          id: 43d47ba6d22c4447ab42f0c6dd779531
+        - color:
+            type: guid
+            value: '1'
+          id: 68d98accca8341409b32d7cb867997d4
+        - color:
+            type: guid
+            value: '4'
+          id: 85fc5c81563548dda143affb4a4fd1bd
+        - color:
+            type: guid
+            value: '3'
+          id: e35dbadd507744e98c0219fc53ff3887
+      stackMeasures: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:column
+description: Total sales over time
+id: 25bdccd8-ef39-40a5-a224-6031d0ab470c
+title: Total Sales Over Time

@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: ambient_temperature
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: timestamp
+      - name: temperature

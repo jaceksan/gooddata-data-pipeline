@@ -1,0 +1,33 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: temperature
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 8a8a5710ac26409f905497f53ed622d5
+            title: Sum of Temperature
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: timestamp.minute
+                type: label
+            localIdentifier: d80b8e52dc16426e8b983a03f33026ec
+      localIdentifier: trend
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:line
+description: ''
+id: baa1d13f-d046-4e7b-b553-066bc5d1165f
+title: 'Temperature by an minute #range'

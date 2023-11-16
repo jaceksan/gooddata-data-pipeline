@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: product
+    meta:
+      gooddata:
+        model_id: ecommerce_demo
+    columns:
+      - name: product_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: ls__product_id__product_name
+        meta:
+          gooddata:
+            id: product_name
+            ldm_type: label
+            label_type: TEXT
+            attribute_column: product_id
+      - name: ls__product_id__product_id_image_web
+        meta:
+          gooddata:
+            id: product_id_image_web
+            ldm_type: label
+            label_type: HYPERLINK
+            attribute_column: product_id
+      - name: product_brand
+      - name: product_category
+      - name: product_image
+      - name: ls__product_image__product_image_web
+        meta:
+          gooddata:
+            id: product_image_web
+            ldm_type: label
+            label_type: HYPERLINK
+            attribute_column: product_image
+      - name: rating
+      - name: product_rating
+#      - name: wdf__product_category

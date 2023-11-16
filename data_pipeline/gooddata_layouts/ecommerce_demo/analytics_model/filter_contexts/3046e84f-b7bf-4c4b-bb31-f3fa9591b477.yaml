@@ -1,0 +1,41 @@
+content:
+  filters:
+    - dateFilter:
+        from: '-1'
+        granularity: GDC.time.month
+        to: '-1'
+        type: relative
+    - attributeFilter:
+        attributeElements:
+          uris: []
+        displayForm:
+          identifier:
+            id: product_category
+            type: label
+        filterElementsBy: []
+        localIdentifier: a020410283be4559b5d0dc9e1d788156
+        negativeSelection: true
+    - attributeFilter:
+        attributeElements:
+          uris: []
+        displayForm:
+          identifier:
+            id: product_brand
+            type: label
+        filterElementsBy: []
+        localIdentifier: a93733fc196c4960888467dd7850dea9
+        negativeSelection: true
+    - attributeFilter:
+        attributeElements:
+          uris: []
+        displayForm:
+          identifier:
+            id: product_rating
+            type: label
+        filterElementsBy: []
+        localIdentifier: 2c4cd1bff9e54c9e99e79e8e7b086c28
+        negativeSelection: true
+  version: '2'
+description: ''
+id: 3046e84f-b7bf-4c4b-bb31-f3fa9591b477
+title: filterContext

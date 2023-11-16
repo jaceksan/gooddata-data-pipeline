@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: orders
+    meta:
+      gooddata:
+        model_id: ecommerce_demo
+    columns:
+      - name: order_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: order_status
+#      - name: wdf__client_id

@@ -1,0 +1,128 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_discounts
+                    type: metric
+            format: '[>=1000000000000]$#,,,,.0 T;
+
+              [>=1000000000]$#,,,.0 B;
+
+              [>=1000000]$#,,.0 M;
+
+              [>=1000]$#,.0 K;
+
+              [>=0]$#,##0;
+
+              [<=-1000000000000]-$#,,,,.0 T;
+
+              [<=-1000000000]-$#,,,.0 B;
+
+              [<=-1000000]-$#,,.0 M;
+
+              [<=-1000]-$#,.0 K;
+
+              [<0]-$#,##0'
+            localIdentifier: ec39060b8362444e9fe4bacb7c6e4c2b
+            title: Total Discounts
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_returns
+                    type: metric
+            format: '[>=1000000000000]$#,,,,.0 T;
+
+              [>=1000000000]$#,,,.0 B;
+
+              [>=1000000]$#,,.0 M;
+
+              [>=1000]$#,.0 K;
+
+              [>=0]$#,##0;
+
+              [<=-1000000000000]-$#,,,,.0 T;
+
+              [<=-1000000000]-$#,,,.0 B;
+
+              [<=-1000000]-$#,,.0 M;
+
+              [<=-1000]-$#,.0 K;
+
+              [<0]-$#,##0'
+            localIdentifier: 50fe87b2aed5402c83560cec490b184d
+            title: Total Returns
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: cogs
+                    type: metric
+            format: '[>=1000000000000]$#,,,,.0 T;
+
+              [>=1000000000]$#,,,.0 B;
+
+              [>=1000000]$#,,.0 M;
+
+              [>=1000]$#,.0 K;
+
+              [>=0]$#,##0;
+
+              [<=-1000000000000]-$#,,,,.0 T;
+
+              [<=-1000000000]-$#,,,.0 B;
+
+              [<=-1000000]-$#,,.0 M;
+
+              [<=-1000]-$#,.0 K;
+
+              [<0]-$#,##0'
+            localIdentifier: 85c76738129d4167bd339128e9f83100
+            title: COGS
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: dc5f7ccc7b274b2cb02d2923b791b366
+            title: Gross Profit
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '2'
+          id: dc5f7ccc7b274b2cb02d2923b791b366
+        - color:
+            type: guid
+            value: '4'
+          id: 50fe87b2aed5402c83560cec490b184d
+        - color:
+            type: guid
+            value: '6'
+          id: ec39060b8362444e9fe4bacb7c6e4c2b
+      dataLabels:
+        visible: auto
+      legend:
+        enabled: true
+        position: right
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: Total sales breakdown
+id: 41a8d4c3-1ab6-4bab-b531-5893912e9b93
+title: Total Sales Breakdown

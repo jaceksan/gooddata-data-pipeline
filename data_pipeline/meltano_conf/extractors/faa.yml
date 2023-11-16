@@ -1,0 +1,47 @@
+plugins:
+  extractors:
+  - name: tap-s3-csv
+    variant: transferwise
+    pip_url: pipelinewise-tap-s3-csv
+  - name: tap-s3-csv-faa
+    inherit_from: tap-s3-csv
+    config:
+      bucket: jacek-blueprint-data-pipeline
+      start_date: '2020-01-01'
+      tables:
+      - search_prefix: all_files/v1/faa
+        search_pattern: aircraft.csv
+        table_name: aircraft
+        key_properties:
+        - tail_num
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/faa
+        search_pattern: aircraft_models.csv
+        table_name: aircraft_models
+        key_properties:
+        - aircraft_model_code
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/faa
+        search_pattern: airports.csv
+        table_name: airports
+        key_properties:
+        - code
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/faa
+        search_pattern: carriers.csv
+        table_name: carriers
+        key_properties:
+        - code
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/faa
+        search_pattern: flights.csv
+        table_name: flights
+        key_properties:
+        - id2
+        date_overrides:
+        - dep_time
+        delimiter: ','

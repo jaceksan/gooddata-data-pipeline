@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: telco_customer_churn
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: customerid
+        description: Customer ID
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            id: telco_customer_churn.customerid
+            ldm_type: primary_key
+      - name: gender
+        meta:
+          gooddata:
+            id: telco_customer_churn.gender
+      - name: seniorcitizen
+        description: Senior Citizen
+      - name: partner
+      - name: dependents
+      - name: tenure
+      - name: phoneservice
+        description: Phone Service
+      - name: multiplelines
+        description: Multiple Lines
+      - name: internetservice
+        description: Internet Service
+      - name: onlinesecurity
+        description: Online Security
+      - name: onlinebackup
+        description: Online Backup
+      - name: deviceprotection
+        description: Device Protection
+      - name: techsupport
+        description: Tech Support
+      - name: streamingtv
+        description: Streaming TV
+      - name: streamingmovies
+        description: Streaming Movies
+      - name: contract
+      - name: paperlessbilling
+        description: Paperless Billing
+      - name: paymentmethod
+        description: Payment Method
+      - name: totalcharges
+        description: Total Charges
+      - name: churn
+      - name: monthlycharges
+        description: Monthly Charges

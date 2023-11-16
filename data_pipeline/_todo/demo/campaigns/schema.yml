@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: campaigns
+    meta:
+      gooddata:
+        model_id: demo
+    columns:
+      - name: campaign_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: campaign_name

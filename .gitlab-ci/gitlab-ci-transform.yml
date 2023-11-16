@@ -1,24 +1,7 @@
 ###################
 # Templates
 
-.dbt_variables:
-  variables:
-    # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
-    # dbt profiles.yml file in this repo relies on DBT_ prefix.
-    # It means that even jobs not running against dbt cloud rely on DBT_ prefix.
-    # More variables are duplicated later in this file based on what database is used.
-    DBT_OUTPUT_SCHEMA: $OUTPUT_SCHEMA
-    DBT_INPUT_SCHEMA_GITHUB: $INPUT_SCHEMA_GITHUB
-    DBT_INPUT_SCHEMA_FAA: $INPUT_SCHEMA_FAA
-    DBT_INPUT_SCHEMA_EXCHANGERATEHOST: $INPUT_SCHEMA_EXCHANGERATEHOST
-    # Notify by sending comment to the merge request,
-    # if duration of a dbt model exceeds average duration from last X runs by DBT_ALLOWED_DEGRADATION percents
-    DBT_ALLOWED_DEGRADATION: 20
-    DBT_INCREMENTAL_STRATEGY: "merge"
-
 .dbt_variables_snowflake:
-  extends:
-    - .dbt_variables
   variables:
     DBT_TARGET: "snowflake"
     DBT_DB_ACCOUNT: $SNOWFLAKE_ACCOUNT
@@ -27,8 +10,6 @@
     DBT_DB_WAREHOUSE: $SNOWFLAKE_WAREHOUSE
 
 .dbt_variables_vertica:
-  extends:
-    - .dbt_variables
   variables:
     DBT_DB_HOST: $VERTICA_HOST
     DBT_DB_PORT: $VERTICA_PORT
@@ -39,6 +20,8 @@
 .dbt_exec:
   extends:
     - .base
+    - .vars-image-dbt
+    - .vars-elta
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
@@ -46,6 +29,8 @@
     entrypoint: [""]
   stage: transform
   before_script:
+    - mkdir -p ~/.gooddata
+    - cp $GOODDATA_PROFILES_FILE ~/.gooddata/profiles.yaml
     - cd $SRC_DATA_PIPELINE
     # dbt packages are installed during build of docker image to workdir
     - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
@@ -53,13 +38,17 @@
   script:
     - dbt run --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT --target $DBT_TARGET $FR_ARG
     - dbt test --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT --target $DBT_TARGET
-    - gooddata-dbt deploy_models $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt provision_workspaces
+    - gooddata-dbt register_data_sources $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt deploy_ldm $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
     # Invalidates GoodData caches
     - gooddata-dbt upload_notification --profile $ELT_ENVIRONMENT --target $DBT_TARGET
 
 .dbt_exec_cloud:
   extends:
     - .base
+    - .vars-image-dbt
+    - .vars-elta
   # We build a custom image on top of the official dbt image in this pipeline
   # It contains dbt itself, all required dbt plugins and gooddata-dbt plugin
   image:
@@ -67,6 +56,8 @@
     entrypoint: [""]
   stage: transform
   before_script:
+    - mkdir -p ~/.gooddata
+    - cp $GOODDATA_PROFILES_FILE ~/.gooddata/profiles.yaml
     - cd $SRC_DATA_PIPELINE
   script:
     # Run corresponding job in dbt cloud
@@ -87,6 +78,9 @@
     - $SRC_DATA_PIPELINE/requirements-gooddata.txt
     - $SRC_DATA_PIPELINE/meltano.yml
     - .gitlab-ci/gitlab-ci-transform.yml
+    - .gitlab-ci/env_vars/image-dbt.yml
+    - .gitlab-ci/env_vars/elta.yml
+    - .gitlab-ci/gitlab-ci-transform.yml
     - .gitlab-ci.yml
 
 
@@ -102,6 +96,20 @@ dbt_dev:
     ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
     DBT_DB_NAME: $DEV_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
+  before_script:
+    - mkdir -p ~/.gooddata
+    # Dummy file with faked tokens
+    - cp $GOODDATA_PROFILES_FILE_DUMMY ~/.gooddata/profiles.yaml
+    - cd $SRC_DATA_PIPELINE
+    # dbt packages are installed during build of docker image to workdir
+    - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
+  script:
+    # We cannot run full-blown script before merge, because someone could create an MR and echo sensitive credentials
+    - dbt parse --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT
+    - gooddata-dbt --dry-run provision_workspaces
+    - gooddata-dbt --dry-run register_data_sources $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt --dry-run deploy_ldm $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt --dry-run upload_notification --profile $ELT_ENVIRONMENT --target $DBT_TARGET
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]
@@ -109,20 +117,20 @@ dbt_dev:
     - !reference [.elt_rules, rules]
 
 # pre-merge dbt Cloud
-dbt_cloud_dev:
-  extends:
-    - .dbt_exec_cloud
-    - .dbt_variables_snowflake
-  variables:
-    DBT_JOB_ID: $CLOUD_DEV_DBT_JOB_ID
-    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
-    DBT_DB_NAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-      changes: !reference [.dbt_changes, changes]
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_cloud_dev:
+#  extends:
+#    - .dbt_exec_cloud
+#    - .dbt_variables_snowflake
+#  variables:
+#    DBT_JOB_ID: $CLOUD_DEV_DBT_JOB_ID
+#    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+#    DBT_DB_NAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_DEV_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+#      changes: !reference [.dbt_changes, changes]
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
 
 # post-merge
 dbt_staging:
@@ -141,37 +149,37 @@ dbt_staging:
     - !reference [.elt_rules, rules]
 
 # post-merge dbt Cloud
-dbt_cloud_staging:
-  extends:
-    - .dbt_exec_cloud
-    - .dbt_variables_snowflake
-  variables:
-    DBT_JOB_ID: $CLOUD_STAGING_DBT_JOB_ID
-    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
-    DBT_DB_NAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_cloud_staging:
+#  extends:
+#    - .dbt_exec_cloud
+#    - .dbt_variables_snowflake
+#  variables:
+#    DBT_JOB_ID: $CLOUD_STAGING_DBT_JOB_ID
+#    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+#    DBT_DB_NAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.dbt_changes, changes]
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
 
-dbt_staging_vertica:
-  extends:
-    - .dbt_exec
-    - .dbt_variables_vertica
-  variables:
-    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
-    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
-    DBT_TARGET: "vertica"
-    GOODDATA_UPPER_CASE: ""
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_staging_vertica:
+#  extends:
+#    - .dbt_exec
+#    - .dbt_variables_vertica
+#  variables:
+#    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+#    GOODDATA_ENVIRONMENT_ID: $STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA
+#    DBT_TARGET: "vertica"
+#    GOODDATA_UPPER_CASE: ""
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.dbt_changes, changes]
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
 
 # merge to prod branch
 dbt_prod:
@@ -191,19 +199,19 @@ dbt_prod:
     - !reference [.elt_rules, rules]
 
 # merge to prod dbt Cloud
-dbt_cloud_prod:
-  extends:
-    - .dbt_exec_cloud
-    - .dbt_variables_snowflake
-  variables:
-    DBT_JOB_ID: $CLOUD_PROD_DBT_JOB_ID
-    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
-    DBT_DB_NAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
-    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
-      changes: !reference [.dbt_changes, changes]
-    # The pipeline scheduler triggers only PROD jobs
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
-    - !reference [.base_rules, rules]
-    - !reference [.elt_rules, rules]
+#dbt_cloud_prod:
+#  extends:
+#    - .dbt_exec_cloud
+#    - .dbt_variables_snowflake
+#  variables:
+#    DBT_JOB_ID: $CLOUD_PROD_DBT_JOB_ID
+#    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+#    DBT_DB_NAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
+#    GOODDATA_ENVIRONMENT_ID: $CLOUD_PROD_GOODDATA_ENVIRONMENT_ID
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.dbt_changes, changes]
+#    # The pipeline scheduler triggers only PROD jobs
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]

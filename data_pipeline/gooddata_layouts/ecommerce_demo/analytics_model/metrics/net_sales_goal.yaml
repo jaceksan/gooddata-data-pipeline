@@ -1,0 +1,25 @@
+content:
+  format: '[>=1000000000000]$#,,,,.0 T;
+
+    [>=1000000000]$#,,,.0 B;
+
+    [>=1000000]$#,,.0 M;
+
+    [>=1000]$#,.0 K;
+
+    [>=0]$#,##0;
+
+    [<=-1000000000000]-$#,,,,.0 T;
+
+    [<=-1000000000]-$#,,,.0 B;
+
+    [<=-1000000]-$#,,.0 M;
+
+    [<=-1000]-$#,.0 K;
+
+    [<0]-$#,##0'
+  maql: SELECT (SELECT {metric/net_sales} FOR PreviousPeriod({label/date.day})) *
+    1.1
+description: ''
+id: net_sales_goal
+title: Net Sales Goal

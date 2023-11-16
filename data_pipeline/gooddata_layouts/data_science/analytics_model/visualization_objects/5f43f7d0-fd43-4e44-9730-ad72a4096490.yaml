@@ -1,0 +1,53 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: number_of_rooms
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: bfb7e9e20dc54014b26b63f59ab88c76
+            title: Sum of Number of rooms
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: number_of_bathrooms
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 59dedfe63f274234bd8b40f110658b5a
+            title: Sum of Number of bathrooms
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: location
+                type: label
+            localIdentifier: d9fd59c10eb54c08806216894afc29e3
+        - attribute:
+            displayForm:
+              identifier:
+                id: neighborhood
+                type: label
+            localIdentifier: 8185388b1d48499f89475b696e3a9781
+      localIdentifier: attribute
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: d9fd59c10eb54c08806216894afc29e3
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: 5f43f7d0-fd43-4e44-9730-ad72a4096490
+title: Number of rooms  and bathrooms

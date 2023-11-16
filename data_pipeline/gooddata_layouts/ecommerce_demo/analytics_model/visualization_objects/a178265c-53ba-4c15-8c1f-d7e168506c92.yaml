@@ -1,0 +1,56 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 6d5038a81a1741d4be183f354e02a1b1
+            title: Net Sales
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_returns
+                    type: metric
+            localIdentifier: 0889348d4f9d46cba15587119c91e00d
+            title: Total Returns
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_discounts
+                    type: metric
+            localIdentifier: 5f7d89b4aa2f4eb5ae5aeda29c8644d7
+            title: Total Discounts
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Date
+            displayForm:
+              identifier:
+                id: date.day
+                type: label
+            localIdentifier: 5cd3eba36f034ba3846383e53988641c
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      legend:
+        position: top
+      yaxis:
+        format: inherit
+  sorts: []
+  version: '2'
+  visualizationUrl: local:area
+description: Total Sales Trend
+id: a178265c-53ba-4c15-8c1f-d7e168506c92
+title: Total Sales Trend

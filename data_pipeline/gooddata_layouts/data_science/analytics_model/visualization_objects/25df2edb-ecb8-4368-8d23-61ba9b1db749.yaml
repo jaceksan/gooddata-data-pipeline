@@ -1,0 +1,42 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: avg
+                filters: []
+                item:
+                  identifier:
+                    id: rental_price
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: e62709c82b614c04a077fa13f16f8114
+            title: Avg Rental price
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: neighborhood
+                type: label
+            localIdentifier: 5efe3006d7494d12a7744c66f89ac72a
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: location
+                type: label
+            localIdentifier: 5d97fc6634de4295a77ee9b71a1dada4
+      localIdentifier: stack
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+createdAt: 2023-09-13 14:36
+description: ''
+id: 25df2edb-ecb8-4368-8d23-61ba9b1db749
+modifiedAt: 2023-09-19 07:48
+title: Rental price by neghborhood

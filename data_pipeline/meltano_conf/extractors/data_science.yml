@@ -1,0 +1,80 @@
+plugins:
+  extractors:
+  - name: tap-s3-csv-data-science
+    inherit_from: tap-s3-csv
+    config:
+      bucket: jacek-blueprint-data-pipeline
+      start_date: '2020-01-01'
+      tables:
+      - search_prefix: all_files/v1/data_science
+        search_pattern: ambient_temperature.csv
+        table_name: ambient_temperature
+        key_properties:
+        - timestamp
+        date_overrides:
+        - timestamp
+        delimiter: ','
+      - search_prefix: all_files/v1/data_science
+        search_pattern: census_by_country.csv
+        table_name: census_by_country
+        key_properties:
+        - timestamp
+        - country
+        date_overrides:
+        - timestamp
+        delimiter: ','
+      - search_prefix: all_files/v1/data_science
+        search_pattern: census.csv
+        table_name: census
+        key_properties:
+        - timestamp
+        - continent
+        date_overrides:
+        - timestamp
+        delimiter: ','
+      - search_prefix: all_files/v1/data_science
+        search_pattern: eshop_customers.csv
+        table_name: eshop_customers
+        key_properties:
+        - id
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/data_science
+        search_pattern: home_rentals.csv
+        table_name: home_rentals
+        key_properties:
+        - sqft
+        - neighborhood
+        - location
+        - number_of_rooms
+        - number_of_bathrooms
+        - days_on_market
+        - initial_price
+        - rental_price
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/data_science
+        search_pattern: house_property_sales_time_series.csv
+        table_name: house_property_sales_time_series
+        key_properties:
+        - saledate
+        - MA
+        - type
+        - bedrooms
+        date_overrides:
+        - saledate
+        delimiter: ','
+      - search_prefix: all_files/v1/data_science
+        search_pattern: mall_customers.csv
+        table_name: mall_customers
+        key_properties:
+        - CustomerID
+        date_overrides: []
+        delimiter: ','
+      - search_prefix: all_files/v1/data_science
+        search_pattern: telco_customer_churn.csv
+        table_name: telco_customer_churn
+        key_properties:
+        - customerID
+        date_overrides: []
+        delimiter: ','

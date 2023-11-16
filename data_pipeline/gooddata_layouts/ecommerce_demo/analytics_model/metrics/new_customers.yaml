@@ -1,0 +1,10 @@
+content:
+  format: '#,##0'
+  maql: "SELECT {metric/active_customers} WHERE \n(SELECT COUNT({label/order_id})\
+    \ BY {label/customer_id} WHERE {label/order_date.day} = {label/customer_created_date.day})\
+    \ > 0"
+description: Customers that placed their first order within the selected time period.
+  Assumption is that all customers place their first order on the date their account
+  is created.
+id: new_customers
+title: New Customers

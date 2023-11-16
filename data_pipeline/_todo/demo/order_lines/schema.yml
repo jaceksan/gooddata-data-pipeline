@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: order_lines
+    meta:
+      gooddata:
+        model_id: demo
+    columns:
+      - name: order_line_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: campaign_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('campaigns')
+              pk_column_name: campaign_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: campaigns
+      - name: customer_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('customers')
+              pk_column_name: customer_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: customers
+      - name: product_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('products')
+              pk_column_name: product_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: products
+      - name: order_id
+      - name: order_status
+      - name: date
+      - name: price
+      - name: quantity

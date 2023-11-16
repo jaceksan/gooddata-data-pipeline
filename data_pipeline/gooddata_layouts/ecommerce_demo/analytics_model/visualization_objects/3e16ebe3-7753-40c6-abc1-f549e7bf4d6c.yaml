@@ -1,0 +1,61 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 199da0fab746448798f8fcc58448bc8b
+            title: Net Sales
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: net_orders
+                    type: metric
+            localIdentifier: 455307b5590a49b28fafa89999446b15
+            title: Net Orders
+      localIdentifier: secondary_measures
+    - items:
+        - attribute:
+            alias: Date
+            displayForm:
+              identifier:
+                id: date.day
+                type: label
+            localIdentifier: f37382df24334dd5ae7756dbd9cc9137
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      dualAxis: true
+      legend:
+        position: top
+      primaryChartType: column
+      secondaryChartType: line
+      secondary_yaxis:
+        format: inherit
+        measures:
+          - 455307b5590a49b28fafa89999446b15
+        name:
+          visible: false
+      yaxis:
+        format: inherit
+        name:
+          visible: false
+  sorts: []
+  version: '2'
+  visualizationUrl: local:combo2
+description: Revenue Trend
+id: 3e16ebe3-7753-40c6-abc1-f549e7bf4d6c
+title: Revenue Trend

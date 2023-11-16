@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({label/customer_id})
+description: Total number of customers in the system
+id: total_customers
+title: Total Customers

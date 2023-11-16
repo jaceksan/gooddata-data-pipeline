@@ -1,0 +1,7 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT AVG({fact/square_feets} / {fact/number_of_rooms})
+createdAt: 2023-09-21 07:07
+description: ''
+id: avg_roomsqft
+title: Avg room sqft

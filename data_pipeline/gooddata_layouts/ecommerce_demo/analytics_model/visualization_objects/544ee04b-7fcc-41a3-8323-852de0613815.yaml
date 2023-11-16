@@ -1,0 +1,34 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: active_customers
+                    type: metric
+            localIdentifier: c9c1a6a146a244f695ad1b52733b283f
+            title: Active Customers
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_state
+                type: label
+            localIdentifier: ad12d182065d4fd3aba4aff5bfff1ee4
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      legend:
+        enabled: false
+  sorts: []
+  version: '2'
+  visualizationUrl: local:treemap
+description: Customers by State
+id: 544ee04b-7fcc-41a3-8323-852de0613815
+title: Customers by State

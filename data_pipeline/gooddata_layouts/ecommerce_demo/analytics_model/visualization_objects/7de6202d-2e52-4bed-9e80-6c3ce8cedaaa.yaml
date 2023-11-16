@@ -1,0 +1,44 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: return_customers
+                    type: metric
+            localIdentifier: a7600faa872a4558ab5645951cad7ac4
+            title: Return Customers
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: new_customers
+                    type: metric
+            localIdentifier: 87a21aa137a14a44bf8f3e5352fc44f4
+            title: New Customers
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '5'
+          id: a7600faa872a4558ab5645951cad7ac4
+        - color:
+            type: guid
+            value: '4'
+          id: 87a21aa137a14a44bf8f3e5352fc44f4
+      dataLabels:
+        visible: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: Active Customers Breakdown
+id: 7de6202d-2e52-4bed-9e80-6c3ce8cedaaa
+title: Active Customers Breakdown

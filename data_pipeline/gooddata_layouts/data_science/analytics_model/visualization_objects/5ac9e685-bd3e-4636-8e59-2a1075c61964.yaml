@@ -1,0 +1,42 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: temperature
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 9e4bcf7aa8e34acc8fb5f92014c5aa74
+            title: Sum of Temperature
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: timestamp.minute
+                type: label
+            localIdentifier: 3ff5346c4da144a2837311c6116be078
+      localIdentifier: trend
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: timestamp
+            type: dataset
+        from: -29
+        granularity: GDC.time.minute
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:line
+createdAt: 2023-09-27 07:49
+description: ''
+id: 5ac9e685-bd3e-4636-8e59-2a1075c61964
+title: 'Minute filter #streaming'

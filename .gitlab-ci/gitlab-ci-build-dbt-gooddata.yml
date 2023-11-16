@@ -1,6 +1,7 @@
 build_dbt_gooddata:
   extends:
     - .docker
+    - .vars-image-gooddata
   stage: build
   script:
     - cd "$CI_PROJECT_DIR"
@@ -17,5 +18,6 @@ build_dbt_gooddata:
         - $SRC_DATA_PIPELINE/requirements-gooddata.txt
         - .gitlab-ci/gitlab-ci-build-dbt-gooddata.yml
         - .gitlab-ci/gitlab-ci-build-base.yml
+        - .gitlab-ci/env_vars/image-gooddata.yml
         - .gitlab-ci.yml
     - !reference [.base_rules, rules]

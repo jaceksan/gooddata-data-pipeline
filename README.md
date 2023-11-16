@@ -44,8 +44,17 @@ The following articles are based on this project:
 
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
-It utilizes the [GoodData Community Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available for free in DockerHub.
+It utilizes the [GoodData Container Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available in DockerHub.
 Optionally, you can also start [Vertica Community Edition](https://hub.docker.com/r/vertica/vertica-ce).
+
+*WARNING:* 
+Since version 3.0.0, the GoodData.CN Community Edition will be renamed to GoodData.CN Container Edition, and will require a license key for its run.
+If you are a GoodData customer, you can use the same license key as for the production deployment.
+If not, please, contact us in our [Slack Community](https://www.gooddata.com/slack/).
+
+*Personal note:*
+I was fighting with the above decision for a long time, but finally, I lost. I encourage you to ask for a return of a free Community Edition in the Slack community.
+The more people ask, the more chances we have to get it back.
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
@@ -72,7 +81,10 @@ export VERTICA_PASS"<your Vertica password>"
 export MOTHERDUCK_TOKEN="<your MotherDuck token>" 
 docker-compose up extract_load_github
 docker-compose up extract_load_faa
-docker-compose up extract_load_exchangeratehost
+# Uncomment once the tap is fixed
+# docker-compose up extract_load_exchangeratehost
+docker-compose up extract_load_data_science
+docker-compose up extract_load_ecommerce_demo
 
 # Transform model to be ready for analytics, with dbt
 # Also, GoodData models are generated from dbt models and pushed to GoodData  
@@ -99,8 +111,13 @@ Move to Gitlab, fork this repository and run the pipeline against your environme
  
 You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
 - TAP_GITHUB_AUTH_TOKEN
-- GOODDATA_HOST - host name pointing to the GoodData instance
-- GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
+- GoodData
+  - Single endpoint, host+port 
+    - GOODDATA_HOST - host name pointing to the GoodData instance
+    - GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
+  - Multiple endpoints
+    - Create file ~/.gooddata/profiles.yaml
+    - Check [Example](data_pipeline/gooddata_profiles_example.yaml)
 - MELTANO_STATE_AWS_ACCESS_KEY_ID/MELTANO_STATE_AWS_SECRET_ACCESS_KEY - Meltano stores its state to AWS S3, and needs these credentials
 - GITLAB_TOKEN - to allow Gitlab jobs to send messages to merge requests
 
@@ -114,7 +131,8 @@ Bootstrap developer environment:
 make dev
 
 # Activate virtualenv for extract_load part or for transform/analytics parts
-source .venv_lt/bin/activate
+source .venv_el/bin/activate
+# Activate virtualenv for transform and analytics parts
 source .venv_t/bin/activate
 # You should see e.g. a `(.venv_el)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
 
@@ -123,8 +141,8 @@ deactivate
 ```
 
 ### Set environment variables
-See [.env.local](.env.local) example. 
-Add sensitive variables to .env.custom.local file.
+See [.env.local](.env.local) and similar examples. 
+Add sensitive variables to the corresponding .env.custom.<local|dev|staging|prod> file.
 
 ```bash
 source .env.local
@@ -132,6 +150,8 @@ source .env.local
 source .env.local vertica
 # For MotherDuck
 source .env.local motherduck
+# For Vertica in the cloud
+source .env.staging vertica
 ```
 
 ### Extract and Load
@@ -158,23 +178,29 @@ How to run:
 make transform
 # Full refresh
 FR="--full-refresh" make transform
+# Dry run
+FR="--dry-run" make transform
 ```
 
 ### Generate GoodData semantic model from dbt models
-Plugin [dbt-gooddata](https://github.com/jaceksan/dbt-gooddata) provides generators of GoodData semantic model objects from dbt models.
+Plugin [gooddata-dbt](https://github.com/gooddata/gooddata-python-sdk/gooddata-dbt) provides generators of GoodData semantic model objects from dbt models.
 In particular, it allows you to generate so called GoodData PDM (Physical Data Model), LDM(Logical Data Model, mapped to PDM), and metrics.
-It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
+It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk/gooddata-sdk).
 
 How to run:
 ```bash
 make deploy_models
+# There are related make target executing atomic steps
+
+# Dry run
+FR="--dry-run" make deploy_models
 ```
 
 For Vertica, we have to customize VERTICA_HOST variable, because Vertica is running inside the docker-compose network.
 When you run e.g. Meltano from localhost, you connect to localhost.
 When GoodData is connecting to Vertica inside the docker network, it must connect to docker hostname of Vertica, which is `vertica`.
 ```bash
-VERTICA_HOST="vertica" dbt-gooddata deploy_models
+VERTICA_HOST="vertica" gooddata-dbt deploy_models
 ```
 
 ## Constraints
@@ -197,7 +223,7 @@ dbt --profiles-dir profile run-operation generate_source \
 ```
 
 # Analytics
-Folder [dbt-gooddata](data_pipeline/dbt-gooddata) contains a PoC of dbt plugin providing tools for loading/storing GoodData analytics model (metrics, insights, dashboards).
+Folder [gooddata-dbt](data_pipeline/gooddata-dbt) contains a PoC of dbt plugin providing tools for loading/storing GoodData analytics model (metrics, insights, dashboards).
 It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python-sdk).
 
 ## Load analytics model to GoodData
@@ -206,26 +232,32 @@ Analytics model is stored in [gooddata_layouts](data_pipeline/gooddata_layouts) 
 The following command reads the layout, and loads it into the GooData instance:
 ```bash
 make deploy_analytics
+# Dry run
+FR="--dry-run" make deploy_analytics
 ```
 
 It not only loads the stored layout, but it also reads metrics from dbt models and loads them too.
 
 ## Store analytics model
 Anytime you can fetch analytics model from the GoodData instance and store it to [gooddata_layouts](data_pipeline/gooddata_layouts) folder.
-It makes sense to do some operations by editing stored layout files, but other in GoodData UI applications.
+It makes sense to do some operations by editing stored layout files, but others in GoodData UI applications.
 For instance, it is more convenient to build more complex GoodData MAQL metrics in the Metric Editor UI application.
 Then, to persist such metrics to [gooddata_layouts](data_pipeline/gooddata_layouts) folder, run the following command:
 
 ```bash
-make store_analytics
+GOODDATA_PROFILES="local" make store_analytics
 ```
+
+WARNING: if you utilize ~/.gooddata/profiles.yaml, and you would fill GOODDATA_PROFILES variable with multiple values, 
+it will store analytics from all related GoodData instances into the same folder. This is not what you usually need.
+That is why I override GOODDATA_PROFILES variable with a single value.
 
 ## Invalidate analytics cache 
 
 Anytime you update data, e.g. by running `dbt run` command, you have to invalidate GoodData caches to see the new data there.
 The following command invalidates these caches:
 ```bash
-make invalidate_analytics_caches
+make invalidate_caches
 ```
 
 ### Test analytics

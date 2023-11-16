@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT  IFNULL({metric/cogs_orders},0) - IFNULL({metric/cogs_returns},0)
+description: ''
+id: cogs
+title: COGS

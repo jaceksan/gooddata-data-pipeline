@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: select COUNT({label/order_id},{label/return_id})
+description: ''
+id: returns
+title: Returns

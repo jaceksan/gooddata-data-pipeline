@@ -5,71 +5,6 @@ stages:
   - analytics
 
 ##########################
-# Global variables
-variables:
-  SRC_DATA_PIPELINE: "data_pipeline"
-  DBT_PROFILES_DIR: "profile"
-  MELTANO_TARGET: "target-snowflake"
-  DBT_TARGET: "snowflake"
-  GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
-  # Snowflake objects are upper-case by default. We use Snowflake in most jobs.
-  GOODDATA_UPPER_CASE: "--gooddata-upper-case"
-  SNOWFLAKE_ACCOUNT: "gooddata"
-  SNOWFLAKE_USER: "cicd"
-  SNOWFLAKE_WAREHOUSE: "DEMO_WH"
-  VERTICA_HOST: "140.236.88.151"
-  VERTICA_PORT: "5433"
-  VERTICA_USER: "gooddata"
-  VERTICA_DBNAME: "PartPub80DB"
-  INPUT_SCHEMA_FAA: "faa_input_stage"
-  INPUT_SCHEMA_GITHUB: "github_input_stage"
-  INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
-  OUTPUT_SCHEMA: "cicd_output_stage"
-  IMAGES_WORKDIR: "/project"
-  MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
-  MELTANO_VERSION: "v2.16.0-python3.10"
-  MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
-  MELTANO_STATE_AWS_BUCKET: "gdc-quiver"
-  DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
-  DBT_VERSION: "1.5.0"
-  DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION"
-  PYTHON_IMAGE: "python:3.10.11-slim-bullseye"
-  DBT_GOODDATA_IMAGE_BASE: "gooddata-data-pipeline-dbt-gooddata"
-  DBT_GOODDATA_VERSION: "0.3.9"
-  DBT_GOODDATA_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_GOODDATA_IMAGE_BASE:$DBT_GOODDATA_VERSION"
-  ############################################################################################################
-  # Environment-specific vars. Defined here so we can reuse them in extract/load nad transform phases
-  ############################################################################################################
-  # DEV
-  DEV_ELT_ENVIRONMENT: "cicd_dev"
-  DEV_SNOWFLAKE_DBNAME: 'CICD_DEV'
-  DEV_GOODDATA_ENVIRONMENT_ID: "development"
-  # STAGING
-  STAGING_ELT_ENVIRONMENT: "cicd_staging"
-  STAGING_SNOWFLAKE_DBNAME: "CICD_STAGING"
-  STAGING_GOODDATA_ENVIRONMENT_ID: "staging"
-  STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA: "staging_vertica"
-  # PROD
-  PROD_ELT_ENVIRONMENT: "cicd_prod"
-  PROD_SNOWFLAKE_DBNAME: 'CICD_PROD'
-  PROD_GOODDATA_ENVIRONMENT_ID: "production"
-  ############################################################
-  # For version running against cloud service, e.g. dbt cloud
-  # DEV
-  CLOUD_DEV_SNOWFLAKE_DBNAME: 'CICD_CLOUD_DEV'
-  CLOUD_DEV_GOODDATA_ENVIRONMENT_ID: "cloud_development"
-  CLOUD_DEV_DBT_JOB_ID: 406899
-  # STAGING
-  CLOUD_STAGING_SNOWFLAKE_DBNAME: "CICD_CLOUD_STAGING"
-  CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID: "cloud_staging"
-  CLOUD_STAGING_GOODDATA_ENVIRONMENT_ID_VERTICA: "cloud_staging_vertica"
-  CLOUD_STAGING_DBT_JOB_ID: 408385
-  # PROD
-  CLOUD_PROD_SNOWFLAKE_DBNAME: 'CICD_CLOUD_PROD'
-  CLOUD_PROD_GOODDATA_ENVIRONMENT_ID: "cloud_production"
-  CLOUD_PROD_DBT_JOB_ID: 408386
-
-##########################
 # Job templates
 ##########################
 .base:
@@ -85,9 +20,19 @@ variables:
     - if: '$FULL_REFRESH == "true"'
       when: manual
 
+# Global variables
+variables:
+  SRC_DATA_PIPELINE: "data_pipeline"
+  IMAGES_WORKDIR: "/project"
+
 # Separate files for each use case
 # Prevent pipeline to be running if we change one gitlab-ci.yaml file containing all use cases
 include:
+  - ".gitlab-ci/env_vars/image-meltano.yml"
+  - ".gitlab-ci/env_vars/image-dbt.yml"
+  - ".gitlab-ci/env_vars/image-gooddata.yml"
+  # TODO - elta.yaml contains variables for all jobs (ELT, analytics). Split it, so its change does not trigger all jobs
+  - ".gitlab-ci/env_vars/elta.yml"
   - ".gitlab-ci/gitlab-ci-build-base.yml"
   - ".gitlab-ci/gitlab-ci-build-meltano.yml"
   - ".gitlab-ci/gitlab-ci-build-dbt.yml"

@@ -1,0 +1,376 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 3046e84f-b7bf-4c4b-bb31-f3fa9591b477
+      type: filterContext
+  layout:
+    sections:
+      - items:
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 759c22e84d114c55aa40707b16d79d1d
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 700d732d-67e1-4658-a6e0-c6b8edbb6d49
+                  type: visualizationObject
+              properties: {}
+              title: Net Sales
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: eb334cab51954b9f83184eead11308bc
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 3ac5e106-b43e-4c87-9ef0-9315e02282bd
+                  type: visualizationObject
+              properties: {}
+              title: Net Orders
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 872407ef1c864d6cb82ece8c58edb20b
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: dc8575f5-27e5-44be-a2dc-23d54b7777e7
+                  type: visualizationObject
+              properties: {}
+              title: Active Customers
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 5d0ce2b953c9471199c8293770cc19db
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 0c7ac154-1766-4d54-ba2b-b6f6913a59dd
+                  type: visualizationObject
+              properties: {}
+              title: Sales per Customer
+              type: insight
+        type: IDashboardLayoutSection
+      - items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 7
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Bubble charts are similar to scatter plots. They show
+                data points as bubbles using Cartesian coordinates.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    attribute:
+                      localIdentifier: 458f2a55e1ca457883ff36141c84dc48
+                    type: drillFromAttribute
+                  target:
+                    identifier:
+                      id: 65120fa4-2805-4f70-b576-01d138117cf4
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 405034d6-ab9c-462a-a88e-3172598adc65
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Brands by Gross Profit and Avg Price of Product
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 5
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Pyramid charts are great at showing hierarchical structures
+                and the relative proportions of different values.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    attribute:
+                      localIdentifier: 3127fb986968460782161cda4a629738
+                    type: drillFromAttribute
+                  target:
+                    identifier:
+                      id: e32644ad-1921-4b89-a7d2-79f31826e5cf
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: b0a2d8c7-8c48-4918-af8a-3ff99c6ea8f3
+                  type: visualizationObject
+              properties: {}
+              title: Product Category Breakdown
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          title: Product details
+        items:
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Bar charts are horizontal visual representations that
+                are commonly used to illustrate trends, comparisons, and distributions.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: aff217f5be79438aa7053d7e15c7a3a7
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 65120fa4-2805-4f70-b576-01d138117cf4
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 603bbd58-ea50-4607-ad20-418bd95c06c8
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Top Sellers
+              type: insight
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Bar charts are horizontal visual representations that
+                are commonly used to illustrate trends, comparisons, and distributions.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: c877604979b64cd09c3840b36469e227
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 65120fa4-2805-4f70-b576-01d138117cf4
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 7b49dbdb-f9ab-41dd-9cb4-cd13627d67c3
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Money Makers
+              type: insight
+          - size:
+              xl:
+                gridHeight: 40
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              description: 'Pivot tables expand the capabilities of regular (flat)
+                tables by allowing you to reorganize and summarize selected data beyond
+                the typical row-column relationship.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    attribute:
+                      localIdentifier: 73d5f54c4e3844adb8b6109118c30dca
+                    type: drillFromAttribute
+                  target:
+                    url:
+                      - ''
+                      - identifier:
+                          id: product_id_image_web
+                          type: label
+                      - ''
+                  transition: new-window
+                  type: drillToCustomUrl
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 65120fa4-2805-4f70-b576-01d138117cf4
+                  type: visualizationObject
+              properties: {}
+              title: Product Details
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: c1d67cd4-94ad-40aa-91a5-cdf4143f778a
+title: 4. Products

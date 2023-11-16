@@ -1,0 +1,27 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: avg
+                filters: []
+                item:
+                  identifier:
+                    id: temperature
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 57fd86c471f54c97b8d320cbe51c1754
+            title: Avg Temperature
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      comparison:
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: ''
+id: 47115d11-e976-48f7-85cb-5747ced242c9
+title: Avg temp

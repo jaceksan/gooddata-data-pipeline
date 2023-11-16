@@ -1,6 +1,7 @@
 build_dbt:
   extends:
     - .docker
+    - .vars-image-dbt
   stage: build
   script:
     - cd "$CI_PROJECT_DIR"
@@ -15,9 +16,11 @@ build_dbt:
       changes:
         - Dockerfile_dbt
         - $SRC_DATA_PIPELINE/requirements-dbt.txt
+        - $SRC_DATA_PIPELINE/requirements-gooddata.txt
         - $SRC_DATA_PIPELINE/packages.yml
         - $SRC_DATA_PIPELINE/dbt_project.yml
         - .gitlab-ci/gitlab-ci-build-dbt.yml
         - .gitlab-ci/gitlab-ci-build-base.yml
+        - .gitlab-ci/env_vars/image-dbt.yml
         - .gitlab-ci.yml
     - !reference [.base_rules, rules]

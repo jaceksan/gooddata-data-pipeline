@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT {metric/active_customers} - IFNULL({metric/new_customers},0)
+description: ''
+id: return_customers
+title: Return Customers

@@ -1,0 +1,52 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: new_customers_monthly
+                    type: metric
+            localIdentifier: 2f2234037eed4600bcf6a670cbf2207d
+            title: New Customers Monthly
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: return_customers_monthly
+                    type: metric
+            localIdentifier: df3a860eabea47c88092c543d4fa551a
+            title: Return Customers Monthly
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Date
+            displayForm:
+              identifier:
+                id: date.day
+                type: label
+            localIdentifier: eebed04fe2054d109c35bc4c34609a56
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '4'
+          id: 2f2234037eed4600bcf6a670cbf2207d
+        - color:
+            type: guid
+            value: '5'
+          id: df3a860eabea47c88092c543d4fa551a
+      stackMeasures: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:column
+description: New vs Returning Trend
+id: 48000537-4586-4a1e-a9a5-8eda7f8151a8
+title: New vs Returning Trend

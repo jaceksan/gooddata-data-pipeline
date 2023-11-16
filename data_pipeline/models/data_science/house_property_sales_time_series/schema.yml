@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: house_property_sales_time_series
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: saledate
+        description: Sale Date
+      - name: type
+      - name: bedrooms
+      - name: ma
+        description: MA

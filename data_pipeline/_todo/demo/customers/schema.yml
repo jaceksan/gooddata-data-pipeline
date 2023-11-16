@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: customers
+    meta:
+      gooddata:
+        model_id: demo
+    columns:
+      - name: customer_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: customer_name
+      - name: state
+      - name: state_latitude
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: GEO_LATITUDE
+            attribute_column: state
+      - name: state_longitude
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: GEO_LONGITUDE
+            attribute_column: state
+      - name: region

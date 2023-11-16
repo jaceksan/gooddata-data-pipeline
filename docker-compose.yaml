@@ -1,18 +1,18 @@
 version: '3.8'
 
 x-postgres-vars: &postgres-vars
-  POSTGRES_HOST: gooddata-cn-ce
-  POSTGRES_PORT: 5432
-  POSTGRES_USER: demouser
-  POSTGRES_PASS: demopass
-  POSTGRES_DBNAME: demo
+  DB_HOST: gooddata-cn-ce
+  DB_PORT: 5432
+  DB_USER: demouser
+  DB_PASS: demopass
+  DB_NAME: demo
 
 x-dbt-postgres-vars: &dbt-postgres-vars
-  DBT_POSTGRES_HOST: gooddata-cn-ce
-  DBT_POSTGRES_PORT: 5432
-  DBT_POSTGRES_USER: demouser
-  DBT_POSTGRES_PASS: demopass
-  DBT_POSTGRES_DBNAME: demo
+  DBT_DB_HOST: gooddata-cn-ce
+  DBT_DB_PORT: 5432
+  DBT_DB_USER: demouser
+  DBT_DB_PASS: demopass
+  DBT_DB_NAME: demo
 
 x-meltano-vars: &meltano-vars
   MELTANO_ENV: cicd_dev_local
@@ -25,17 +25,17 @@ x-meltano-vars: &meltano-vars
 services:
   gooddata-cn-ce:
     # You can use "dev_latest" tag which points to the latest development version of GD.CN
-    image: gooddata/gooddata-cn-ce:2.4
+    image: gooddata/gooddata-cn-ce:3.0.0
     ports:
       - "3000:3000"
       - "5432:5432"
     volumes:
       - gooddata-data-pipeline:/data
     environment:
-      LICENSE_AND_PRIVACY_POLICY_ACCEPTED: "YES"
+      GDCN_LICENSE_KEY: "${GDCN_LICENSE_KEY}"
       APP_LOGLEVEL: "INFO"
       GDC_FEATURES_VALUES_ENABLE_METRIC_SQL_AND_DATA_EXPLAIN: 'ENABLED'
-      LIMIT_MAX_RESULT_XTAB_DIMENSION: 100000
+      LIMIT_MAX_RESULT_XTAB_DIMENSION: 200000
       GDC_FEATURES_VALUES_ENABLE_PDM_REMOVAL_DEPRECATION_PHASE: "true"
 
   bootstrap_origins:
@@ -75,6 +75,7 @@ services:
       TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
 
   extract_load_faa:
     build:
@@ -92,6 +93,43 @@ services:
       TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
     volumes:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
+
+  extract_load_ecommerce_demo:
+    build:
+      context: .
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-s3-csv-ecommerce-demo target-postgres
+    environment:
+      <<: [ *postgres-vars, *meltano-vars ]
+      TARGET_SCHEMA: ecommerce_demo_input_stage
+      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
+      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
+
+  extract_load_data_science:
+    build:
+      context: .
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-s3-csv-data-science target-postgres
+    environment:
+      <<: [ *postgres-vars, *meltano-vars ]
+      TARGET_SCHEMA: data_science_input_stage
+      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
+      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
 
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
 #  extract_load_exchangeratehost:
@@ -118,17 +156,21 @@ services:
       - -c
     command:
       - |
-        dbt run --profile default --target $$ELT_ENVIRONMENT
-        dbt test --profile default --target $$ELT_ENVIRONMENT
-        dbt-gooddata deploy_models
-        dbt-gooddata upload_notification
+        dbt run --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+        dbt test --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+        gooddata-dbt provision_workspaces
+        gooddata-dbt register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+        gooddata-dbt deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+        gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
     environment:
-      <<: [ *postgres-vars, *dbt-postgres-vars ]
+      <<: [ *dbt-postgres-vars ]
       DBT_INPUT_SCHEMA: cicd_input_stage
       DBT_INPUT_SCHEMA_GITHUB: "github_input_stage"
       DBT_INPUT_SCHEMA_FAA: "faa_input_stage"
       DBT_OUTPUT_SCHEMA: cicd_output_stage
       ELT_ENVIRONMENT: cicd_dev_local
+      DBT_TARGET: "postgres"
+      DBT_INCREMENTAL_STRATEGY: "delete+insert"
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
     volumes:
@@ -146,8 +188,8 @@ services:
       - -c
     command:
       - |
-        dbt-gooddata deploy_analytics
-        dbt-gooddata test_insights
+        gooddata-dbt deploy_analytics
+        gooddata-dbt test_insights
     environment:
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
       GOODDATA_OVERRIDE_HOST: "localhost"
@@ -157,7 +199,7 @@ services:
 
   # Minio serves as AWS S3 state backend for extract_load (Meltano)
   minio:
-    image: minio/minio:RELEASE.2023-02-27T18-10-45Z
+    image: minio/minio:RELEASE.2023-09-30T07-02-29Z
     volumes:
       - minio-data:/data
     ports:
@@ -174,7 +216,7 @@ services:
       retries: 3
 
   minio-bootstrap:
-    image: minio/mc:RELEASE.2023-02-28T00-12-59Z
+    image: minio/mc:RELEASE.2023-09-29T16-41-22Z
     depends_on:
       - minio
     entrypoint: >

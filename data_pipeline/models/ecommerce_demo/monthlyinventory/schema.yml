@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: monthlyinventory
+    meta:
+      gooddata:
+        model_id: ecommerce_demo
+    columns:
+      - name: monthly_inventory_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: product__product_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('product')
+              pk_column_name: product_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: product
+      - name: monthly_quantity_eom
+      - name: monthly_quantity_bom
+      - name: inventory_month
+      - name: date
+#      - name: wdf__client_id

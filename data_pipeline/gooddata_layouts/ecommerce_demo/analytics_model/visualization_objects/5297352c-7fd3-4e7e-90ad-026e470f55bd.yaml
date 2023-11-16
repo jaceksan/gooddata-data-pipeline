@@ -1,0 +1,59 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit_margin
+                    type: metric
+            localIdentifier: a42c7fae73a54765b89e23f0ebc83678
+            title: Gross Profit Margin
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: 7e148773a5e94c28a367eb18f4b3d206
+            title: Gross Profit
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_category
+                type: label
+            localIdentifier: deb150afe30946e989f6a54bb3a6d4e7
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_name
+                type: label
+            localIdentifier: 644c713693514146b8c2b0f788313960
+      localIdentifier: attribute
+      totals:
+        - attributeIdentifier: 644c713693514146b8c2b0f788313960
+          measureIdentifier: 7e148773a5e94c28a367eb18f4b3d206
+          type: sum
+  filters: []
+  properties:
+    controls:
+      columnWidths:
+        - attributeColumnWidthItem:
+            attributeIdentifier: 644c713693514146b8c2b0f788313960
+            width:
+              value: 500
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: deb150afe30946e989f6a54bb3a6d4e7
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Gross Profit Margin Detail
+id: 5297352c-7fd3-4e7e-90ad-026e470f55bd
+title: Gross Profit Margin Detail

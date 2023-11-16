@@ -1,0 +1,42 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 5f460be07cfc47a5a4a369917469f333
+            title: Net Sales
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_returns
+                    type: metric
+            localIdentifier: 3c910f1183e247beada046e18fd055a8
+            title: Total Returns
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_discounts
+                    type: metric
+            localIdentifier: e5480401e2ca457589a8448589fa136c
+            title: Total Discounts
+      localIdentifier: measures
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: Net Sales Breakdown
+id: 643699f3-f980-44f6-b618-4b3d3f3f560e
+title: Net Sales Breakdown

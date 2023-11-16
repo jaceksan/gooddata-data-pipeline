@@ -1,0 +1,391 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 6aacab95-c3da-4e87-8f8c-ca3b6ebfb8b2
+      type: filterContext
+  layout:
+    sections:
+      - items:
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 872407ef1c864d6cb82ece8c58edb20b
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: dc8575f5-27e5-44be-a2dc-23d54b7777e7
+                  type: visualizationObject
+              properties: {}
+              title: Active Customers
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 13f2358c2d2040fe8849757b2a5ddddf
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: a347814a-a893-4354-915d-29699b92a6d7
+                  type: visualizationObject
+              properties: {}
+              title: New Customers
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 1df9a9af3c734b5da9f719b62d1b06c3
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 4cea4177-37c5-4196-8aab-c6bf60dc1f22
+                  type: visualizationObject
+              properties: {}
+              title: Return Customers
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 5d0ce2b953c9471199c8293770cc19db
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 0c7ac154-1766-4d54-ba2b-b6f6913a59dd
+                  type: visualizationObject
+              properties: {}
+              title: Sales per Customer
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          title: New vs Returning
+        items:
+          - size:
+              xl:
+                gridHeight: 23
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Donut charts show data as proportional segments of a disc
+                with a hollowed out center.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: a7600faa872a4558ab5645951cad7ac4
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: 87a21aa137a14a44bf8f3e5352fc44f4
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 7de6202d-2e52-4bed-9e80-6c3ce8cedaaa
+                  type: visualizationObject
+              properties: {}
+              title: Active Customers Breakdown
+              type: insight
+          - size:
+              xl:
+                gridHeight: 23
+                gridWidth: 8
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Column charts are used to compare and display categorical
+                data or quantitative values across different categories in the form
+                of vertical bars.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: df3a860eabea47c88092c543d4fa551a
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 48000537-4586-4a1e-a9a5-8eda7f8151a8
+                  type: visualizationObject
+              properties: {}
+              title: New vs Returning
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          title: Ranking
+        items:
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Bar charts are horizontal visual representations that
+                are commonly used to illustrate trends, comparisons, and distributions.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    attribute:
+                      localIdentifier: 0b6cc41384054a5496ab4d40962a62fb
+                    type: drillFromAttribute
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 607e9724-37ed-44f6-9fb4-55676d58df6e
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Top 10 Spenders
+              type: insight
+          - size:
+              xl:
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Bar charts are horizontal visual representations that
+                are commonly used to illustrate trends, comparisons, and distributions.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    attribute:
+                      localIdentifier: 0b6cc41384054a5496ab4d40962a62fb
+                    type: drillFromAttribute
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 8e8f236e-1bb2-48b3-828e-48706c684629
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Top 10 Buyers
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          title: Customers by Country and State
+        items:
+          - size:
+              xl:
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: true
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Treemaps display data hierarchically as nested rectangles.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: c9c1a6a146a244f695ad1b52733b283f
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 2f12ace7-e626-47f1-953d-5ae957ca108e
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Customers by Country and State
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: 370ec88c-2235-4e65-bb7c-5318280069a1
+title: 3. Customers

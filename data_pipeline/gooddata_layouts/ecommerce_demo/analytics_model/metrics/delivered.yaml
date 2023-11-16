@@ -1,0 +1,7 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT (select {metric/of_orders}WHERE {label/order_status} = "Processed")
+    - (select {metric/of_orders} WHERE {label/order_status} = "Canceled")
+description: ''
+id: delivered
+title: Delivered

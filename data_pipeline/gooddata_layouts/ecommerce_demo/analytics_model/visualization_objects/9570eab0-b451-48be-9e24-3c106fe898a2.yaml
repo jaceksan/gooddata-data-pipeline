@@ -1,0 +1,42 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: 157e5232d0014c65ad3be170c2fea0e6
+            title: Gross Profit
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Date
+            displayForm:
+              identifier:
+                id: date.day
+                type: label
+            localIdentifier: e5d6cafa6615451e87a42133eef8050f
+      localIdentifier: trend
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: -1
+        granularity: GDC.time.month
+        to: -1
+  properties:
+    controls:
+      dataPoints:
+        visible: false
+  sorts: []
+  version: '2'
+  visualizationUrl: local:line
+description: Gross Profit Trend
+id: 9570eab0-b451-48be-9e24-3c106fe898a2
+title: Gross Profit Trend

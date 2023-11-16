@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT -1*{metric/total_returns}
+description: ''
+id: negative_total_return
+title: Total Returns N
