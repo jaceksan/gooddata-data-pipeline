@@ -97,13 +97,19 @@ dbt_dev:
     DBT_DB_NAME: $DEV_SNOWFLAKE_DBNAME
     GOODDATA_ENVIRONMENT_ID: $DEV_GOODDATA_ENVIRONMENT_ID
   before_script:
+    - mkdir -p ~/.gooddata
+    # Dummy file with faked tokens
+    - cp $GOODDATA_PROFILES_FILE_DUMMY ~/.gooddata/profiles.yaml
     - cd $SRC_DATA_PIPELINE
     # dbt packages are installed during build of docker image to workdir
     - ln -s ${IMAGES_WORKDIR}/dbt_packages dbt_packages
   script:
     # We cannot run full-blown script before merge, because someone could create an MR and echo sensitive credentials
     - dbt parse --profiles-dir $DBT_PROFILES_DIR --profile $ELT_ENVIRONMENT
-    # TODO - introduce gooddata-dbt --dry-run option
+    - gooddata-dbt --dry-run provision_workspaces
+    - gooddata-dbt --dry-run register_data_sources $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt --dry-run deploy_ldm $GOODDATA_UPPER_CASE --profile $ELT_ENVIRONMENT --target $DBT_TARGET
+    - gooddata-dbt --dry-run upload_notification --profile $ELT_ENVIRONMENT --target $DBT_TARGET
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.dbt_changes, changes]

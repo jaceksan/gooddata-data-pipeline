@@ -1,2 +1,2 @@
-gooddata-dbt==1.8.1.dev1
+gooddata-dbt==1.8.1.dev2
 deep-translator==1.11.4

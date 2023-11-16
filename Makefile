@@ -59,33 +59,33 @@ transform_cloud_stats:
 
 invalidate_caches:
 	# Invalidate GoodData caches after new data are delivered
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$DR
 
 deploy_models: dbt_compile
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt provision_workspaces
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR provision_workspaces
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 provision_workspaces:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt provision_workspaces
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR provision_workspaces
 
 register_data_sources:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_ldm:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_models_cloud:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt provision_workspaces
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt register_data_sources --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_ldm --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR provision_workspaces
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_analytics: dbt_compile
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt deploy_analytics $$GOODDATA_UPPER_CASE
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt test_insights
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
 
 store_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt store_analytics
 
 test_insights:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt test_insights
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
