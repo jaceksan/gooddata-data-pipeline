@@ -178,6 +178,8 @@ How to run:
 make transform
 # Full refresh
 FR="--full-refresh" make transform
+# Dry run
+FR="--dry-run" make transform
 ```
 
 ### Generate GoodData semantic model from dbt models
@@ -188,6 +190,10 @@ It is based on [GoodData Python SDK](https://github.com/gooddata/gooddata-python
 How to run:
 ```bash
 make deploy_models
+# There are related make target executing atomic steps
+
+# Dry run
+FR="--dry-run" make deploy_models
 ```
 
 For Vertica, we have to customize VERTICA_HOST variable, because Vertica is running inside the docker-compose network.
@@ -226,6 +232,8 @@ Analytics model is stored in [gooddata_layouts](data_pipeline/gooddata_layouts) 
 The following command reads the layout, and loads it into the GooData instance:
 ```bash
 make deploy_analytics
+# Dry run
+FR="--dry-run" make deploy_analytics
 ```
 
 It not only loads the stored layout, but it also reads metrics from dbt models and loads them too.
