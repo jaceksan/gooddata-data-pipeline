@@ -91,6 +91,10 @@ organizations:
       - cicd_demo
       - ecommerce_demo
       - data_science
-
+  - gooddata_profile: labs_se
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science
 global_properties:
   test_insights_parallelism: 4
