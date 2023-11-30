@@ -3,7 +3,7 @@
     DBT_PROFILES_DIR: "profile"
     MELTANO_TARGET: "target-snowflake"
     DBT_TARGET: "snowflake"
-    GOODDATA_PROFILES: "demo_cicd closed_beta closed_beta_se"
+    GOODDATA_PROFILES: "demo_cicd closed_beta closed_beta_se labs_se"
     # Snowflake objects are upper-case by default. We use Snowflake in most jobs.
     GOODDATA_UPPER_CASE: "--gooddata-upper-case"
     SNOWFLAKE_ACCOUNT: "gooddata"
