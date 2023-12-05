@@ -1,0 +1,40 @@
+name: Build and Push Docker Image
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    env:
+      GIT_DEPTH: "0"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v1
+#
+#      - name: Build and Push Docker Image
+#        env:
+#          CR_PAT: ${{ secrets.GITHUB_TOKEN }}
+#        timeout-minutes: 10
+#        run: |
+#          echo $CR_PAT | docker login ghcr.io -u $GITHUB_REPOSITORY --password-stdin
+#          docker buildx create --use
+#          docker buildx build --progress plain --platform linux/amd64 -t ghcr.io/$GITHUB_REPOSITORY/gooddata-data-pipeline-meltano:v3.1.0-python3.11 -f Dockerfile_meltano --push .
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Build GoodData Meltano Image
+        timeout-minutes: 10
+        run: |
+          docker build -t ghcr.io/$GITHUB_REPOSITORY/gooddata-data-pipeline-meltano:v3.1.0-python3.11 -f Dockerfile_meltano .
+          docker push ghcr.io/$GITHUB_REPOSITORY/gooddata-data-pipeline-meltano:v3.1.0-python3.11
