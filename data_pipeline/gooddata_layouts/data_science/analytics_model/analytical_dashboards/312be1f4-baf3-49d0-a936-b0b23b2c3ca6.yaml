@@ -127,12 +127,7 @@ content:
               type: insight
         type: IDashboardLayoutSection
     type: IDashboardLayout
-  plugins:
-    - plugin:
-        identifier:
-          id: f2dc1c49-5d15-4d6a-8101-899a83a76647
-          type: dashboardPlugin
-      version: '2'
+  plugins: []
   version: '2'
 description: ''
 id: 312be1f4-baf3-49d0-a936-b0b23b2c3ca6

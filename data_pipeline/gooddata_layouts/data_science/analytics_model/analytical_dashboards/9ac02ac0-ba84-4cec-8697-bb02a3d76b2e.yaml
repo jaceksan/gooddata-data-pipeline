@@ -32,12 +32,7 @@ content:
               type: insight
         type: IDashboardLayoutSection
     type: IDashboardLayout
-  plugins:
-    - plugin:
-        identifier:
-          id: 7e0a0704-ffab-4ac2-b14e-f065dd6408ba
-          type: dashboardPlugin
-      version: '2'
+  plugins: []
   version: '2'
 description: ''
 id: 9ac02ac0-ba84-4cec-8697-bb02a3d76b2e

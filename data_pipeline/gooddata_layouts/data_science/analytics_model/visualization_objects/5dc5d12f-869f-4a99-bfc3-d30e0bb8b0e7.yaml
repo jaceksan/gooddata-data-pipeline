@@ -2,6 +2,7 @@ content:
   buckets:
     - items:
         - measure:
+            alias: Monthly Charges
             definition:
               measureDefinition:
                 aggregation: sum
@@ -16,6 +17,7 @@ content:
       localIdentifier: measures
     - items:
         - attribute:
+            alias: Payment Method
             displayForm:
               identifier:
                 id: paymentmethod
@@ -24,6 +26,7 @@ content:
       localIdentifier: view
     - items:
         - attribute:
+            alias: Internet Service
             displayForm:
               identifier:
                 id: internetservice

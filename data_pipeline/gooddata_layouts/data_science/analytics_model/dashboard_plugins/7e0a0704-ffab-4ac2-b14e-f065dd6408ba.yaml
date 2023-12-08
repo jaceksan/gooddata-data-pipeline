@@ -1,6 +1,0 @@
-content:
-  url: https://gdc-dev-dashboard-plugins.s3.amazonaws.com/internal/gartner/bar-race-plugin/dp_bar_race_plugin.mjs
-  version: '2'
-description: ''
-id: 7e0a0704-ffab-4ac2-b14e-f065dd6408ba
-title: bar-race-plugin
