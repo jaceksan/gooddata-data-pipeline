@@ -1,0 +1,40 @@
+name: Build and Push Custom Meltano Image
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+        - "data_pipeline/requirements-meltano.txt"
+        - "data_pipeline/meltano-plugins.yml"
+        - "data_pipeline/plugins/**/*.lock"
+        - "Dockerfile_meltano"
+        - ".github/workflows/build-meltano.yml"
+        - ".github/variables/image-meltano.env"
+
+jobs:
+  build-and-push:
+    env:
+      GIT_DEPTH: "0"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Set Environment Variables
+        uses: ./.github/actions/setvars
+        with:
+          varFilePath: ./.github/variables/image-meltano.env
+
+      - name: Build custom Meltano Image
+        timeout-minutes: 10
+        run: |
+          docker build --build-arg MELTANO_VERSION=${{ env.MELTANO_VERSION }} --build-arg IMAGES_WORKDIR=${{ env.IMAGES_WORKDIR }} -t ghcr.io/$GITHUB_REPOSITORY/${{ env.MELTANO_CUSTOM_IMAGE }} -f Dockerfile_meltano .
+          docker push ghcr.io/$GITHUB_REPOSITORY/${{ env.MELTANO_CUSTOM_IMAGE }}
