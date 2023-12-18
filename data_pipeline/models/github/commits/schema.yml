@@ -49,13 +49,11 @@ models:
             attribute_column: commit_id
       - name: created_at
         data_type: "TIMESTAMP"
-        description: "Created at"
         meta:
           gooddata:
             ldm_type: date
       - name: comment_count
         data_type: "INT"
-        description: "Comment count"
         meta:
           gooddata:
             ldm_type: fact
