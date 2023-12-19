@@ -26,11 +26,6 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Set Environment Variables
-        uses: ./.github/actions/setvars
-        with:
-          varFilePath: ./.github/variables/image-gooddata.env
-
       - name: Build GoodData dbt Image
         timeout-minutes: 10
         run: |
