@@ -11,7 +11,7 @@ on:
       - ".github/variables/image-gooddata.env"
 
 jobs:
-  build-and-push:
+  build-and-push-custom-gooddata-dbt-image:
     env:
       GIT_DEPTH: "0"
     runs-on: ubuntu-latest
@@ -35,4 +35,8 @@ jobs:
         timeout-minutes: 10
         run: |
           docker build --build-arg PYTHON_IMAGE=${{ env.PYTHON_IMAGE }} --build-arg IMAGES_WORKDIR=${{ env.IMAGES_WORKDIR }} -t ghcr.io/$GITHUB_REPOSITORY/${{ env.DBT_GOODDATA_IMAGE }} -f Dockerfile_dbt_gooddata .
+
+      - name: Push GoodData dbt Image
+        timeout-minutes: 10
+        run: |
           docker push ghcr.io/$GITHUB_REPOSITORY/${{ env.DBT_GOODDATA_IMAGE }}

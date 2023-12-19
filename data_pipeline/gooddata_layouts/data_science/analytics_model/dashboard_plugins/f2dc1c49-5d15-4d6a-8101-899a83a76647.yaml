@@ -1,6 +1,0 @@
-content:
-  url: https://gdc-dev-dashboard-plugins.s3.amazonaws.com/internal/gartner/insight-prediction-plugin/dp_insight_prediction_plugin.mjs
-  version: '2'
-description: ''
-id: f2dc1c49-5d15-4d6a-8101-899a83a76647
-title: insight-prediction-plugin
