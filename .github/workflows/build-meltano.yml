@@ -13,7 +13,7 @@ on:
         - ".github/variables/image-meltano.env"
 
 jobs:
-  build-and-push:
+  build-and-push-custom-meltano-image:
     env:
       GIT_DEPTH: "0"
     runs-on: ubuntu-latest
@@ -37,4 +37,8 @@ jobs:
         timeout-minutes: 10
         run: |
           docker build --build-arg MELTANO_VERSION=${{ env.MELTANO_VERSION }} --build-arg IMAGES_WORKDIR=${{ env.IMAGES_WORKDIR }} -t ghcr.io/$GITHUB_REPOSITORY/${{ env.MELTANO_CUSTOM_IMAGE }} -f Dockerfile_meltano .
+
+      - name: Push custom Meltano Image
+        timeout-minutes: 10
+        run: |
           docker push ghcr.io/$GITHUB_REPOSITORY/${{ env.MELTANO_CUSTOM_IMAGE }}
