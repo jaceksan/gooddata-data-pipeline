@@ -24,14 +24,7 @@ content:
             localIdentifier: da096d08e5f945268bd4763f082a8915
             showAllValues: true
       localIdentifier: trend
-  filters:
-    - absoluteDateFilter:
-        dataSet:
-          identifier:
-            id: timestamp
-            type: dataset
-        from: 2013-08-19 00:00
-        to: 2013-08-23 23:59
+  filters: []
   properties: {}
   sorts: []
   version: '2'
