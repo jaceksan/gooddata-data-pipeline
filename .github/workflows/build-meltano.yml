@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-        - "data_pipeline/requirements-meltano.txt"
-        - "data_pipeline/meltano-plugins.yml"
-        - "data_pipeline/plugins/**/*.lock"
-        - "Dockerfile_meltano"
-        - ".github/workflows/build-meltano.yml"
-        - ".github/variables/image-meltano.env"
+        - data_pipeline/requirements-meltano.txt
+        - data_pipeline/meltano-plugins.yml
+        - data_pipeline/plugins/**/*.lock
+        - Dockerfile_meltano
+        - .github/workflows/build-meltano.yml
+        - .github/variables/image-meltano.env
 
 jobs:
   build-and-push-custom-meltano-image:

@@ -5,18 +5,18 @@ on:
     branches:
       - main
     paths:
-        - "data_pipeline/requirements-dbt.txt"
-        - "data_pipeline/requirements-gooddata.txt"
-        - "data_pipeline/packages.yml"
-        - "data_pipeline/dbt_project.yml"
-        - "Dockerfile_dbt"
-        - ".github/workflows/build-dbt.yml"
-        - ".github/variables/image-dbt.env"
+        - data_pipeline/requirements-dbt.txt
+        - data_pipeline/requirements-gooddata.txt
+        - data_pipeline/packages.yml
+        - data_pipeline/dbt_project.yml
+        - Dockerfile_dbt
+        - .github/workflows/build-dbt.yml
+        - .github/variables/image-dbt.env
 
 jobs:
   build-and-push-custom-dbt-image:
     env:
-      GIT_DEPTH: "0"
+      GIT_DEPTH: 0
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
