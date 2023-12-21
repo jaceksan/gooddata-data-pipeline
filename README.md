@@ -72,9 +72,6 @@ docker-compose up bootstrap_origins
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
-# Set AWS S3 credentials to be able to ELT the FAA data (stored in a public S3 bucket)
-export TAP_S3_CSV_AWS_ACCESS_KEY_ID="<my AWS access key>"
-export TAP_S3_CSV_AWS_SECRET_ACCESS_KEY="<my AWS secret key>"
 # If you use Vertica
 export VERTICA_PASS"<your Vertica password>" 
 # If you use MotherDuck

@@ -8,7 +8,7 @@ plugins:
       pip_url: git+https://github.com/MeltanoLabs/tap-github.git
     - name: tap-s3-csv
       variant: transferwise
-      pip_url: pipelinewise-tap-s3-csv
+      pip_url: git+https://github.com/jaceksan/pipelinewise-tap-s3-csv@aws_unsigned
     - name: tap-exchangeratehost
       variant: anelendata
       pip_url: git+https://github.com/anelendata/tap-exchangeratehost.git

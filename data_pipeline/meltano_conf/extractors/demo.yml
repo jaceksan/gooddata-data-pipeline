@@ -3,7 +3,8 @@ plugins:
   - name: tap-s3-csv-demo
     inherit_from: tap-s3-csv
     config:
-      bucket: jacek-blueprint-data-pipeline
+      bucket: gdc-tiger-test-data
+      aws_unsigned: true
       start_date: '2020-01-01'
       tables:
       - search_prefix: all_files/v1/demo

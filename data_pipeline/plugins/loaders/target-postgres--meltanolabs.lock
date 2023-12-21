@@ -6,7 +6,7 @@
   "label": "Postgres",
   "docs": "https://hub.meltano.com/loaders/target-postgres--meltanolabs",
   "repo": "https://github.com/MeltanoLabs/target-postgres",
-  "pip_url": "meltanolabs-target-postgres~=0.0.7",
+  "pip_url": "meltanolabs-target-postgres",
   "executable": "target-postgres",
   "description": "PostgreSQL database loader",
   "logo_url": "https://hub.meltano.com/assets/logos/loaders/postgres.png",
@@ -70,6 +70,27 @@
       "kind": "string",
       "label": "Host",
       "description": "Hostname for postgres instance. Note if sqlalchemy_url is set this will be ignored."
+    },
+    {
+      "name": "load_method",
+      "kind": "options",
+      "value": "append-only",
+      "label": "Load Method",
+      "description": "The method to use when loading data into the destination. `append-only` will always write all input records whether that records already exists or not. `upsert` will update existing records and insert new records. `overwrite` will delete all existing records and insert all input records.",
+      "options": [
+        {
+          "label": "Append Only",
+          "value": "append-only"
+        },
+        {
+          "label": "Upsert",
+          "value": "upsert"
+        },
+        {
+          "label": "Overwrite",
+          "value": "overwrite"
+        }
+      ]
     },
     {
       "name": "password",

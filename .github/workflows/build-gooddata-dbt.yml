@@ -5,10 +5,10 @@ on:
     branches:
       - main
     paths:
-      - "data_pipeline/requirements-gooddata.txt"
-      - "Dockerfile_dbt_gooddata"
-      - ".github/workflows/build-gooddata-dbt.yml"
-      - ".github/variables/image-gooddata.env"
+      - data_pipeline/requirements-gooddata.txt
+      - Dockerfile_dbt_gooddata
+      - .github/workflows/build-gooddata-dbt.yml
+      - .github/variables/image-gooddata.env
 
 jobs:
   build-and-push-custom-gooddata-dbt-image:

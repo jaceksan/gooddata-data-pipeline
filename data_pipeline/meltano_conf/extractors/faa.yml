@@ -2,11 +2,12 @@ plugins:
   extractors:
   - name: tap-s3-csv
     variant: transferwise
-    pip_url: pipelinewise-tap-s3-csv
+    pip_url: git+https://github.com/jaceksan/pipelinewise-tap-s3-csv@aws_unsigned
   - name: tap-s3-csv-faa
     inherit_from: tap-s3-csv
     config:
-      bucket: jacek-blueprint-data-pipeline
+      bucket: gdc-tiger-test-data
+      aws_unsigned: true
       start_date: '2020-01-01'
       tables:
       - search_prefix: all_files/v1/faa

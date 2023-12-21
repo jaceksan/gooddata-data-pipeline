@@ -72,7 +72,7 @@ provision_workspaces:
 register_data_sources:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
-deploy_ldm:
+deploy_ldm: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_models_cloud:
