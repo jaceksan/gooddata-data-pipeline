@@ -1,10 +1,11 @@
 version: 1
-default_environment: cicd_dev_local
-project_id: 04722b1d-768e-4e37-bc49-8b59d673bbdd
+default_environment: gdp_dev_local
+project_id: gdp-gdp-demo-1
 environments:
-- name: cicd_dev_local
-- name: cicd_dev
-- name: cicd_staging
+- name: gdp_dev_local
+- name: gdp_dev
+# TODO - add envs for dbt cloud
+- name: gdp_staging
   config:
     plugins:
       extractors:
@@ -14,7 +15,7 @@ environments:
       - name: tap-exchangeratehost
         config:
           start_date: '2010-01-01'
-- name: cicd_prod
+- name: gdp_prod
   config:
     plugins:
       extractors:
@@ -36,8 +37,7 @@ include_paths:
   - "./meltano_conf/loaders/loaders.yml"
 
 state_backend:
-  # TODO - migrate to dedicated user and bucket
-  uri: s3://${MELTANO_STATE_AWS_BUCKET}/cicd_demo_meltano_state
+  uri: s3://${MELTANO_STATE_AWS_BUCKET}/gdp_demo_meltano_state
   s3:
     aws_access_key_id: ${MELTANO_STATE_AWS_ACCESS_KEY_ID}
     aws_secret_access_key: ${MELTANO_STATE_AWS_SECRET_ACCESS_KEY}

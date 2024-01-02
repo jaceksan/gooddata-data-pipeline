@@ -1,0 +1,53 @@
+name: Extract, Load, Transform, and Analytics (Dev)
+# TODO - add analytics
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      # TODO - some jobs can be triggered even if no related paths were changed
+      # There is a workaround solution applied in:
+      #   https://github.com/gooddata/gdc-nas/blob/master/.github/workflows/pre-merge-pipeline.yml
+      # Shared
+      - .github/workflows/elta_dev.yml
+      - .github/variables/elta_shared.yml
+      # Extract load
+      - data_pipeline/meltano.yml
+      - data_pipeline/meltano_conf/**/*
+      - data_pipeline/requirements-meltano.txt
+      - .github/workflows/reusable_extract_load.yml
+      # Transform
+      - data_pipeline/macros/**/*
+      - data_pipeline/models/**/*
+      - data_pipeline/profile/**/*
+      - data_pipeline/dbt_project.yml
+      - data_pipeline/packages.yml
+      - data_pipeline/requirements-dbt.txt
+      - data_pipeline/requirements-gooddata.txt
+      - .github/workflows/reusable_transform.yml
+
+jobs:
+  extract-load-dev:
+    uses: ./.github/workflows/reusable_extract_load.yml
+    with:
+      ENV_FILE: ./.github/variables/elta_dev.env
+      # TODO - hardcoded in multiple places. They have to be passed as inputs because matrix cannot evaluate env vars
+      INPUT_SCHEMA_FAA: "faa_input_stage"
+      INPUT_SCHEMA_GITHUB: "github_input_stage"
+      INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
+      INPUT_SCHEMA_ECOMMERCE_DEMO: "ecommerce_demo_input_stage"
+      INPUT_SCHEMA_DATA_SCIENCE: "data_science_input_stage"
+    secrets: inherit
+  transform-dev:
+    needs: extract-load-dev
+    uses: ./.github/workflows/reusable_transform.yml
+    with:
+      ENV_FILE: ./.github/variables/elta_dev.env
+      # TODO - hardcoded in multiple places. They have to be passed as inputs because matrix cannot evaluate env vars
+      INPUT_SCHEMA_FAA: "faa_input_stage"
+      INPUT_SCHEMA_GITHUB: "github_input_stage"
+      INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
+      INPUT_SCHEMA_ECOMMERCE_DEMO: "ecommerce_demo_input_stage"
+      INPUT_SCHEMA_DATA_SCIENCE: "data_science_input_stage"
+    secrets: inherit

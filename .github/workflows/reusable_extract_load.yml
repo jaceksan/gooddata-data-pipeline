@@ -1,0 +1,73 @@
+on:
+  workflow_call:
+    inputs:
+      ENV_FILE:
+        required: true
+        type: string
+      INPUT_SCHEMA_FAA:
+        required: true
+        type: string
+      INPUT_SCHEMA_GITHUB:
+        required: true
+        type: string
+      INPUT_SCHEMA_EXCHANGERATEHOST:
+        required: true
+        type: string
+      INPUT_SCHEMA_ECOMMERCE_DEMO:
+        required: true
+        type: string
+      INPUT_SCHEMA_DATA_SCIENCE:
+        required: true
+        type: string
+
+jobs:
+  reusable_extract_load:
+    strategy:
+      matrix:
+        MELTANO_SOURCE: [tap-github-repo, tap-github-org, tap-s3-csv-faa, tap-s3-csv-ecommerce-demo, tap-s3-csv-data-science]
+        include:
+          - MELTANO_SOURCE: tap-github-repo
+            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_GITHUB }}"
+          - MELTANO_SOURCE: tap-github-org
+            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_GITHUB }}"
+          - MELTANO_SOURCE: tap-s3-csv-faa
+            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_FAA }}"
+          - MELTANO_SOURCE: tap-s3-csv-ecommerce-demo
+            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
+          - MELTANO_SOURCE: tap-s3-csv-data-science
+            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_DATA_SCIENCE }}"
+          # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+          # - MELTANO_SOURCE: tap-exchangeratehost
+          #  TARGET_SCHEMA: "${env.INPUT_SCHEMA_EXCHANGERATEHOST}"
+    env:
+      GIT_DEPTH: "0"
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/prod' && 'prod' || github.ref == 'refs/heads/master' && 'staging' || 'dev' }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Environment Variables
+        uses: ./.github/actions/setvars
+        with:
+          varFilePath: "./.github/variables/elta_shared.env ${{ inputs.ENV_FILE }}"
+
+      - name: Setup Environment
+        run: |
+          ln -s ${{ env.IMAGES_WORKDIR }}/.meltano .meltano
+
+      - name: Run Extract and Load
+        timeout-minutes: 15
+        env:
+          FR_ARG: ${{ env.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
+          TARGET_SCHEMA: "${{ matrix.TARGET_SCHEMA }}"
+          DB_PASS: "${{ secrets.DB_PASS }}"
+          MELTANO_STATE_AWS_ACCESS_KEY_ID: "${{ secrets.MELTANO_STATE_AWS_ACCESS_KEY_ID }}"
+          MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "${{ secrets.MELTANO_STATE_AWS_SECRET_ACCESS_KEY }}"
+          TAP_GITHUB_AUTH_TOKEN: "${{ secrets.TAP_GITHUB_AUTH_TOKEN }}"
+          # TODO - move it to deploy_analytics workflow
+          # GOODDATA_PROFILES_FILE: "${{ secrets.GOODDATA_PROFILES_FILE }}"
+        run: |
+          # TODO - move it to deploy_analytics workflow
+          # echo $GOODDATA_PROFILES_FILE | base64 --decode > ~/.gooddata/profiles.yaml
+          meltano --environment ${{ env.ELT_ENVIRONMENT }} run ${{ matrix.MELTANO_SOURCE }} ${{ env.MELTANO_TARGET }} ${{ env.FR_ARG }}

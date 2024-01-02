@@ -45,8 +45,6 @@
   extends:
     - .extract_load
   variables:
-    DB_USER: "${SNOWFLAKE_USER}"
-    DB_PASS: "${SNOWFLAKE_PASS}"
     DB_WAREHOUSE: "${SNOWFLAKE_WAREHOUSE}"
     DB_ACCOUNT: "${SNOWFLAKE_ACCOUNT}"
 
@@ -123,6 +121,8 @@ extract_load_staging:
   variables:
     ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
     DB_NAME: $STAGING_SNOWFLAKE_DBNAME
+    DB_USER: "${STAGING_SNOWFLAKE_USER}"
+    DB_PASS: "${STAGING_SNOWFLAKE_PASS}"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -138,6 +138,8 @@ extract_load_staging:
 #  variables:
 #    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
 #    DB_NAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
+#    DB_USER: "${STAGING_SNOWFLAKE_USER}"
+#    DB_PASS: "${STAGING_SNOWFLAKE_PASS}"
 #  rules:
 #    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
 #      changes: !reference [.extract_load_changes, changes]
@@ -166,6 +168,8 @@ extract_load_prod:
   variables:
     ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
     DB_NAME: $PROD_SNOWFLAKE_DBNAME
+    DB_USER: "${PROD_SNOWFLAKE_USER}"
+    DB_PASS: "${PROD_SNOWFLAKE_PASS}"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -181,6 +185,8 @@ extract_load_prod:
 #  variables:
 #    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
 #    DB_NAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
+#    DB_USER: "${PROD_SNOWFLAKE_USER}"
+#    DB_PASS: "${PROD_SNOWFLAKE_PASS}"
 #  rules:
 #    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
 #      changes: !reference [.extract_load_changes, changes]
