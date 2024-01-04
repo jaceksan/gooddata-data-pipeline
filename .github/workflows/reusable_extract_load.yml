@@ -1,7 +1,7 @@
 on:
   workflow_call:
     inputs:
-      ENV_FILE:
+      ENVIRONMENT:
         required: true
         type: string
       INPUT_SCHEMA_FAA:
@@ -19,13 +19,21 @@ on:
       INPUT_SCHEMA_DATA_SCIENCE:
         required: true
         type: string
+      FULL_REFRESH:
+        required: true
+        type: string
+      MELTANO_CUSTOM_IMAGE:
+        required: true
+        type: string
 
 jobs:
   reusable_extract_load:
+    environment: ${{ inputs.ENVIRONMENT }}
     strategy:
       matrix:
         MELTANO_SOURCE: [tap-github-repo, tap-github-org, tap-s3-csv-faa, tap-s3-csv-ecommerce-demo, tap-s3-csv-data-science]
         include:
+          # TODO: utry to use vars instead of inputs
           - MELTANO_SOURCE: tap-github-repo
             TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_GITHUB }}"
           - MELTANO_SOURCE: tap-github-org
@@ -42,32 +50,36 @@ jobs:
     env:
       GIT_DEPTH: "0"
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/prod' && 'prod' || github.ref == 'refs/heads/master' && 'staging' || 'dev' }}
+    container: ${{ inputs.MELTANO_CUSTOM_IMAGE }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Environment Variables
-        uses: ./.github/actions/setvars
-        with:
-          varFilePath: "./.github/variables/elta_shared.env ${{ inputs.ENV_FILE }}"
+#      - name: Set Environment Variables
+#        uses: ./.github/actions/setvars
+#        with:
+#          varFilePath: "./.github/variables/elta_shared.env ${{ inputs.ENV_FILE }}"
 
       - name: Setup Environment
         run: |
-          ln -s ${{ env.IMAGES_WORKDIR }}/.meltano .meltano
+          cd ${{ vars.SRC_DATA_PIPELINE }}
+          ln -s ${{ vars.IMAGES_WORKDIR }}/.meltano .meltano
 
       - name: Run Extract and Load
         timeout-minutes: 15
         env:
-          FR_ARG: ${{ env.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
+          FR_ARG: ${{ inputs.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
           TARGET_SCHEMA: "${{ matrix.TARGET_SCHEMA }}"
           DB_PASS: "${{ secrets.DB_PASS }}"
           MELTANO_STATE_AWS_ACCESS_KEY_ID: "${{ secrets.MELTANO_STATE_AWS_ACCESS_KEY_ID }}"
           MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "${{ secrets.MELTANO_STATE_AWS_SECRET_ACCESS_KEY }}"
+          MELTANO_STATE_AWS_BUCKET: "${{ vars.MELTANO_STATE_AWS_BUCKET }}"
           TAP_GITHUB_AUTH_TOKEN: "${{ secrets.TAP_GITHUB_AUTH_TOKEN }}"
-          # TODO - move it to deploy_analytics workflow
-          # GOODDATA_PROFILES_FILE: "${{ secrets.GOODDATA_PROFILES_FILE }}"
+          # TODO: no need to generalize WAREHOUSE/ACCOUNT, they are Snowflake specific
+          DB_WAREHOUSE: "${{ vars.SNOWFLAKE_WAREHOUSE }}"
+          DB_ACCOUNT: "${{ vars.SNOWFLAKE_ACCOUNT }}"
+          DB_NAME: "${{ vars.DB_NAME }}"
+          DB_USER: "${{ vars.DB_USER }}"
         run: |
-          # TODO - move it to deploy_analytics workflow
-          # echo $GOODDATA_PROFILES_FILE | base64 --decode > ~/.gooddata/profiles.yaml
-          meltano --environment ${{ env.ELT_ENVIRONMENT }} run ${{ matrix.MELTANO_SOURCE }} ${{ env.MELTANO_TARGET }} ${{ env.FR_ARG }}
+          cd ${{ vars.SRC_DATA_PIPELINE }}
+          meltano --log-level debug --environment ${{ vars.ELT_ENVIRONMENT }} run ${{ matrix.MELTANO_SOURCE }} ${{ vars.MELTANO_TARGET }} ${{ env.FR_ARG }}

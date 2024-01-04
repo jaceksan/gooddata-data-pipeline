@@ -22,10 +22,11 @@ on:
 
 jobs:
   reusable_transform:
+    environment: ${{ inputs.ENVIRONMENT }}
     env:
       GIT_DEPTH: "0"
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/prod' && 'prod' || github.ref == 'refs/heads/master' && 'staging' || 'dev' }}
+    container: ghcr.io/$GITHUB_REPOSITORY/${{ env.DBT_CUSTOM_IMAGE }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

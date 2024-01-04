@@ -12,42 +12,58 @@ on:
       # Shared
       - .github/workflows/elta_dev.yml
       - .github/variables/elta_shared.yml
+      # Build custom Meltano image
+      - data_pipeline/requirements-meltano.txt
+      - data_pipeline/meltano-plugins.yml
+      - data_pipeline/plugins/**/*.lock
+      - Dockerfile_meltano
       # Extract load
       - data_pipeline/meltano.yml
       - data_pipeline/meltano_conf/**/*
       - data_pipeline/requirements-meltano.txt
       - .github/workflows/reusable_extract_load.yml
       # Transform
-      - data_pipeline/macros/**/*
-      - data_pipeline/models/**/*
-      - data_pipeline/profile/**/*
-      - data_pipeline/dbt_project.yml
-      - data_pipeline/packages.yml
-      - data_pipeline/requirements-dbt.txt
-      - data_pipeline/requirements-gooddata.txt
-      - .github/workflows/reusable_transform.yml
+      #      - data_pipeline/macros/**/*
+      #      - data_pipeline/models/**/*
+      #      - data_pipeline/profile/**/*
+      #      - data_pipeline/dbt_project.yml
+      #      - data_pipeline/packages.yml
+      #      - data_pipeline/requirements-dbt.txt
+      #      - data_pipeline/requirements-gooddata.txt
+      #      - .github/workflows/reusable_transform.yml
 
 jobs:
+#  build-and-push-custom-meltano-image:
+#    uses: ./.github/workflows/reusable_build.yml
+#    with:
+#      TAGS: |
+#        ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}
+#      DOCKER_FILE: Dockerfile_meltano
+#      BUILD_ARGS: |
+#        MELTANO_VERSION=${{ vars.MELTANO_VERSION }}
+#        IMAGES_WORKDIR=${{ vars.IMAGES_WORKDIR }}
+#    secrets: inherit
   extract-load-dev:
+#    needs: build-and-push-custom-meltano-image
     uses: ./.github/workflows/reusable_extract_load.yml
     with:
-      ENV_FILE: ./.github/variables/elta_dev.env
-      # TODO - hardcoded in multiple places. They have to be passed as inputs because matrix cannot evaluate env vars
-      INPUT_SCHEMA_FAA: "faa_input_stage"
-      INPUT_SCHEMA_GITHUB: "github_input_stage"
-      INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
-      INPUT_SCHEMA_ECOMMERCE_DEMO: "ecommerce_demo_input_stage"
-      INPUT_SCHEMA_DATA_SCIENCE: "data_science_input_stage"
+      INPUT_SCHEMA_FAA: "${{ vars.INPUT_SCHEMA_FAA }}"
+      INPUT_SCHEMA_GITHUB: "${{ vars.INPUT_SCHEMA_GITHUB }}"
+      INPUT_SCHEMA_EXCHANGERATEHOST: "${{ vars.INPUT_SCHEMA_EXCHANGERATEHOST }}"
+      INPUT_SCHEMA_ECOMMERCE_DEMO: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
+      INPUT_SCHEMA_DATA_SCIENCE: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
+      ENVIRONMENT: "dev"
+      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
+      MELTANO_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}"
     secrets: inherit
-  transform-dev:
-    needs: extract-load-dev
-    uses: ./.github/workflows/reusable_transform.yml
-    with:
-      ENV_FILE: ./.github/variables/elta_dev.env
-      # TODO - hardcoded in multiple places. They have to be passed as inputs because matrix cannot evaluate env vars
-      INPUT_SCHEMA_FAA: "faa_input_stage"
-      INPUT_SCHEMA_GITHUB: "github_input_stage"
-      INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
-      INPUT_SCHEMA_ECOMMERCE_DEMO: "ecommerce_demo_input_stage"
-      INPUT_SCHEMA_DATA_SCIENCE: "data_science_input_stage"
-    secrets: inherit
+#  transform-dev:
+#    needs: extract-load-dev
+#    uses: ./.github/workflows/reusable_transform.yml
+#    with:
+#      INPUT_SCHEMA_FAA: "${{ vars.INPUT_SCHEMA_FAA }}"
+#      INPUT_SCHEMA_GITHUB: "${{ vars.INPUT_SCHEMA_GITHUB }}"
+#      INPUT_SCHEMA_EXCHANGERATEHOST: "${{ vars.INPUT_SCHEMA_EXCHANGERATEHOST }}"
+#      INPUT_SCHEMA_ECOMMERCE_DEMO: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
+#      INPUT_SCHEMA_DATA_SCIENCE: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
+#      ENVIRONMENT: "dev"
+#    secrets: inherit
