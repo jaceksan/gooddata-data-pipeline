@@ -15,7 +15,7 @@ x-dbt-postgres-vars: &dbt-postgres-vars
   DBT_DB_NAME: demo
 
 x-meltano-vars: &meltano-vars
-  MELTANO_ENV: cicd_dev_local
+  MELTANO_ENV: gdp_dev_local
   MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
   MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
   MELTANO_STATE_AWS_BUCKET: "meltano"
@@ -168,7 +168,7 @@ services:
       DBT_INPUT_SCHEMA_GITHUB: "github_input_stage"
       DBT_INPUT_SCHEMA_FAA: "faa_input_stage"
       DBT_OUTPUT_SCHEMA: cicd_output_stage
-      ELT_ENVIRONMENT: cicd_dev_local
+      ELT_ENVIRONMENT: gdp_dev_local
       DBT_TARGET: "postgres"
       DBT_INCREMENTAL_STRATEGY: "delete+insert"
       GOODDATA_HOST: "http://gooddata-cn-ce:3000"
