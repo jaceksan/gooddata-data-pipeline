@@ -1,0 +1,36 @@
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+      GOODDATA_CUSTOM_IMAGE:
+        required: true
+        type: string
+
+jobs:
+  reusable_analytics:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}
+    container: ${{ inputs.GOODDATA_CUSTOM_IMAGE }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        env:
+          GOODDATA_PROFILES_FILE: "${{ secrets.GOODDATA_PROFILES_FILE }}"
+        run: |
+          mkdir -p ~/.gooddata
+          echo ${{ env.GOODDATA_PROFILES_FILE }} | base64 --decode > ~/.gooddata/profiles.yaml
+
+      - name: Run Analytics
+        timeout-minutes: 15
+        env:
+          GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
+          GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
+          GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
+        run: |
+          cd ${{ vars.SRC_DATA_PIPELINE }}
+          gooddata-dbt deploy_analytics
+          gooddata-dbt test_insights

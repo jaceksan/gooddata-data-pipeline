@@ -1,0 +1,62 @@
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+      FULL_REFRESH:
+        required: true
+        type: string
+      MELTANO_CUSTOM_IMAGE:
+        required: true
+        type: string
+
+jobs:
+  reusable_extract_load:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}
+    container: ${{ inputs.MELTANO_CUSTOM_IMAGE }}
+    strategy:
+      matrix:
+        MELTANO_SOURCE: [tap-github-repo, tap-github-org, tap-s3-csv-faa, tap-s3-csv-ecommerce-demo, tap-s3-csv-data-science]
+        include:
+          - MELTANO_SOURCE: tap-github-repo
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_GITHUB }}"
+          - MELTANO_SOURCE: tap-github-org
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_GITHUB }}"
+          - MELTANO_SOURCE: tap-s3-csv-faa
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_FAA }}"
+          - MELTANO_SOURCE: tap-s3-csv-ecommerce-demo
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
+          - MELTANO_SOURCE: tap-s3-csv-data-science
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
+          # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+          # - MELTANO_SOURCE: tap-exchangeratehost
+          #  TARGET_SCHEMA: "${env.INPUT_SCHEMA_EXCHANGERATEHOST}"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          cd ${{ vars.SRC_DATA_PIPELINE }}
+          ln -s ${{ vars.IMAGES_WORKDIR }}/.meltano .meltano
+
+      - name: Run Extract and Load
+        timeout-minutes: 15
+        env:
+          FR_ARG: ${{ inputs.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
+          TARGET_SCHEMA: "${{ matrix.TARGET_SCHEMA }}"
+          DB_PASS: "${{ secrets.DB_PASS }}"
+          MELTANO_STATE_AWS_ACCESS_KEY_ID: "${{ secrets.MELTANO_STATE_AWS_ACCESS_KEY_ID }}"
+          MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "${{ secrets.MELTANO_STATE_AWS_SECRET_ACCESS_KEY }}"
+          MELTANO_STATE_AWS_BUCKET: "${{ vars.MELTANO_STATE_AWS_BUCKET }}"
+          TAP_GITHUB_AUTH_TOKEN: "${{ secrets.TAP_GITHUB_AUTH_TOKEN }}"
+          # TODO: no need to generalize WAREHOUSE/ACCOUNT, they are Snowflake specific
+          DB_WAREHOUSE: "${{ vars.SNOWFLAKE_WAREHOUSE }}"
+          DB_ACCOUNT: "${{ vars.SNOWFLAKE_ACCOUNT }}"
+          DB_NAME: "${{ vars.DB_NAME }}"
+          DB_USER: "${{ vars.DB_USER }}"
+        run: |
+          cd ${{ vars.SRC_DATA_PIPELINE }}
+          meltano --environment ${{ vars.ELT_ENVIRONMENT }} run ${{ matrix.MELTANO_SOURCE }} ${{ vars.MELTANO_TARGET }} ${{ env.FR_ARG }}

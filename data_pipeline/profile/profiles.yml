@@ -1,6 +1,6 @@
 # TODO - use dbt vault for credentials shared by dbt and GoodData once GoodData supports vault for data source credentials
 # https://dbtvault.readthedocs.io/en/latest/
-cicd_dev_local:
+gdp_dev_local:
   target: postgres
   outputs:
     # Define default values for all env vars to do not have to set them even when they are not needed
@@ -37,7 +37,7 @@ cicd_dev_local:
 # Copy & paste below targets, reasons:
 # 1. the env variables must be shared with Meltano, so we cannot hardcode them here
 # 2. we cannot create single target, because its name (dict key) is used as ID of GoodData data source
-cicd_dev:
+gdp_dev:
   target: snowflake
   outputs:
     snowflake:
@@ -51,7 +51,7 @@ cicd_dev:
       warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
-cicd_staging:
+gdp_staging:
   target: snowflake
   outputs:
     snowflake:
@@ -76,7 +76,7 @@ cicd_staging:
       database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
-cicd_prod:
+gdp_prod:
   target: snowflake
   outputs:
     snowflake:

@@ -8,6 +8,7 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # Remove comments by sed, GitHub Actions do not support comments in env files
     - run: |
-        cat ${{ inputs.varFilePath }} >> $GITHUB_ENV
+        cat ${{ inputs.varFilePath }} | sed -r 's/^#.*$//' | sed -r '/^$/d' >> $GITHUB_ENV
       shell: bash
