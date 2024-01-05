@@ -182,7 +182,7 @@ services:
   analytics:
     build:
       context: .
-      dockerfile: Dockerfile_dbt_gooddata
+      dockerfile: Dockerfile_gooddata
     entrypoint:
       - /bin/bash
       - -c

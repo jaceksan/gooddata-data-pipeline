@@ -36,7 +36,7 @@ include:
   - ".gitlab-ci/gitlab-ci-build-base.yml"
   - ".gitlab-ci/gitlab-ci-build-meltano.yml"
   - ".gitlab-ci/gitlab-ci-build-dbt.yml"
-  - ".gitlab-ci/gitlab-ci-build-dbt-gooddata.yml"
+  - ".gitlab-ci/gitlab-ci-build-gooddata.yml"
   - ".gitlab-ci/gitlab-ci-extract-load.yml"
   - ".gitlab-ci/gitlab-ci-transform.yml"
   - ".gitlab-ci/gitlab-ci-analytics.yml"
