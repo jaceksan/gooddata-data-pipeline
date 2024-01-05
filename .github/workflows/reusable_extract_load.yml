@@ -4,21 +4,6 @@ on:
       ENVIRONMENT:
         required: true
         type: string
-      INPUT_SCHEMA_FAA:
-        required: true
-        type: string
-      INPUT_SCHEMA_GITHUB:
-        required: true
-        type: string
-      INPUT_SCHEMA_EXCHANGERATEHOST:
-        required: true
-        type: string
-      INPUT_SCHEMA_ECOMMERCE_DEMO:
-        required: true
-        type: string
-      INPUT_SCHEMA_DATA_SCIENCE:
-        required: true
-        type: string
       FULL_REFRESH:
         required: true
         type: string
@@ -28,37 +13,29 @@ on:
 
 jobs:
   reusable_extract_load:
+    runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
+    container: ${{ inputs.MELTANO_CUSTOM_IMAGE }}
     strategy:
       matrix:
         MELTANO_SOURCE: [tap-github-repo, tap-github-org, tap-s3-csv-faa, tap-s3-csv-ecommerce-demo, tap-s3-csv-data-science]
         include:
-          # TODO: utry to use vars instead of inputs
           - MELTANO_SOURCE: tap-github-repo
-            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_GITHUB }}"
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_GITHUB }}"
           - MELTANO_SOURCE: tap-github-org
-            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_GITHUB }}"
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_GITHUB }}"
           - MELTANO_SOURCE: tap-s3-csv-faa
-            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_FAA }}"
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_FAA }}"
           - MELTANO_SOURCE: tap-s3-csv-ecommerce-demo
-            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
           - MELTANO_SOURCE: tap-s3-csv-data-science
-            TARGET_SCHEMA: "${{ inputs.INPUT_SCHEMA_DATA_SCIENCE }}"
+            TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
           # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
           # - MELTANO_SOURCE: tap-exchangeratehost
           #  TARGET_SCHEMA: "${env.INPUT_SCHEMA_EXCHANGERATEHOST}"
-    env:
-      GIT_DEPTH: "0"
-    runs-on: ubuntu-latest
-    container: ${{ inputs.MELTANO_CUSTOM_IMAGE }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-#      - name: Set Environment Variables
-#        uses: ./.github/actions/setvars
-#        with:
-#          varFilePath: "./.github/variables/elta_shared.env ${{ inputs.ENV_FILE }}"
 
       - name: Setup Environment
         run: |
@@ -82,4 +59,4 @@ jobs:
           DB_USER: "${{ vars.DB_USER }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
-          meltano --log-level debug --environment ${{ vars.ELT_ENVIRONMENT }} run ${{ matrix.MELTANO_SOURCE }} ${{ vars.MELTANO_TARGET }} ${{ env.FR_ARG }}
+          meltano --environment ${{ vars.ELT_ENVIRONMENT }} run ${{ matrix.MELTANO_SOURCE }} ${{ vars.MELTANO_TARGET }} ${{ env.FR_ARG }}
