@@ -38,7 +38,7 @@ environment_setups:
 data_products:
   - id: cicd_demo
     name: CICD demo
-    environment_setup_id: default
+    environment_setup_id: simple
     model_ids:
       - github
   - id: faa
