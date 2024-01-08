@@ -1,9 +1,6 @@
 name: Extract, Load, Transform, and Analytics (Staging/Production)
 
 on:
-  # TODO - schedules
-  #  schedule:
-  #    - cron: "0 4 * * *"
   push:
     branches:
       - main

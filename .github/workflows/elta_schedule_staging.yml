@@ -1,0 +1,15 @@
+name: Extract, Load, Transform, and Analytics (Staging Schedule)
+
+on:
+  schedule:
+    - cron: "50 15 * * *"
+
+jobs:
+  elta:
+    name: ELTA (staging)
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "staging"
+      BRANCH_NAME: "main"
+      RUN_ANALYTICS: "false"
+    secrets: inherit
