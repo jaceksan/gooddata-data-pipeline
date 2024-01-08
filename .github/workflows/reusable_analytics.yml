@@ -7,6 +7,8 @@ on:
       GOODDATA_CUSTOM_IMAGE:
         required: true
         type: string
+      BRANCH_NAME:
+        type: string
 
 jobs:
   reusable_analytics:
@@ -16,6 +18,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.BRANCH_NAME }}
 
       - name: Setup Environment
         env:

@@ -1,0 +1,36 @@
+name: Reusable Builds
+
+on:
+  workflow_call:
+
+jobs:
+  build-and-push-custom-meltano-image:
+    uses: ./.github/workflows/reusable_build.yml
+    with:
+      TAGS: |
+        ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}
+      DOCKER_FILE: Dockerfile_meltano
+      BUILD_ARGS: |
+        MELTANO_VERSION=${{ vars.MELTANO_VERSION }}
+        IMAGES_WORKDIR=${{ vars.IMAGES_WORKDIR }}
+    secrets: inherit
+  build-and-push-custom-dbt-image:
+    uses: ./.github/workflows/reusable_build.yml
+    with:
+      TAGS: |
+        ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}
+      DOCKER_FILE: Dockerfile_dbt
+      BUILD_ARGS: |
+        DBT_VERSION=${{ vars.DBT_VERSION }}
+        IMAGES_WORKDIR=${{ vars.IMAGES_WORKDIR }}
+    secrets: inherit
+  build-and-push-custom-gooddata-image:
+    uses: ./.github/workflows/reusable_build.yml
+    with:
+      TAGS: |
+        ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}
+      DOCKER_FILE: Dockerfile_gooddata
+      BUILD_ARGS: |
+        PYTHON_IMAGE=${{ vars.PYTHON_IMAGE }}
+        IMAGES_WORKDIR=${{ vars.IMAGES_WORKDIR }}
+    secrets: inherit
