@@ -1,6 +1,9 @@
 name: Extract, Load, Transform, and Analytics (Staging/Production)
 
 on:
+  # TODO - schedules
+  #  schedule:
+  #    - cron: "0 4 * * *"
   push:
     branches:
       - main
@@ -31,38 +34,9 @@ on:
       - .github/workflows/reusable_analytics.yml
 
 jobs:
-  ####################################
-  # Extract load
-  extract-load:
-    # TODO - overriding job names this way does not work, extract-load/reusable_extract_load is used instead
-    #  Note: job names in the left panel are correct, just job names in the lineage graph are wrong
-    name: Extract Load (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
-    uses: ./.github/workflows/reusable_extract_load.yml
+  elta:
+    name: ELTA (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
+    uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
-      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
-      MELTANO_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}"
-    secrets: inherit
-  ####################################
-  # Transform
-  transform:
-    name: Transform (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
-    needs:
-      - extract-load
-    uses: ./.github/workflows/reusable_transform.yml
-    with:
-      ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
-      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
-      DBT_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}"
-    secrets: inherit
-  ####################################
-  # Transform
-  analytics:
-    name: Analytics (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
-    needs:
-      - transform
-    uses: ./.github/workflows/reusable_analytics.yml
-    with:
-      ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
-      GOODDATA_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}"
     secrets: inherit
