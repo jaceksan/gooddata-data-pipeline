@@ -1,4 +1,4 @@
-name: Extract, Load, Transform, and Analytics (Dev)
+name: Extract, Load, Transform, and Analytics (Staging)
 
 on:
   push:
