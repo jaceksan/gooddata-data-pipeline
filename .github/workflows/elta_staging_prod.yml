@@ -4,12 +4,13 @@ on:
   push:
     branches:
       - main
+      - prod
     paths:
       # TODO - some jobs can be triggered even if no related paths were changed
       # There is a workaround solution applied in:
       #   https://github.com/gooddata/gdc-nas/blob/master/.github/workflows/pre-merge-pipeline.yml
       # Shared
-      - .github/workflows/elta_staging.yml
+      - .github/workflows/elta_staging_prod.yml
       # Extract load
       - data_pipeline/meltano.yml
       - data_pipeline/meltano_conf/**/*
