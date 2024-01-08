@@ -1,0 +1,42 @@
+name: Build and Push Custom GoodData dbt Image
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - data_pipeline/requirements-gooddata.txt
+      - Dockerfile_dbt_gooddata
+      - .github/workflows/build-gooddata-dbt.yml
+      - .github/variables/image-gooddata.env
+
+jobs:
+  build-and-push-custom-gooddata-dbt-image:
+    env:
+      GIT_DEPTH: "0"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Set Environment Variables
+        uses: ./.github/actions/setvars
+        with:
+          varFilePath: ./.github/variables/image-gooddata.env
+
+      - name: Build GoodData dbt Image
+        timeout-minutes: 10
+        run: |
+          docker build --build-arg PYTHON_IMAGE=${{ env.PYTHON_IMAGE }} --build-arg IMAGES_WORKDIR=${{ env.IMAGES_WORKDIR }} -t ghcr.io/$GITHUB_REPOSITORY/${{ env.DBT_GOODDATA_IMAGE }} -f Dockerfile_dbt_gooddata .
+
+      - name: Push GoodData dbt Image
+        timeout-minutes: 10
+        run: |
+          docker push ghcr.io/$GITHUB_REPOSITORY/${{ env.DBT_GOODDATA_IMAGE }}

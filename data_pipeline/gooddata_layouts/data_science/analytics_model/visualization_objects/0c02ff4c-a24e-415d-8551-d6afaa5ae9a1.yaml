@@ -1,0 +1,24 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: avg
+                filters: []
+                item:
+                  identifier:
+                    id: annualincome
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: f9fc661a38ca466984de406549ad4ba0
+            title: Avg Annual income
+      localIdentifier: measures
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: ''
+id: 0c02ff4c-a24e-415d-8551-d6afaa5ae9a1
+title: Avg Annual income

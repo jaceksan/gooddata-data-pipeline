@@ -1,0 +1,49 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: of_orders
+                    type: metric
+            localIdentifier: 8c7d1a1164ab4bdb870e49e26bbfd72d
+            title: '# of Orders'
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: order_status
+                type: label
+            localIdentifier: 8a4e80f8663d44d7b09e6b5dfb60c86f
+      localIdentifier: view
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '2'
+          id: Processed
+        - color:
+            type: guid
+            value: '3'
+          id: Canceled
+        - color:
+            type: guid
+            value: '6'
+          id: In Cart
+      dataLabels:
+        visible: auto
+      legend:
+        position: right
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: Order breakdown
+id: b4497110-8d8a-4ab3-9cd5-471b60d8e561
+title: Order Breakdown

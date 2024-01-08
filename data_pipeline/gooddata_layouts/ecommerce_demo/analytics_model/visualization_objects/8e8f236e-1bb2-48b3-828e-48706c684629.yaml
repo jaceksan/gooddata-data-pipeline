@@ -1,0 +1,43 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_orders
+                    type: metric
+            localIdentifier: 74113481eb294ad5af3b9088e8917d9d
+            title: Net Orders
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Customer
+            displayForm:
+              identifier:
+                id: customer_name
+                type: label
+            localIdentifier: 0b6cc41384054a5496ab4d40962a62fb
+      localIdentifier: view
+  filters:
+    - negativeAttributeFilter:
+        displayForm:
+          identifier:
+            id: customer_id
+            type: label
+        notIn:
+          uris: []
+    - rankingFilter:
+        measure:
+          localIdentifier: 74113481eb294ad5af3b9088e8917d9d
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+description: Top 10 Buyers
+id: 8e8f236e-1bb2-48b3-828e-48706c684629
+title: Top 10 Buyers

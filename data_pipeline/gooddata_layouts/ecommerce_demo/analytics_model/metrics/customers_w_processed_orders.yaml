@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT {metric/active_customers} WHERE {label/order_status} = "Processed"
+description: Number of customers that transacted
+id: customers_w_processed_orders
+title: Customers w/ Processed Orders

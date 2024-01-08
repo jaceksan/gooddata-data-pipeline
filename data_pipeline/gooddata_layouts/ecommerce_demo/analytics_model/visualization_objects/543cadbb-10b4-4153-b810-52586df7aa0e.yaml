@@ -1,0 +1,62 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: of_orders
+                    type: metric
+            localIdentifier: 74047aaaa1904be3a0f08d6cf46606b2
+            title: '# of Orders'
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: order_amount
+                    type: metric
+            localIdentifier: 0442893010af41168bebbd2b18dd1b30
+            title: Order Amount
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_country
+                type: label
+            localIdentifier: b6e6b9cd507a433997f3da4dd929cb2e
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_state
+                type: label
+            localIdentifier: 619a8767a0624c9da9411cbdc73cd239
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_city
+                type: label
+            localIdentifier: a3521bb3c9584e9491cd70c0f99e4886
+        - attribute:
+            alias: Customer
+            displayForm:
+              identifier:
+                id: customer_name
+                type: label
+            localIdentifier: f8f9f6b624cc4abeac89a060667159c2
+      localIdentifier: attribute
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: b6e6b9cd507a433997f3da4dd929cb2e
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Customer Detail
+id: 543cadbb-10b4-4153-b810-52586df7aa0e
+title: Customer Detail

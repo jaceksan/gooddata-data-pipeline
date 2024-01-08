@@ -1,0 +1,6 @@
+content:
+  format: '#,##0.0'
+  maql: SELECT AVG({fact/rating})
+description: ''
+id: product_rating
+title: Product Rating

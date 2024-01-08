@@ -1,0 +1,498 @@
+content:
+  filterContextRef:
+    identifier:
+      id: b30e53f4-1a67-41cc-b705-31e3b619acf0
+      type: filterContext
+  layout:
+    sections:
+      - items:
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 0c6dbb7da7c84aabb1b2ae868ca93d08
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: adf2b786-32bd-4864-b251-7e2cfe9a006f
+                  type: visualizationObject
+              properties: {}
+              title: Total Sales
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 759c22e84d114c55aa40707b16d79d1d
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 700d732d-67e1-4658-a6e0-c6b8edbb6d49
+                  type: visualizationObject
+              properties: {}
+              title: Net Sales
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: e406fb1d6f5c472687b65b28eac4a4cb
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: b666412b-3c13-4e80-9b3f-7787558aa3ce
+                  type: visualizationObject
+              properties: {}
+              title: Gross Profit
+              type: insight
+          - size:
+              xl:
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: eb334cab51954b9f83184eead11308bc
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 3ac5e106-b43e-4c87-9ef0-9315e02282bd
+                  type: visualizationObject
+              properties: {}
+              title: Orders Paid
+              type: insight
+          - size:
+              xl:
+                gridHeight: 12
+                gridWidth: 12
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Bullet charts are used to display a single quantitative
+                measure along with a target or comparison value.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 693d01e8d946428cbf0e013cec96ce59
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 25bdccd8-ef39-40a5-a224-6031d0ab470c
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 8a07a527-d091-43b0-8e73-9259d8a4995c
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Sales Goal
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          title: Sales breakdown
+        items:
+          - size:
+              xl:
+                gridHeight: 18
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Donut charts show data as proportional segments of a disc
+                with a hollowed out center.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: ec39060b8362444e9fe4bacb7c6e4c2b
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: 50fe87b2aed5402c83560cec490b184d
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: 85c76738129d4167bd339128e9f83100
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: dc5f7ccc7b274b2cb02d2923b791b366
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 41a8d4c3-1ab6-4bab-b531-5893912e9b93
+                  type: visualizationObject
+              properties: {}
+              title: Total sales breakdown
+              type: insight
+          - size:
+              xl:
+                gridWidth: 8
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Column charts are used to compare and display categorical
+                data or quantitative values across different categories in the form
+                of vertical bars.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 442792c638df4c0283af94d95a1d3612
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 60dd3592-1322-4260-aaad-bd51cdcb1343
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Net sales over time
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          title: Orders breakdown
+        items:
+          - size:
+              xl:
+                gridHeight: 23
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Donut charts show data as proportional segments of a disc
+                with a hollowed out center.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 8c7d1a1164ab4bdb870e49e26bbfd72d
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: b4497110-8d8a-4ab3-9cd5-471b60d8e561
+                  type: visualizationObject
+              properties: {}
+              title: Order breakdown
+              type: insight
+          - size:
+              xl:
+                gridHeight: 23
+                gridWidth: 8
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Column charts are used to compare and display categorical
+                data or quantitative values across different categories in the form
+                of vertical bars.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: ce1c1dc6197f41f9b79ac375cdd23fab
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: a2b50fff-c7eb-444c-95e6-67037d2544d6
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Orders over time
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          description: Are customers more active in certain times of day or months
+            of a year?
+          title: Seasonality
+        items:
+          - size:
+              xl:
+                gridHeight: 27
+                gridWidth: 5
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Column charts are used to compare and display categorical
+                data or quantitative values across different categories in the form
+                of vertical bars.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 329aa3cc4dab4b24acbd667bdc622e54
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: f1027458-1123-4f4d-af20-0e21b1d5e009
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Activity by Hour
+              type: insight
+          - size:
+              xl:
+                gridHeight: 27
+                gridWidth: 7
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              description: 'Heatmaps display data as a matrix where individual values,
+                or the magnitude or density of data are represented using color gradients.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 026ea78496f142d2b5037a6f066156e7
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: c1d67cd4-94ad-40aa-91a5-cdf4143f778a
+                      type: analyticalDashboard
+                  transition: in-place
+                  type: drillToDashboard
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 09a05f3f-d0cd-423a-8844-eba4ba7ca0c4
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Net Sales by Product Category - Seasonality
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: bf439696-d6c6-4d41-a102-dd98e2f3da35
+title: 2. Sales

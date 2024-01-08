@@ -5,47 +5,6 @@ stages:
   - analytics
 
 ##########################
-# Global variables
-variables:
-  SRC_DATA_PIPELINE: "data_pipeline"
-  DBT_PROFILE_DIR: "profile"
-  DBT_PROFILE: "default"
-  GOODDATA_HOST: "https://demo-cicd.cloud.gooddata.com"
-  GOODDATA_UPPER_CASE: "--gooddata-upper-case"
-  SNOWFLAKE_ACCOUNT: "gooddata"
-  SNOWFLAKE_USER: "cicd"
-  SNOWFLAKE_WAREHOUSE: "DEMO_WH"
-  INPUT_SCHEMA_FAA: "faa_input_stage"
-  INPUT_SCHEMA_GITHUB: "github_input_stage"
-  INPUT_SCHEMA_EXCHANGERATEHOST: "exchangeratehost_input_stage"
-  OUTPUT_SCHEMA: "cicd_output_stage"
-  IMAGES_WORKDIR: "/project"
-  MELTANO_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-meltano"
-  MELTANO_VERSION: "v2.16.0-python3.10"
-  MELTANO_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION"
-  MELTANO_STATE_AWS_BUCKET: "gdc-quiver"
-  DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
-  DBT_VERSION: "1.4.1"
-  DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION"
-
-.envs:
-  # Meltano, dbt and GoodData environments have 1:1 relationship in this demo
-  # But, you can design you pipeline in any alternative way, e.g. share 1 data source by multiple GoodData workspaces
-  dev:
-    ELT_ENVIRONMENT: "cicd_dev"
-    SNOWFLAKE_DBNAME: "CICD_DEV"
-    GOODDATA_ENVIRONMENT_ID: "development"
-  staging:
-    ELT_ENVIRONMENT: "cicd_staging"
-    SNOWFLAKE_DBNAME: "CICD_STAGING"
-    GOODDATA_ENVIRONMENT_ID: "staging"
-  prod:
-    ELT_ENVIRONMENT: "cicd_prod"
-    SNOWFLAKE_DBNAME: "CICD_PROD"
-    GOODDATA_ENVIRONMENT_ID: "production"
-
-
-##########################
 # Job templates
 ##########################
 .base:
@@ -61,12 +20,23 @@ variables:
     - if: '$FULL_REFRESH == "true"'
       when: manual
 
+# Global variables
+variables:
+  SRC_DATA_PIPELINE: "data_pipeline"
+  IMAGES_WORKDIR: "/project"
+
 # Separate files for each use case
 # Prevent pipeline to be running if we change one gitlab-ci.yaml file containing all use cases
 include:
+  - ".gitlab-ci/env_vars/image-meltano.yml"
+  - ".gitlab-ci/env_vars/image-dbt.yml"
+  - ".gitlab-ci/env_vars/image-gooddata.yml"
+  # TODO - elta.yaml contains variables for all jobs (ELT, analytics). Split it, so its change does not trigger all jobs
+  - ".gitlab-ci/env_vars/elta.yml"
   - ".gitlab-ci/gitlab-ci-build-base.yml"
   - ".gitlab-ci/gitlab-ci-build-meltano.yml"
   - ".gitlab-ci/gitlab-ci-build-dbt.yml"
+  - ".gitlab-ci/gitlab-ci-build-gooddata.yml"
   - ".gitlab-ci/gitlab-ci-extract-load.yml"
   - ".gitlab-ci/gitlab-ci-transform.yml"
   - ".gitlab-ci/gitlab-ci-analytics.yml"

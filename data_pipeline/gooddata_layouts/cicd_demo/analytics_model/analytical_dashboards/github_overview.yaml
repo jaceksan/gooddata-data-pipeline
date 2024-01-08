@@ -5,6 +5,74 @@ content:
       type: filterContext
   layout:
     sections:
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 10
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 7b120cea-315d-404e-9aca-46e747b09b25
+                  type: visualizationObject
+              properties: {}
+              title: PR summary
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: b49132db-1609-4939-9383-9180809a4aa1
+                  type: visualizationObject
+              properties: {}
+              title: Days to solve summary
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 3ddbabb1-3993-40cb-982c-af877f1bebdf
+                  type: visualizationObject
+              title: Workflow run duration summary
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 4d5632e6-81a8-4705-905c-1eb0d51aeab8
+                  type: visualizationObject
+              properties: {}
+              title: Workflow executions summary
+              type: insight
+        type: IDashboardLayoutSection
       - items:
           - size:
               xl:
@@ -82,7 +150,7 @@ content:
       - items:
           - size:
               xl:
-                gridWidth: 4
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -101,7 +169,7 @@ content:
               type: insight
           - size:
               xl:
-                gridWidth: 4
+                gridWidth: 6
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -117,25 +185,6 @@ content:
                   type: visualizationObject
               properties: {}
               title: Created commits / Month
-              type: insight
-          - size:
-              xl:
-                gridHeight: 22
-                gridWidth: 4
-            type: IDashboardLayoutItem
-            widget:
-              dateDataSet:
-                identifier:
-                  id: created_at
-                  type: dataset
-              description: ''
-              drills: []
-              ignoreDashboardFilters: []
-              insight:
-                identifier:
-                  id: commits_vs_btc_rate
-                  type: visualizationObject
-              title: Commits vs. BTC rate
               type: insight
           - size:
               xl:

@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: returns
+    meta:
+      gooddata:
+        model_id: ecommerce_demo
+    columns:
+      - name: return_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: order__order_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('orders')
+              pk_column_name: order_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: orders
+      - name: product__product_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('product')
+              pk_column_name: product_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: product
+      - name: customer__customer_id
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('customer')
+              pk_column_name: customer_id
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: customer
+      - name: return_unit_cost
+      - name: return_unit_quantity
+      - name: return_unit_paid_amount
+      - name: date
+      - name: return_date
+#      - name: wdf__client_id

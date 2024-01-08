@@ -6,8 +6,7 @@
     {'columns': ['created_at'], 'unique': false}
   ],
   materialized='incremental',
-  unique_key=['pull_request_number', 'repo_id'],
-  incremental_strategy='delete+insert'
+  unique_key='id'
 ) }}
 
 -- Helper step, materialize extracted JSON fields first and then JOIN it with other tables
@@ -15,6 +14,7 @@
 
 with using_clause as (
   select
+    id,
     number as pull_request_number,
     html_url as pull_request_url,
     title as pull_request_title,
@@ -24,7 +24,7 @@ with using_clause as (
     created_at,
     merged_at,
     closed_at,
-    CAST(json_extract_path_text(to_json("{{ get_db_entity_name('user') }}"), 'id') as INT) as user_id
+    {{ extract_json_value('user', 'id', 'user_id', 'INT') }}
   from {{ var("input_schema_github") }}.pull_requests
   {% if is_incremental() %}
     where created_at > ( select max(created_at) from {{ this }} )
@@ -35,7 +35,7 @@ updates as (
   select *
   from using_clause
   {% if is_incremental() %}
-    where (pull_request_number, repo_id) in ( select pull_request_number, repo_id from {{ this }} )
+    where id in ( select id from {{ this }} )
   {% else %}
     -- No updates when doing full load
     where 1 = 0
@@ -46,7 +46,7 @@ inserts as (
   select *
   from using_clause
   {% if is_incremental() %}
-    where (pull_request_number, repo_id) not in ( select pull_request_number, repo_id from {{ this }} )
+    where id not in ( select id from {{ this }} )
   {% endif %}
 ),
 

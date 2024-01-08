@@ -7,8 +7,7 @@
     {'columns': ['created_at'], 'unique': false}
   ],
   materialized='incremental',
-  unique_key=['pull_request_number', 'repo_id'],
-  incremental_strategy='delete+insert'
+  unique_key='id'
 ) }}
 
 with using_clause as (
@@ -23,7 +22,7 @@ updates as (
   select *
   from using_clause
   {% if is_incremental() %}
-    where (pull_request_number, repo_id) in ( select pull_request_number, repo_id from {{ this }} )
+    where id in ( select id from {{ this }} )
   {% else %}
     -- No updates when doing full load
     where 1 = 0
@@ -34,7 +33,7 @@ inserts as (
   select *
   from using_clause
   {% if is_incremental() %}
-    where (pull_request_number, repo_id) not in ( select pull_request_number, repo_id from {{ this }} )
+    where id not in ( select id from {{ this }} )
   {% endif %}
 ),
 
@@ -48,6 +47,10 @@ repos as (
 
 final as (
     select
+      -- Have to SELECT "id" here for incremental processing
+      -- It is not defined in schema.yml, it is not exposed to GoodData
+      id,
+      -- replace useless internal PR ID with something meaningful
       repos.repo_name || '/' || p.pull_request_number as pull_request_id,
       p.pull_request_number,
       p.pull_request_url,
@@ -60,7 +63,7 @@ final as (
       p.user_id,
       (
         -- Either merged_at, or closed_at(closed without merged) or now(not yet merged or closed)
-        extract(epoch from coalesce(p.merged_at, p.closed_at, {{ dbt_date.now() }}))
+        extract(epoch from coalesce(p.merged_at, p.closed_at, {{ current_timestamp() }}))
           - extract(epoch from p.created_at)
       ) / 3600 / 24 as days_to_solve
     from (

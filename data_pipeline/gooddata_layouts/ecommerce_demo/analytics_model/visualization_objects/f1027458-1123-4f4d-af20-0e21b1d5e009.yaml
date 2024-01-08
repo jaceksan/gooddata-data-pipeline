@@ -1,0 +1,32 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: of_orders
+                    type: metric
+            localIdentifier: 329aa3cc4dab4b24acbd667bdc622e54
+            title: '# of Orders'
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Hour of Day
+            displayForm:
+              identifier:
+                id: date.hourOfDay
+                type: label
+            localIdentifier: 212835194328458fae55274e2b7606d4
+      localIdentifier: view
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:column
+description: Activity by Hour
+id: f1027458-1123-4f4d-af20-0e21b1d5e009
+title: Activity by Hour

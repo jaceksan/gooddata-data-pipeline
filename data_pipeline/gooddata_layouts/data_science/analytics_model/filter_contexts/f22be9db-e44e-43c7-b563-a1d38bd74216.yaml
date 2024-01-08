@@ -1,0 +1,11 @@
+content:
+  filters:
+    - dateFilter:
+        from: 0
+        granularity: GDC.time.month
+        to: 0
+        type: relative
+  version: '2'
+description: ''
+id: f22be9db-e44e-43c7-b563-a1d38bd74216
+title: filterContext

@@ -1,0 +1,43 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: 693d01e8d946428cbf0e013cec96ce59
+            title: Net Sales
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales_goal
+                    type: metric
+            localIdentifier: b7a1b6885d6e479dab84b0ad5af1d3ec
+            title: Net Sales Goal
+      localIdentifier: secondary_measures
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '4'
+          id: b7a1b6885d6e479dab84b0ad5af1d3ec
+      legend:
+        enabled: true
+        position: top
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bullet
+description: ''
+id: 8a07a527-d091-43b0-8e73-9259d8a4995c
+title: Sales Goal

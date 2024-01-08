@@ -7,9 +7,33 @@ environment_setups:
       - id: staging
         name: Staging
         elt_environment: cicd_staging
+      - id: staging_vertica
+        name: Staging(Vertica)
+        elt_environment: cicd_staging_vertica
       - id: production
         name: Production
         elt_environment: cicd_prod
+      - id: cloud_development
+        name: dbt Cloud Development
+        elt_environment: cicd_cloud_dev
+      - id: cloud_staging
+        name: dbt Cloud Staging
+        elt_environment: cicd_cloud_staging
+      - id: cloud_production
+        name: dbt Cloud Production
+        elt_environment: cicd_cloud_prod
+  - id: simple
+    environments:
+      - id: development
+        name: Development
+        elt_environment: cicd_dev
+      - id: staging
+        name: Staging
+        elt_environment: cicd_staging
+      - id: production
+        name: Production
+        elt_environment: cicd_prod
+
 
 data_products:
   - id: cicd_demo
@@ -22,3 +46,55 @@ data_products:
     environment_setup_id: default
     model_ids:
       - faa
+    localization:
+      from_language: en
+      to:
+        - locale: fr-FR
+          language: fr
+        - locale: zh-Hans
+          language: "chinese (simplified)"
+  - id: ecommerce_demo
+    name: Ecommerce demo
+    environment_setup_id: simple
+    model_ids:
+      - ecommerce_demo
+    # TODO - this insight cannot be calculated by Python SDK:
+    #  The limit for maximum size of the dimension without metrics was exceeded(100_000).
+    #  Fix it either in Python SDK or in the insight
+    skip_tests:
+      - "0c7ac154-1766-4d54-ba2b-b6f6913a59dd"
+      - "1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6"
+  - id: data_science
+    name: Data science
+    environment_setup_id: simple
+    model_ids:
+      - data_science
+
+organizations:
+  - gooddata_profile: local
+    data_product_ids:
+      - cicd_demo
+      - faa
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: demo_cicd
+    data_product_ids:
+      - cicd_demo
+      - faa
+  - gooddata_profile: closed_beta
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: closed_beta_se
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: labs_se
+    data_product_ids:
+      - cicd_demo
+      - ecommerce_demo
+      - data_science
+global_properties:
+  test_insights_parallelism: 4

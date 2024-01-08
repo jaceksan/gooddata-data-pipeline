@@ -1,0 +1,31 @@
+content:
+  filters:
+    - dateFilter:
+        from: '-1'
+        granularity: GDC.time.month
+        to: '-1'
+        type: relative
+    - attributeFilter:
+        attributeElements:
+          uris: []
+        displayForm:
+          identifier:
+            id: customer_country
+            type: label
+        filterElementsBy: []
+        localIdentifier: 23d599c44d83404d8b20747759d3a72c
+        negativeSelection: true
+    - attributeFilter:
+        attributeElements:
+          uris: []
+        displayForm:
+          identifier:
+            id: customer_age
+            type: label
+        filterElementsBy: []
+        localIdentifier: 8b158c16213545f6972a20048d5be2ff
+        negativeSelection: true
+  version: '2'
+description: ''
+id: 6aacab95-c3da-4e87-8f8c-ca3b6ebfb8b2
+title: filterContext

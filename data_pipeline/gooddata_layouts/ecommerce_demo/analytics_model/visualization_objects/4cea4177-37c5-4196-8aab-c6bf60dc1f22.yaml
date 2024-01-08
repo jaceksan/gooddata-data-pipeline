@@ -1,0 +1,44 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: return_customers
+                    type: metric
+            localIdentifier: 1df9a9af3c734b5da9f719b62d1b06c3
+            title: Return Customers
+      localIdentifier: measures
+    - items:
+        - measure:
+            alias: Previous period
+            definition:
+              previousPeriodMeasure:
+                dateDataSets:
+                  - dataSet:
+                      identifier:
+                        id: date
+                        type: dataset
+                    periodsAgo: 1
+                measureIdentifier: 1df9a9af3c734b5da9f719b62d1b06c3
+            localIdentifier: 1df9a9af3c734b5da9f719b62d1b06c3_previous_period
+      localIdentifier: secondary_measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: 0
+        granularity: GDC.time.month
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: Return Customers
+id: 4cea4177-37c5-4196-8aab-c6bf60dc1f22
+title: Return Customers

@@ -1,0 +1,38 @@
+content:
+  buckets:
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: geo__customer_city__city_pushpin_latitude
+                type: label
+            localIdentifier: b7a83e3cb635430ea4dbd9a14b171180
+      localIdentifier: location
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_customers
+                    type: metric
+            localIdentifier: b4d9e83718df41ad96c6c1ee888c4325
+            title: Total Customers
+      localIdentifier: size
+  filters: []
+  properties:
+    controls:
+      latitude: geo__customer_city__city_pushpin_latitude
+      longitude: geo__customer_city__city_pushpin_longitude
+      points:
+        groupNearbyPoints: true
+      tooltipText: customer_city
+      viewport:
+        area: continent_na
+  sorts: []
+  version: '2'
+  visualizationUrl: local:pushpin
+description: ''
+id: 6bb6723e-3bcb-4833-96f7-844cf81b56ef
+title: Customer Cities

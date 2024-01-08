@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT {metric/of_orders} WHERE {label/order_status} = "Processed"
+description: Total number of orders that have been processed
+id: net_orders
+title: Net Orders

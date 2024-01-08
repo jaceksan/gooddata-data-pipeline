@@ -1,0 +1,40 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: initial_price
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 10412b4b0d034a97899f330aa8bd684a
+            title: Sum of Initial price
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: neighborhood
+                type: label
+            localIdentifier: b5a3053808484342b773d6404901412f
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: number_of_rooms
+                type: label
+            localIdentifier: c5e65ec43f6e46f1a1966a9494ae75ba
+      localIdentifier: segment
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:treemap
+description: ''
+id: 37f9c303-3241-431e-8bb8-b5f33584cdcc
+title: Initial price per number of room and neighborhood

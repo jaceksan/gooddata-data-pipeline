@@ -1,0 +1,35 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: ma
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 34ba4f15e0164ff2a2f3f54d3957c467
+            title: Sum of Ma
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: saledate.year
+                type: label
+            localIdentifier: f4b388e0b569404985748abc390dacd3
+      localIdentifier: attribute
+  filters: []
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: f4b388e0b569404985748abc390dacd3
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: ''
+id: bd6bc60f-2e4a-4c5d-85e1-bc2a7bb2fcf5
+title: DHO test

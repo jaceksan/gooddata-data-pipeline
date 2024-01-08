@@ -1,0 +1,570 @@
+content:
+  filterContextRef:
+    identifier:
+      id: a4283267-0531-4b78-8faf-77faa5288811
+      type: filterContext
+  layout:
+    sections:
+      - header:
+          description: The section provides a summary of sales, orders, customers,
+            and profit margin. It includes charts for net sales, orders paid, active
+            customers, and gross profit margin.
+        items:
+          - size:
+              xl:
+                gridHeight: 12
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 759c22e84d114c55aa40707b16d79d1d
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 700d732d-67e1-4658-a6e0-c6b8edbb6d49
+                  type: visualizationObject
+              properties: {}
+              title: Net Sales
+              type: insight
+          - size:
+              xl:
+                gridHeight: 12
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: eb334cab51954b9f83184eead11308bc
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 3ac5e106-b43e-4c87-9ef0-9315e02282bd
+                  type: visualizationObject
+              properties: {}
+              title: Orders
+              type: insight
+          - size:
+              xl:
+                gridHeight: 12
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 872407ef1c864d6cb82ece8c58edb20b
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: dc8575f5-27e5-44be-a2dc-23d54b7777e7
+                  type: visualizationObject
+              properties: {}
+              title: Active Customers
+              type: insight
+          - size:
+              xl:
+                gridHeight: 12
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Headlines can display a single number or compare two numbers.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 93158c3fdd71488ca07277d10f29b202
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 5297352c-7fd3-4e7e-90ad-026e470f55bd
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 03b89e08-ee06-4e1f-88d8-bbd805c691cc
+                  type: visualizationObject
+              properties: {}
+              title: Gross Profit Margin
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          description: How is your company performing?
+          title: Sales overview
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 8
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: The Revenue Trend insight is like a cool combo chart that
+                shows how much money we're making and how many orders we're getting
+                over time. It's a dope way to see if our sales are going up or down
+                and if there's any connection with the number of orders.
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 199da0fab746448798f8fcc58448bc8b
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: ddc4be59-1ea8-4b9d-86a2-6f389ae217b9
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: 455307b5590a49b28fafa89999446b15
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: ddc4be59-1ea8-4b9d-86a2-6f389ae217b9
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 3e16ebe3-7753-40c6-abc1-f549e7bf4d6c
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Revenue Trend (click & drag to zoom in)
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Waterfall charts are useful for showing the total effect
+                of positive and negative changes on a final value.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 62ebb5d9f12f49e99989edaa1bfaf4e4
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: 3eaf69ac7b2b49f98df951eeae22d343
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: 7a0e188fbb1543498b839a9598936fce
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 469e8936-ca67-4987-8c70-0e35be24be4d
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 68ddf963-edce-4f88-a8d5-09bf3825b124
+                  type: visualizationObject
+              properties: {}
+              title: Net Sales Breakdown
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          description: Where are your orders coming from?
+          title: Customers overview
+        items:
+          - size:
+              xl:
+                gridHeight: 32
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: true
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Geo charts show data points as bubbles using the coordinates
+                from the location attribute.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 2b7ab1a2bf774b8e9a3bcf777bd6fad7
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 543cadbb-10b4-4153-b810-52586df7aa0e
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 71d6d37b-77d6-4225-af37-d24760200874
+                  type: visualizationObject
+              properties: {}
+              title: Map
+              type: insight
+          - size:
+              xl:
+                gridHeight: 32
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: true
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Treemaps display data hierarchically as nested rectangles.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: c9c1a6a146a244f695ad1b52733b283f
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 370ec88c-2235-4e65-bb7c-5318280069a1
+                      type: analyticalDashboard
+                  transition: in-place
+                  type: drillToDashboard
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 2f12ace7-e626-47f1-953d-5ae957ca108e
+                  type: visualizationObject
+              properties:
+                controls:
+                  zoomInsight: true
+              title: Customers by Country and State
+              type: insight
+        type: IDashboardLayoutSection
+      - header:
+          description: What are the most popular products?
+          title: Products overview
+        items:
+          - size:
+              xl:
+                gridHeight: 20
+                gridWidth: 8
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Bar charts are horizontal visual representations that
+                are commonly used to illustrate trends, comparisons, and distributions.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 100691d163aa4d53be0fc7e1a048190b
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: c1d67cd4-94ad-40aa-91a5-cdf4143f778a
+                      type: analyticalDashboard
+                  transition: in-place
+                  type: drillToDashboard
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: e32644ad-1921-4b89-a7d2-79f31826e5cf
+                  type: visualizationObject
+              properties: {}
+              title: Net Sales by Product Category
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Sankey diagrams show the flows of values from one category
+                to another.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    attribute:
+                      localIdentifier: f9153e2686434163861385ec841b9132
+                    type: drillFromAttribute
+                  target:
+                    identifier:
+                      id: c1d67cd4-94ad-40aa-91a5-cdf4143f778a
+                      type: analyticalDashboard
+                  transition: in-place
+                  type: drillToDashboard
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 06f23fe2-edcf-4b6c-9163-8fa26c8ef45f
+                  type: visualizationObject
+              properties: {}
+              title: Product Category Rating
+              type: insight
+          - size:
+              xl:
+                gridHeight: 20
+                gridWidth: 4
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: customer_created_date
+                  type: dataset
+              description: 'Funnel charts are great at showing the progressive stages
+                of a process or workflow.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 191126ea62f344d582828f2e380f07a0
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: 87856c760d7b41e08fd5f2652107d8e9
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+                - origin:
+                    measure:
+                      localIdentifier: dfff54c52b2545b3b3aa96e8c3bd06ef
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: 1b9ce816-a4f9-4301-bdfd-d36c6a7a71b6
+                      type: visualizationObject
+                  transition: pop-up
+                  type: drillToInsight
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: bc9120de-8d50-4c92-be62-6bbbda34208d
+                  type: visualizationObject
+              properties: {}
+              title: Order status
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 8
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                description:
+                  includeMetrics: false
+                  source: widget
+                  visible: true
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: date
+                  type: dataset
+              description: 'Scatter plots show data as points using Cartesian coordinates.
+
+
+                You can change the description in the visualization configuration.'
+              drills:
+                - origin:
+                    measure:
+                      localIdentifier: 62f0f79a45b04db8bb2933cd5e877917
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: c1d67cd4-94ad-40aa-91a5-cdf4143f778a
+                      type: analyticalDashboard
+                  transition: in-place
+                  type: drillToDashboard
+                - origin:
+                    measure:
+                      localIdentifier: 59dfdd9221b9422d8b0b20863eaa2d7c
+                    type: drillFromMeasure
+                  target:
+                    identifier:
+                      id: c1d67cd4-94ad-40aa-91a5-cdf4143f778a
+                      type: analyticalDashboard
+                  transition: in-place
+                  type: drillToDashboard
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 2da13424-2a6b-4ed4-916c-9bbc002fdd1b
+                  type: visualizationObject
+              properties: {}
+              title: Net Sales vs Orders
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: 092929af-375a-4e9c-964f-2add8cdbd259
+title: 1. Overview

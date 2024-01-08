@@ -1,0 +1,46 @@
+plugins:
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
+  - name: target-postgres
+    variant: meltanolabs
+    config:
+      host: ${DB_HOST}
+      port: ${DB_PORT}
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      database: ${DB_NAME}
+      default_target_schema: ${TARGET_SCHEMA}
+      add_metadata_columns: true
+      dialect+driver: postgresql+psycopg2
+  - name: target-snowflake
+    variant: transferwise
+    pip_url: pipelinewise-target-snowflake
+    config:
+      account: ${DB_ACCOUNT}
+      dbname: ${DB_NAME}
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      warehouse: ${DB_WAREHOUSE}
+      default_target_schema: ${TARGET_SCHEMA}
+      file_format: PUBLIC.MELTANO_FORMAT
+  - name: target-vertica
+    variant: full360
+    pip_url: git+https://github.com/full360/pipelinewise-target-vertica.git
+    config:
+      host: ${DB_HOST}
+      port: ${DB_PORT}
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      dbname: ${DB_NAME}
+      default_target_schema: ${TARGET_SCHEMA}
+      add_metadata_columns: true
+  - name: target-duckdb
+    variant: jwills
+    pip_url: git+https://github.com/jwills/target-duckdb.git@refs/pull/26/head
+    config:
+      path: md:${DB_NAME}
+      token: ${MOTHERDUCK_TOKEN}
+      default_target_schema: ${TARGET_SCHEMA}
+      add_metadata_columns: true

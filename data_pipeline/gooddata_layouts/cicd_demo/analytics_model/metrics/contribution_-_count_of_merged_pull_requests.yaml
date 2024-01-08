@@ -5,5 +5,5 @@ content:
 description: How requested dimension contributes to overall count of merged pull requests
 id: contribution_-_count_of_merged_pull_requests
 tags:
-  - Metrics GD
+  - Pull requests
 title: Contribution - count of merged pull requests

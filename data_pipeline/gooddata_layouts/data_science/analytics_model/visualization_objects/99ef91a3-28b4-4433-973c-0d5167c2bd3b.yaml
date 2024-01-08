@@ -1,0 +1,34 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Price
+            definition:
+              measureDefinition:
+                aggregation: sum
+                computeRatio: false
+                filters: []
+                item:
+                  identifier:
+                    id: ma
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 2380293b35bc4ced9b168e457ed937e0
+            title: Sum of Ma
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: saledate.quarter
+                type: label
+            localIdentifier: 44c491444f6e4fa9adebd4bf0b9e5522
+      localIdentifier: trend
+  filters: []
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:line
+description: ''
+id: 99ef91a3-28b4-4433-973c-0d5167c2bd3b
+title: 'MA by quarter #forecast'

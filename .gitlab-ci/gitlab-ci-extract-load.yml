@@ -3,6 +3,8 @@
 .extract_load:
   extends:
     - .base
+    - .vars-image-meltano
+    - .vars-elta
   # We build a custom image on top of the official Meltano image in this pipeline
   # It contains Meltano itself, and all extractors/loaders
   image:
@@ -10,7 +12,6 @@
     entrypoint: [""]
   stage: extract_load
   variables:
-    MELTANO_TARGET: "target-snowflake"
     FULL_REFRESH: "${FULL_REFRESH}"
   parallel:
     matrix:
@@ -18,10 +19,16 @@
         TARGET_SCHEMA: "${INPUT_SCHEMA_GITHUB}"
       - MELTANO_SOURCE: tap-github-org
         TARGET_SCHEMA: "${INPUT_SCHEMA_GITHUB}"
-      - MELTANO_SOURCE: tap-s3-csv
+      - MELTANO_SOURCE: tap-s3-csv-faa
         TARGET_SCHEMA: "${INPUT_SCHEMA_FAA}"
-      - MELTANO_SOURCE: tap-exchangeratehost
-        TARGET_SCHEMA: "${INPUT_SCHEMA_EXCHANGERATEHOST}"
+      - MELTANO_SOURCE: tap-s3-csv-ecommerce-demo
+        TARGET_SCHEMA: "${INPUT_SCHEMA_ECOMMERCE_DEMO}"
+      - MELTANO_SOURCE: tap-s3-csv-data-science
+        TARGET_SCHEMA: "${INPUT_SCHEMA_DATA_SCIENCE}"
+# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+#      - do not forget to move corresponding dbt models from _todo folder back to main folder
+#      - MELTANO_SOURCE: tap-exchangeratehost
+#        TARGET_SCHEMA: "${INPUT_SCHEMA_EXCHANGERATEHOST}"
 # TODO - .meltano is linked to include plugins, artifacts cannot be gathered through links
 #  artifacts:
 #    paths:
@@ -34,11 +41,32 @@
   script:
     - meltano --environment $ELT_ENVIRONMENT run $MELTANO_SOURCE $MELTANO_TARGET $FR_ARG
 
+.extract_load_snowflake:
+  extends:
+    - .extract_load
+  variables:
+    DB_WAREHOUSE: "${SNOWFLAKE_WAREHOUSE}"
+    DB_ACCOUNT: "${SNOWFLAKE_ACCOUNT}"
+
+.extract_load_vertica:
+  extends:
+    - .extract_load
+  variables:
+    DB_HOST: "${VERTICA_HOST}"
+    DB_PORT: "${VERTICA_PORT}"
+    DB_USER: "${VERTICA_USER}"
+    DB_PASS: "${VERTICA_PASS}"
+    DB_NAME: "${VERTICA_DBNAME}"
+    MELTANO_TARGET: "target-vertica"
+
 .extract_load_changes:
   changes:
     - $SRC_DATA_PIPELINE/meltano.yml
+    - $SRC_DATA_PIPELINE/meltano_conf/**/*
     - $SRC_DATA_PIPELINE/requirements-meltano.txt
     - .gitlab-ci/gitlab-ci-extract-load.yml
+    - .gitlab-ci/env_vars/image-meltano.yml
+    - .gitlab-ci/env_vars/elta.yml
     - .gitlab-ci.yml
 
 ##########################3
@@ -47,23 +75,54 @@
 # pre-merge
 extract_load_dev:
   extends:
-    - .extract_load
+    - .extract_load_snowflake
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, dev, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, dev, SNOWFLAKE_DBNAME]
+    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+    DB_NAME: $DEV_SNOWFLAKE_DBNAME
+  # We cannot run full-blown script before merge, because someone could create an MR and echo sensitive credentials
+  # Override it to trigger only 1 job and save Gitlab minutes
+  parallel:
+    matrix:
+      - MELTANO_SOURCE: tap-github-repo
+        TARGET_SCHEMA: "${INPUT_SCHEMA_GITHUB}"
+  before_script:
+    - cd $SRC_DATA_PIPELINE
+    # Meltano plugins are installed during build of docker image to workdir
+    - ln -s ${IMAGES_WORKDIR}/.meltano .meltano
+  script:
+    # We cannot run full-blown script before merge, because someone could create an MR and echo sensitive credentials
+    - meltano --environment $ELT_ENVIRONMENT compile
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
       changes: !reference [.extract_load_changes, changes]
     - !reference [.base_rules, rules]
     - !reference [.elt_rules, rules]
 
+# pre-merge Cloud
+# TODO - before enabling this job, fix the the following bug:
+#  meltano.yml contains only one environment for both non-cloud and cloud environments
+#  envs then share the same state.lock file, so only one loads an increment, the other does nothing
+#extract_load_cloud_dev:
+#  extends:
+#    - .extract_load_snowflake
+#  variables:
+#    ELT_ENVIRONMENT: $DEV_ELT_ENVIRONMENT
+#    DB_NAME: $CLOUD_DEV_SNOWFLAKE_DBNAME
+#  rules:
+#      - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+#        changes: !reference [.extract_load_changes, changes]
+#      - !reference [.base_rules, rules]
+#      - !reference [.elt_rules, rules]
+
 # post-merge
 extract_load_staging:
   extends:
-    - .extract_load
+    - .extract_load_snowflake
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, staging, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, staging, SNOWFLAKE_DBNAME]
+    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+    DB_NAME: $STAGING_SNOWFLAKE_DBNAME
+    DB_USER: "${STAGING_SNOWFLAKE_USER}"
+    DB_PASS: "${STAGING_SNOWFLAKE_PASS}"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -72,13 +131,45 @@ extract_load_staging:
     - !reference [.base_rules, rules]
     - !reference [.elt_rules, rules]
 
+# post-merge Cloud
+#extract_load_cloud_staging:
+#  extends:
+#    - .extract_load_snowflake
+#  variables:
+#    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+#    DB_NAME: $CLOUD_STAGING_SNOWFLAKE_DBNAME
+#    DB_USER: "${STAGING_SNOWFLAKE_USER}"
+#    DB_PASS: "${STAGING_SNOWFLAKE_PASS}"
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.extract_load_changes, changes]
+#    # The pipeline scheduler. Run ELT jobs regularly to load new data.
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
+
+#extract_load_staging_vertica:
+#  extends:
+#    - .extract_load_vertica
+#  variables:
+#    ELT_ENVIRONMENT: $STAGING_ELT_ENVIRONMENT
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.extract_load_changes, changes]
+#    # The pipeline scheduler. Run ELT jobs regularly to load new data.
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_STAGING == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]
+
 # merge to prod branch
 extract_load_prod:
   extends:
-    - .extract_load
+    - .extract_load_snowflake
   variables:
-    ELT_ENVIRONMENT: !reference [.envs, prod, ELT_ENVIRONMENT]
-    SNOWFLAKE_DBNAME: !reference [.envs, prod, SNOWFLAKE_DBNAME]
+    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+    DB_NAME: $PROD_SNOWFLAKE_DBNAME
+    DB_USER: "${PROD_SNOWFLAKE_USER}"
+    DB_PASS: "${PROD_SNOWFLAKE_PASS}"
   rules:
     - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
       changes: !reference [.extract_load_changes, changes]
@@ -86,3 +177,20 @@ extract_load_prod:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
     - !reference [.base_rules, rules]
     - !reference [.elt_rules, rules]
+
+# merge to prod branch (cloud)
+#extract_load_cloud_prod:
+#  extends:
+#    - .extract_load_snowflake
+#  variables:
+#    ELT_ENVIRONMENT: $PROD_ELT_ENVIRONMENT
+#    DB_NAME: $CLOUD_PROD_SNOWFLAKE_DBNAME
+#    DB_USER: "${PROD_SNOWFLAKE_USER}"
+#    DB_PASS: "${PROD_SNOWFLAKE_PASS}"
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "prod" && $CI_PIPELINE_SOURCE == "push"'
+#      changes: !reference [.extract_load_changes, changes]
+#    # The pipeline scheduler. Run ELT jobs regularly to load new data.
+#    - if: '$CI_PIPELINE_SOURCE == "schedule" && $RUN_ETL_PROD == "true"'
+#    - !reference [.base_rules, rules]
+#    - !reference [.elt_rules, rules]

@@ -1,0 +1,45 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            alias: Sales per customer
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: arpu
+                    type: metric
+            localIdentifier: 5d0ce2b953c9471199c8293770cc19db
+            title: ARPU
+      localIdentifier: measures
+    - items:
+        - measure:
+            alias: Previous period
+            definition:
+              previousPeriodMeasure:
+                dateDataSets:
+                  - dataSet:
+                      identifier:
+                        id: date
+                        type: dataset
+                    periodsAgo: 1
+                measureIdentifier: 5d0ce2b953c9471199c8293770cc19db
+            localIdentifier: 5d0ce2b953c9471199c8293770cc19db_previous_period
+      localIdentifier: secondary_measures
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: 0
+        granularity: GDC.time.month
+        to: 0
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: Sales per Customer
+id: 0c7ac154-1766-4d54-ba2b-b6f6913a59dd
+title: Sales per Customer

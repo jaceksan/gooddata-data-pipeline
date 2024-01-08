@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: home_rentals
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: location
+      - name: neighborhood
+      # TODO - allow to specify multiple LDM types in single column definition
+      - name: number_of_rooms
+      - name: number_of_rooms_fact
+        description: Number of rooms
+        meta:
+          gooddata:
+            # Both columns can have the same ID, because they are of different LDM types
+            id: number_of_rooms
+            ldm_type: fact
+      - name: number_of_bathrooms
+        meta:
+          gooddata:
+            ldm_type: fact
+      - name: square_feets
+        description: Square footage
+      - name: days_on_market
+      - name: initial_price
+      - name: rental_price

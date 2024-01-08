@@ -1,0 +1,37 @@
+on:
+  workflow_call:
+    inputs:
+      TAGS:
+        required: true
+        type: string
+      DOCKER_FILE:
+        required: true
+        type: string
+      BUILD_ARGS:
+        type: string
+
+jobs:
+  reusable_build:
+    env:
+      GIT_DEPTH: "0"
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/prod' && 'prod' || github.ref == 'refs/heads/master' && 'staging' || 'dev' }}
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ inputs.TAGS }}
+          file: ${{ inputs.DOCKER_FILE }}
+          build-args: ${{ inputs.BUILD_ARGS }}

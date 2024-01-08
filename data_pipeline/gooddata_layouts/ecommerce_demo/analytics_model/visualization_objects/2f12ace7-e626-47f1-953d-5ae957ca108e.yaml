@@ -1,0 +1,41 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: active_customers
+                    type: metric
+            localIdentifier: c9c1a6a146a244f695ad1b52733b283f
+            title: Active Customers
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_country
+                type: label
+            localIdentifier: 71434542913b4ad9b9bebc04b91dc155
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: customer_state
+                type: label
+            localIdentifier: ad12d182065d4fd3aba4aff5bfff1ee4
+      localIdentifier: segment
+  filters: []
+  properties:
+    controls:
+      legend:
+        enabled: false
+  sorts: []
+  version: '2'
+  visualizationUrl: local:treemap
+description: Customers by Country and State
+id: 2f12ace7-e626-47f1-953d-5ae957ca108e
+title: Customers by Country and State

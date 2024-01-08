@@ -31,21 +31,26 @@ clean-targets:         # directories to be removed by `dbt clean`
 # These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 models:
+  +materialized: table
   cicd_demo:
-    _todo:
-      +enabled: false
     github:
-      +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
-      +materialized: table
+      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+      +incremental_strategy: "{{ env_var('DBT_INCREMENTAL_STRATEGY', 'merge') }}"
     faa:
-      +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
-      +materialized: table
-    exchange_rate_host:
-      +schema: "{{ env_var('OUTPUT_SCHEMA', 'cicd_output_stage') }}"
-      +materialized: table
+      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+    ecommerce_demo:
+      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+    data_science:
+      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+#    exchange_rate_host:
+#      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
 
 vars:
   "dbt_date:time_zone": "UTC"
-  input_schema_github: "{{ env_var('INPUT_SCHEMA_GITHUB', 'github_input_stage') }}"
-  input_schema_faa: "{{ env_var('INPUT_SCHEMA_FAA', 'faa_input_stage') }}"
-  input_schema_exchangeratehost: "{{ env_var('INPUT_SCHEMA_EXCHANGERATEHOST', 'exchangeratehost_input_stage') }}"
+  input_schema_github: "{{ env_var('DBT_INPUT_SCHEMA_GITHUB', 'default_input_stage') }}"
+  input_schema_faa: "{{ env_var('DBT_INPUT_SCHEMA_FAA', 'default_input_stage') }}"
+  input_schema_ecommerce_demo: "{{ env_var('DBT_INPUT_SCHEMA_ECOMMERCE_DEMO', 'default_input_stage') }}"
+  input_schema_data_science: "{{ env_var('DBT_INPUT_SCHEMA_DATA_SCIENCE', 'default_input_stage') }}"
+  # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
+#  input_schema_exchangeratehost: "{{ env_var('DBT_INPUT_SCHEMA_EXCHANGERATEHOST', 'default_input_stage') }}"

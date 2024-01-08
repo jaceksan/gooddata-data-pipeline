@@ -1,0 +1,6 @@
+content:
+  format: '#,##0'
+  maql: SELECT SUM({metric/total_customers}) WHERE {metric/of_orders} = 1
+description: ''
+id: of_orders_1
+title: '# of Single Orders'

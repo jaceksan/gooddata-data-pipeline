@@ -6,8 +6,7 @@
     {'columns': ['repo_id'], 'unique': false}
   ],
   materialized='incremental',
-  unique_key='commit_id',
-  incremental_strategy='delete+insert'
+  unique_key='commit_id'
 ) }}
 
 -- Helper step, materialize extracted JSON fields first and then JOIN it with other tables
@@ -17,9 +16,12 @@ with using_clause as (
   select
     sha as commit_id,
     html_url as commit_url,
-    CAST(json_extract_path_text(to_json(commit), 'comment_count') as INT) as comment_count,
+    {{ extract_json_value('commit', 'comment_count', 'comment_count', 'INT') }},
     commit_timestamp as created_at,
-    CAST(json_extract_path_text(to_json(author), 'id') as INT) as user_id,
+    {{ extract_json_value('author', 'id', 'user_id', 'INT') }},
+    {{ extract_json_value('author', 'login', 'login', 'VARCHAR') }},
+    {{ extract_json_value('author', 'avatar_url', 'user_avatar_url', 'VARCHAR') }},
+    {{ extract_json_value('author', 'html_url', 'user_url', 'VARCHAR') }},
     CAST(repo_id as INT) as repo_id
   from {{ var("input_schema_github") }}.commits
   {% if is_incremental() %}

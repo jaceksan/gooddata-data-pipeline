@@ -1,0 +1,6 @@
+content:
+  format: $#,##0.00
+  maql: SELECT SUM({fact/return_unit_paid_amount}*{fact/return_unit_quantity})
+description: The sum of all returned orders
+id: total_returns
+title: Total Returns

@@ -1,2 +1,4 @@
-dbt-postgres==1.4.1
-dbt-snowflake==1.4.0
+dbt-postgres==1.5.0
+dbt-snowflake==1.5.0
+dbt-vertica==1.5.0
+dbt-duckdb==1.5.0

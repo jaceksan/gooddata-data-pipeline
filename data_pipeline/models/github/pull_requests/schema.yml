@@ -15,6 +15,8 @@ models:
         meta:
           gooddata:
             ldm_type: primary_key
+            sort_column: "pull_request_title"
+            sort_direction: "DESC"
       - name: pull_request_number
         data_type: "INT"
         description: "Pull request number"
@@ -23,6 +25,7 @@ models:
             ldm_type: label
             label_type: TEXT
             attribute_column: pull_request_id
+            default_view: true
       - name: user_id
         data_type: "INT"
         tests:
@@ -63,25 +66,21 @@ models:
             ldm_type: attribute
       - name: pull_request_draft
         data_type: "BOOLEAN"
-        description: "Pull request draft"
         meta:
           gooddata:
             ldm_type: attribute
       - name: created_at
         data_type: "TIMESTAMP"
-        description: "Created at"
         meta:
           gooddata:
             ldm_type: date
       - name: merged_at
         data_type: "TIMESTAMP"
-        description: "Merged at"
         meta:
           gooddata:
             ldm_type: date
       - name: closed_at
         data_type: "TIMESTAMP"
-        description: "Closed at"
         meta:
           gooddata:
             ldm_type: date
@@ -92,103 +91,104 @@ models:
           gooddata:
             ldm_type: fact
 
-metrics:
-  - name: count_pull_requests
-    label: Count of pull requests
-    description: Count of pull requests
-    model: ref('pull_requests')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0"
-
-    calculation_method: count_distinct
-    expression: pull_request_id
-
-    timestamp: created_at
-    time_grains: [day, week, month, quarter, year]
-
-  - name: count_merged_pull_requests
-    label: Count of merged pull requests
-    description: Count of merged pull requests. "Merged at" must not be empty
-    model: ref('pull_requests')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0"
-
-    calculation_method: count_distinct
-    expression: pull_request_id
-
-    timestamp: created_at
-    time_grains: [day, week, month, quarter, year]
-
-    # TODO - is it valid if executed by dbt? Cannot find it in dbt DOC.
-    filters:
-      - field: merged_at
-        operator: "is not"
-        value: "NULL"
-
-  - name: count_nodraft_pull_requests
-    label: Count of non draft pull requests
-    description: Count of pull requests where draft is False
-    model: ref('pull_requests')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0"
-
-    calculation_method: count_distinct
-    expression: pull_request_id
-
-    timestamp: created_at
-    time_grains: [day, week, month, quarter, year]
-
-    # TODO - is it valid if executed by dbt? Cannot find it in dbt DOC.
-    filters:
-      - field: pull_request_draft
-        operator: "<>"
-        value: '"true"'
-
-  - name: sum_days_to_solve
-    label: Sum days to solve
-    description: Sum of days it took to solve pull requests
-    model: ref('pull_requests')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0.00"
-
-    calculation_method: sum
-    expression: days_to_solve
-
-    timestamp: created_at
-    time_grains: [day, week, month, quarter, year]
-
-  - name: avg_days_to_solve
-    label: Average days to solve
-    description: Average days it took to solve pull requests
-    model: ref('pull_requests')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0.00"
-
-    calculation_method: average
-    expression: days_to_solve
-
-    timestamp: created_at
-    time_grains: [day, week, month, quarter, year]
-
-    dimensions:
-      - pull_request_draft
+# TODO - remove it. dbt metrics are going to be deprecated by dbt, we deprecated it in dbt-gooddata too
+# metrics:
+#   - name: count_pull_requests
+#     label: Count of pull requests
+#     description: Count of pull requests
+#     model: ref('pull_requests')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0"
+#
+#     calculation_method: count_distinct
+#     expression: pull_request_id
+#
+#     timestamp: created_at
+#     time_grains: [day, week, month, quarter, year]
+#
+#   - name: count_merged_pull_requests
+#     label: Count of merged pull requests
+#     description: Count of merged pull requests. "Merged at" must not be empty
+#     model: ref('pull_requests')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0"
+#
+#     calculation_method: count_distinct
+#     expression: pull_request_id
+#
+#     timestamp: created_at
+#     time_grains: [day, week, month, quarter, year]
+#
+#     # TODO - is it valid if executed by dbt? Cannot find it in dbt DOC.
+#     filters:
+#       - field: merged_at
+#         operator: "is not"
+#         value: "NULL"
+#
+#   - name: count_nodraft_pull_requests
+#     label: Count of non draft pull requests
+#     description: Count of pull requests where draft is False
+#     model: ref('pull_requests')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0"
+#
+#     calculation_method: count_distinct
+#     expression: pull_request_id
+#
+#     timestamp: created_at
+#     time_grains: [day, week, month, quarter, year]
+#
+#     # TODO - is it valid if executed by dbt? Cannot find it in dbt DOC.
+#     filters:
+#       - field: pull_request_draft
+#         operator: "<>"
+#         value: '"true"'
+#
+#   - name: sum_days_to_solve
+#     label: Sum days to solve
+#     description: Sum of days it took to solve pull requests
+#     model: ref('pull_requests')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0.00"
+#
+#     calculation_method: sum
+#     expression: days_to_solve
+#
+#     timestamp: created_at
+#     time_grains: [day, week, month, quarter, year]
+#
+#   - name: avg_days_to_solve
+#     label: Average days to solve
+#     description: Average days it took to solve pull requests
+#     model: ref('pull_requests')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0.00"
+#
+#     calculation_method: average
+#     expression: days_to_solve
+#
+#     timestamp: created_at
+#     time_grains: [day, week, month, quarter, year]
+#
+#     dimensions:
+#       - pull_request_draft

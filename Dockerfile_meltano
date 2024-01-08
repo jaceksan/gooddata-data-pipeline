@@ -1,4 +1,4 @@
-ARG MELTANO_VERSION=v2.16.0-python3.10
+ARG MELTANO_VERSION=v3.1.0-python3.11
 ARG MELTANO_IMAGE=meltano/meltano:$MELTANO_VERSION
 FROM $MELTANO_IMAGE
 
@@ -10,6 +10,7 @@ COPY ${SRC_DATA_PIPELINE}/requirements-meltano.txt requirements-meltano.txt
 RUN pip install -r requirements-meltano.txt
 
 COPY ${SRC_DATA_PIPELINE}/meltano-plugins.yml meltano.yml
+COPY ${SRC_DATA_PIPELINE}/plugins plugins
 RUN meltano install
 
 # Don't allow changes to containerized project files

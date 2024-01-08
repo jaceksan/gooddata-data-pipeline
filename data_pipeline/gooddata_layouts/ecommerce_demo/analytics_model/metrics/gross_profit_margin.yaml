@@ -1,0 +1,7 @@
+content:
+  format: '#,##0%'
+  maql: SELECT {metric/gross_profit}/{metric/net_sales}
+description: How much of each $1 of sales is left over for other things after accounting
+  for the costs of the products
+id: gross_profit_margin
+title: Gross Profit Margin

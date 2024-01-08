@@ -1,0 +1,7 @@
+content:
+  format: '#,##0.0%'
+  maql: SELECT {metric/net_sales} / (SELECT {metric/net_sales} BY ALL OTHER WITHOUT
+    PF)
+description: ''
+id: of_net_sales
+title: '% of Net Sales'

@@ -1,0 +1,55 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: of_orders
+                    type: metric
+            localIdentifier: ce1c1dc6197f41f9b79ac375cdd23fab
+            title: '# of Orders'
+      localIdentifier: measures
+    - items:
+        - attribute:
+            alias: Date
+            displayForm:
+              identifier:
+                id: date.day
+                type: label
+            localIdentifier: b1936567b60e422d8d4aa387d04b233d
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: order_status
+                type: label
+            localIdentifier: c199d26e0fbd4049b3d332d1dc46386e
+      localIdentifier: stack
+  filters: []
+  properties:
+    controls:
+      colorMapping:
+        - color:
+            type: guid
+            value: '2'
+          id: Processed
+        - color:
+            type: guid
+            value: '6'
+          id: In Cart
+        - color:
+            type: guid
+            value: '3'
+          id: Canceled
+      legend:
+        position: top
+  sorts: []
+  version: '2'
+  visualizationUrl: local:column
+description: Orders over time
+id: a2b50fff-c7eb-444c-95e6-67037d2544d6
+title: Orders Over Time

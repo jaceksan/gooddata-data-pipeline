@@ -48,21 +48,22 @@ models:
           gooddata:
             ldm_type: date
 
-metrics:
-  - name: sum_stargazers
-    label: Sum of stargazers
-    description: Sum of stargazers
-    model: ref('repos')
-    tags:
-      - "Metrics dbt"
-    meta:
-      gooddata:
-        model_id: github
-        format: "#,##0"
-
-    calculation_method: sum
-    expression: stargazers_count
-
-    timestamp: repo_created_at
-    time_grains: [day, week, month, quarter, year]
+# TODO - remove it. dbt metrics are going to be deprecated by dbt, we deprecated it in dbt-gooddata too
+# metrics:
+#   - name: sum_stargazers
+#     label: Sum of stargazers
+#     description: Sum of stargazers
+#     model: ref('repos')
+#     tags:
+#       - "Metrics dbt"
+#     meta:
+#       gooddata:
+#         model_id: github
+#         format: "#,##0"
+#
+#     calculation_method: sum
+#     expression: stargazers_count
+#
+#     timestamp: repo_created_at
+#     time_grains: [day, week, month, quarter, year]
 

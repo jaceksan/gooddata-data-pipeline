@@ -1,0 +1,11 @@
+plugins:
+  extractors:
+  - name: tap-gitlab
+    variant: meltanolabs
+    config:
+      start_date: '2020-01-01'
+      projects: patrikbraborec/gooddata-data-pipeline
+    select:
+    - merge_requests.*
+    - commits.*
+    - projects.*

@@ -1,0 +1,82 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: net_sales
+                    type: metric
+            localIdentifier: f7c65b77a50a4f999aee269b8e6ee40d
+            title: Net Sales
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_returns
+                    type: metric
+            localIdentifier: 9bbd3123e2a84bc094fc581ac91ec0a8
+            title: Total Returns
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: total_discounts
+                    type: metric
+            localIdentifier: 182783e3b51249d1b54c56cddf7e0a2f
+            title: Total Discounts
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_id
+                type: label
+            localIdentifier: e992628ae16340ac865d1ed7caa996a3
+        - attribute:
+            alias: Product Name
+            displayForm:
+              identifier:
+                id: product_name
+                type: label
+            localIdentifier: 73d5f54c4e3844adb8b6109118c30dca
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_rating
+                type: label
+            localIdentifier: f845d4e1be6e4888910dac662eaf1a72
+      localIdentifier: attribute
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: date.year
+                type: label
+            localIdentifier: 2ab49044c2c04d48a308a6990d3bdb52
+      localIdentifier: columns
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: date
+            type: dataset
+        from: -20
+        granularity: GDC.time.year
+        to: 0
+  properties: {}
+  sorts:
+    - attributeSortItem:
+        attributeIdentifier: e992628ae16340ac865d1ed7caa996a3
+        direction: asc
+  version: '2'
+  visualizationUrl: local:table
+description: Product detail
+id: 65120fa4-2805-4f70-b576-01d138117cf4
+title: Product Details

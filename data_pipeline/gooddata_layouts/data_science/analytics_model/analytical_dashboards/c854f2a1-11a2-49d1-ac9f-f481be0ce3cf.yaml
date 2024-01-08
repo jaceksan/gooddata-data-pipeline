@@ -1,0 +1,83 @@
+content:
+  filterContextRef:
+    identifier:
+      id: 8fabb2aa-9bb0-4a22-98ed-b3a25b6d777f
+      type: filterContext
+  layout:
+    sections:
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 9ddcc5cd-3264-415a-b8f9-3826449a2853
+                  type: visualizationObject
+              properties: {}
+              title: Locations by rental price
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 1cc1b3a7-e711-424a-a4f8-f6bf17774103
+                  type: visualizationObject
+              properties: {}
+              title: Initial price by location and neighborhood
+              type: insight
+        type: IDashboardLayoutSection
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 5f43f7d0-fd43-4e44-9730-ad72a4096490
+                  type: visualizationObject
+              properties: {}
+              title: Number of rooms  and bathrooms
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 6d884317-d3eb-480f-9518-b7160dbeb64c
+                  type: visualizationObject
+              properties: {}
+              title: Rental price by location and neighborhood
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  plugins: []
+  version: '2'
+description: ''
+id: c854f2a1-11a2-49d1-ac9f-f481be0ce3cf
+title: Cross-filtering

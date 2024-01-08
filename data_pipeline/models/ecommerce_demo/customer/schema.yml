@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: customer
+    meta:
+      gooddata:
+        model_id: ecommerce_demo
+    columns:
+      - name: customer_id
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: ls__customer_id__customer_name
+        meta:
+          gooddata:
+            id: customer_name
+            ldm_type: label
+            label_type: TEXT
+            attribute_column: customer_id
+      - name: customer_city
+      - name: geo__customer_city__city_pushpin_longitude
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: GEO_LONGITUDE
+            attribute_column: customer_city
+      - name: geo__customer_city__city_pushpin_latitude
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: GEO_LATITUDE
+            attribute_column: customer_city
+      - name: customer_country
+      - name: customer_email
+      - name: customer_state
+      - name: customer_created_date
+#      - name: wdf__client_id

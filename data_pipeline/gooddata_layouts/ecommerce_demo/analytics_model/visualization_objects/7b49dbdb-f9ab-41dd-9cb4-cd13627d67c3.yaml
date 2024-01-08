@@ -1,0 +1,35 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: gross_profit
+                    type: metric
+            localIdentifier: c877604979b64cd09c3840b36469e227
+            title: Gross Profit
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: product_name
+                type: label
+            localIdentifier: 8ed871e5a6f1464c82e21213aa900afe
+      localIdentifier: view
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: c877604979b64cd09c3840b36469e227
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+description: Top 10 Money Makers
+id: 7b49dbdb-f9ab-41dd-9cb4-cd13627d67c3
+title: Top 10 Money Makers

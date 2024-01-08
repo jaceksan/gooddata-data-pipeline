@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: mall_customers
+    meta:
+      gooddata:
+        model_id: data_science
+    columns:
+      - name: customerid
+        description: Customer ID
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            id: mall_customers.customerid
+            ldm_type: primary_key
+      - name: gender
+        meta:
+          gooddata:
+            id: mall_customers.gender
+      - name: age
+      - name: annualincome
+        description: Annual Income
+      - name: spendingscore
+        description: Spending Score

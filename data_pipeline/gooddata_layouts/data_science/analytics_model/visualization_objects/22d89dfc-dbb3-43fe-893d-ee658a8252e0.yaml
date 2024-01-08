@@ -1,0 +1,27 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: avg
+                filters: []
+                item:
+                  identifier:
+                    id: rental_price
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: fc01f2a727d34d8b84037f93da061a62
+            title: Avg Rental price
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      comparison:
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: ''
+id: 22d89dfc-dbb3-43fe-893d-ee658a8252e0
+title: Avg Rental price
