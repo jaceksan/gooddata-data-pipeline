@@ -1,0 +1,15 @@
+name: Extract, Load, Transform, and Analytics (Prod Schedule)
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+
+jobs:
+  elta:
+    name: ELTA (staging)
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "prod"
+      BRANCH_NAME: "prod"
+      RUN_ANALYTICS: "false"
+    secrets: inherit
