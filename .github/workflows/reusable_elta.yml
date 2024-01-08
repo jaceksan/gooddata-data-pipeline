@@ -12,6 +12,10 @@ on:
         required: false
         type: string
         default: "true"
+      DBT_CLOUD:
+        required: false
+        type: string
+        default: "false"
 
 jobs:
   ####################################
@@ -35,6 +39,7 @@ jobs:
       FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
       DBT_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}"
       BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
+      DBT_CLOUD: "${{ inputs.DBT_CLOUD }}"
     secrets: inherit
   ####################################
   # Analytics
