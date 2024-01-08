@@ -4,7 +4,6 @@ project_id: gdp-gdp-demo-1
 environments:
 - name: gdp_dev_local
 - name: gdp_dev
-# TODO - add envs for dbt cloud
 - name: gdp_staging
   config:
     plugins:
@@ -25,6 +24,28 @@ environments:
       - name: tap-exchangeratehost
         config:
           start_date: '2010-01-01'
+- name: gdp_cloud_staging
+  config:
+    plugins:
+      extractors:
+        - name: tap-github-repo
+          config:
+            start_date: '2010-01-01'
+        - name: tap-exchangeratehost
+          config:
+            start_date: '2010-01-01'
+# Dedicated for dbt Cloud. We need to separate their state files (they run against different databases)
+- name: gdp_cloud_dev
+- name: gdp_cloud_prod
+  config:
+    plugins:
+      extractors:
+        - name: tap-github-repo
+          config:
+            start_date: '2010-01-01'
+        - name: tap-exchangeratehost
+          config:
+            start_date: '2010-01-01'
 
 include_paths:
   - "./meltano_conf/extractors/github.yml"

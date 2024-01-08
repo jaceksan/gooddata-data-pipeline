@@ -51,6 +51,20 @@ gdp_dev:
       warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
+gdp_cloud_dev:
+  target: snowflake
+  outputs:
+    snowflake:
+      title: "CICD demo (cloud dev)"
+      type: snowflake
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
 gdp_staging:
   target: snowflake
   outputs:
@@ -76,11 +90,39 @@ gdp_staging:
       database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
+gdp_cloud_staging:
+  target: snowflake
+  outputs:
+    snowflake:
+      title: "CICD demo (cloud staging)"
+      type: snowflake
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
 gdp_prod:
   target: snowflake
   outputs:
     snowflake:
       title: "CICD demo (prod)"
+      type: snowflake
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
+gdp_cloud_prod:
+  target: snowflake
+  outputs:
+    snowflake:
+      title: "CICD demo (cloud prod)"
       type: snowflake
       threads: 2
       account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
