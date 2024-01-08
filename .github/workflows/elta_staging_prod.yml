@@ -34,6 +34,8 @@ jobs:
   ####################################
   # Extract load
   extract-load:
+    # TODO - overriding job names this way does not work, extract-load/reusable_extract_load is used instead
+    #  Note: job names in the left panel are correct, just job names in the lineage graph are wrong
     name: Extract Load (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
     uses: ./.github/workflows/reusable_extract_load.yml
     with:
