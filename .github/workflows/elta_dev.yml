@@ -37,23 +37,29 @@ on:
       - .github/workflows/reusable_analytics.yml
 
 jobs:
-  build-images:
-    uses: ./.github/workflows/reusable_builds.yml
-    secrets: inherit
-
-  elta:
-    needs:
-      - build-images
-    uses: ./.github/workflows/reusable_elta.yml
-    with:
-      ENVIRONMENT: "dev"
-    secrets: inherit
-
-  elta_cloud:
-    needs:
-      - build-images
-    uses: ./.github/workflows/reusable_elta.yml
-    with:
-      ENVIRONMENT: "dev_cloud"
-      DBT_CLOUD: "true"
-    secrets: inherit
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: |
+          set
+#  build-images:
+#    uses: ./.github/workflows/reusable_builds.yml
+#    secrets: inherit
+#
+#  elta:
+#    needs:
+#      - build-images
+#    uses: ./.github/workflows/reusable_elta.yml
+#    with:
+#      ENVIRONMENT: "dev"
+#    secrets: inherit
+#
+#  elta_cloud:
+#    needs:
+#      - build-images
+#    uses: ./.github/workflows/reusable_elta.yml
+#    with:
+#      ENVIRONMENT: "dev_cloud"
+#      DBT_CLOUD: "true"
+#    secrets: inherit
