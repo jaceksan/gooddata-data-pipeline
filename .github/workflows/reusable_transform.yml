@@ -79,6 +79,13 @@ jobs:
           # TODO - implement notification about perf degradations similarly how it exists in GitLab
           DBT_ALLOWED_DEGRADATION: 20
           DBT_INCREMENTAL_STRATEGY: "merge"
+          # GitHub does not propagate CI_COMMIT_SHA to environment variable in workers
+          # Developers must propagate it manually from ${{ github.event.pull_request.head.sha }} to GOODDATA_GITHUB_SHA
+          # DOC: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
+          # gooddata-dbt plugin accepts GOODDATA_GITHUB_SHA variable as a replacement for GITHUB_SHA
+          # dbt Cloud checkouts the commit specified by GOODDATA_GITHUB_SHA
+          # TODO: what if a pull request is created from a fork?
+          GOODDATA_GITHUB_SHA: "${{ github.event.pull_request.head.sha }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
           gooddata-dbt dbt_cloud_run ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}

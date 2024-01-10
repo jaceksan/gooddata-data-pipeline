@@ -117,6 +117,7 @@ You have to set the following (sensitive) environment variables in the Gitlab(se
     - Check [Example](data_pipeline/gooddata_profiles_example.yaml)
 - MELTANO_STATE_AWS_ACCESS_KEY_ID/MELTANO_STATE_AWS_SECRET_ACCESS_KEY - Meltano stores its state to AWS S3, and needs these credentials
 - GITLAB_TOKEN - to allow Gitlab jobs to send messages to merge requests
+- GITHUB_TOKEN - to allow GitHub jobs to send messages to pull requests
 
 The rest of environment variables (Github repos to be crawled, DB endpoints, ...) can be configured in [.gitlab-ci.yml](.gitlab-ci.yml)(section `variables`).
 The same variables must be set in GitHub variables UI if you want to use GitHub.
