@@ -2,7 +2,7 @@ name: Extract, Load, Transform, and Analytics (Staging Schedule)
 
 on:
   schedule:
-    - cron: "05 16 * * *"
+    - cron: "00 4 * * *"
 
 jobs:
   elta:
@@ -11,5 +11,5 @@ jobs:
     with:
       ENVIRONMENT: "staging"
       BRANCH_NAME: "main"
-      RUN_ANALYTICS: "false"
+      DEPLOY_ANALYTICS: "false"
     secrets: inherit
