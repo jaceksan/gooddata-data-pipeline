@@ -93,14 +93,8 @@ jobs:
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
           gooddata-dbt dbt_cloud_run ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
-          echo "Profiles file: "
-          cat ${{ env.DBT_PROFILES_DIR }}/profiles.yml
       - name: Generate and Deploy GoodData models from dbt models
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
-          echo "Profiles file: "
-          cat ${{ env.DBT_PROFILES_DIR }}/profiles.yml
-          echo "-----------------"
           gooddata-dbt provision_workspaces
           gooddata-dbt register_data_sources ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
           gooddata-dbt deploy_ldm ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
