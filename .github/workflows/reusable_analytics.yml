@@ -12,6 +12,7 @@ on:
 
 jobs:
   reusable_analytics:
+    name: analytics
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     container: ${{ inputs.GOODDATA_CUSTOM_IMAGE }}

@@ -15,6 +15,7 @@ on:
 
 jobs:
   reusable_extract_load:
+    name: extract-load
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     container: ${{ inputs.MELTANO_CUSTOM_IMAGE }}

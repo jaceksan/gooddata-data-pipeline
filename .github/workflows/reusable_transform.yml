@@ -19,6 +19,7 @@ on:
 
 jobs:
   reusable_transform:
+    name: transform
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     container: ${{ inputs.DBT_CUSTOM_IMAGE }}
