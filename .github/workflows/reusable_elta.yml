@@ -8,7 +8,7 @@ on:
         type: string
       BRANCH_NAME:
         type: string
-      RUN_ANALYTICS:
+      DEPLOY_ANALYTICS:
         required: false
         type: string
         default: "true"
@@ -44,7 +44,6 @@ jobs:
   ####################################
   # Analytics
   analytics:
-    if: ${{ inputs.RUN_ANALYTICS == 'true' }}
     needs:
       - transform
     uses: ./.github/workflows/reusable_analytics.yml

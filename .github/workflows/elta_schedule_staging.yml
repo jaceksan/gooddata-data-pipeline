@@ -11,5 +11,5 @@ jobs:
     with:
       ENVIRONMENT: "staging"
       BRANCH_NAME: "main"
-      RUN_ANALYTICS: "false"
+      DEPLOY_ANALYTICS: "false"
     secrets: inherit

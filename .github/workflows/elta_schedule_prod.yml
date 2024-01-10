@@ -11,5 +11,5 @@ jobs:
     with:
       ENVIRONMENT: "prod"
       BRANCH_NAME: "prod"
-      RUN_ANALYTICS: "false"
+      DEPLOY_ANALYTICS: "false"
     secrets: inherit
