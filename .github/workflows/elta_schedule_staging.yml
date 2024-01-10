@@ -13,3 +13,12 @@ jobs:
       BRANCH_NAME: "main"
       DEPLOY_ANALYTICS: "false"
     secrets: inherit
+  elta_cloud:
+    name: ELTA (staging cloud)
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "staging_cloud"
+      BRANCH_NAME: "main"
+      DEPLOY_ANALYTICS: "false"
+      DBT_CLOUD: "true"
+    secrets: inherit
