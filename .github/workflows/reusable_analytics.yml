@@ -36,6 +36,7 @@ jobs:
           GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
           GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
           GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
+          GOODDATA_ENVIRONMENT_ID: "${{ vars.GOODDATA_ENVIRONMENT_ID }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
           gooddata-dbt deploy_analytics
