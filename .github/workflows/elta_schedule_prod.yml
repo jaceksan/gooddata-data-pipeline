@@ -6,10 +6,19 @@ on:
 
 jobs:
   elta:
-    name: ELTA (staging)
+    name: ELTA (prod)
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "prod"
       BRANCH_NAME: "prod"
       DEPLOY_ANALYTICS: "false"
+    secrets: inherit
+  elta_cloud:
+    name: ELTA (prod cloud)
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "prod_cloud"
+      BRANCH_NAME: "prod"
+      DEPLOY_ANALYTICS: "false"
+      DBT_CLOUD: "true"
     secrets: inherit
