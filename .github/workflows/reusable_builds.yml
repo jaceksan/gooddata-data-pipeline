@@ -7,6 +7,7 @@ jobs:
   build-and-push-custom-meltano-image:
     uses: ./.github/workflows/reusable_build.yml
     with:
+      NAME: build-meltano
       TAGS: |
         ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}
       DOCKER_FILE: Dockerfile_meltano
@@ -17,6 +18,7 @@ jobs:
   build-and-push-custom-dbt-image:
     uses: ./.github/workflows/reusable_build.yml
     with:
+      NAME: build-dbt
       TAGS: |
         ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}
       DOCKER_FILE: Dockerfile_dbt
@@ -27,6 +29,7 @@ jobs:
   build-and-push-custom-gooddata-image:
     uses: ./.github/workflows/reusable_build.yml
     with:
+      NAME: build-gooddata
       TAGS: |
         ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}
       DOCKER_FILE: Dockerfile_gooddata

@@ -48,3 +48,12 @@ jobs:
     with:
       ENVIRONMENT: "dev"
     secrets: inherit
+
+  elta-cloud:
+    needs:
+      - build-images
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "dev_cloud"
+      DBT_CLOUD: "true"
+    secrets: inherit

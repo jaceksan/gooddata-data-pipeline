@@ -1,5 +1,5 @@
 .vars-image-dbt:
   variables:
     DBT_CUSTOM_IMAGE_BASE: "gooddata-data-pipeline-dbt"
-    DBT_VERSION: "1.5.0"
+    DBT_VERSION: "1.7.0"
     DBT_CUSTOM_IMAGE: "$CI_REGISTRY_IMAGE/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION"

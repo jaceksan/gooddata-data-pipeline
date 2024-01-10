@@ -1,2 +1,3 @@
-gooddata-dbt==1.8.1.dev2
+gooddata-dbt==1.11.1.dev2
 deep-translator==1.11.4
+PyGithub==2.1.1

@@ -1,6 +1,6 @@
 # TODO - use dbt vault for credentials shared by dbt and GoodData once GoodData supports vault for data source credentials
 # https://dbtvault.readthedocs.io/en/latest/
-gdp_dev_local:
+cicd_dev_local:
   target: postgres
   outputs:
     # Define default values for all env vars to do not have to set them even when they are not needed
@@ -37,7 +37,7 @@ gdp_dev_local:
 # Copy & paste below targets, reasons:
 # 1. the env variables must be shared with Meltano, so we cannot hardcode them here
 # 2. we cannot create single target, because its name (dict key) is used as ID of GoodData data source
-gdp_dev:
+cicd_dev:
   target: snowflake
   outputs:
     snowflake:
@@ -51,7 +51,21 @@ gdp_dev:
       warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
-gdp_staging:
+cicd_cloud_dev:
+  target: snowflake
+  outputs:
+    snowflake:
+      title: "CICD demo (cloud dev)"
+      type: snowflake
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
+cicd_staging:
   target: snowflake
   outputs:
     snowflake:
@@ -76,11 +90,39 @@ gdp_staging:
       database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
-gdp_prod:
+cicd_cloud_staging:
+  target: snowflake
+  outputs:
+    snowflake:
+      title: "CICD demo (cloud staging)"
+      type: snowflake
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
+cicd_prod:
   target: snowflake
   outputs:
     snowflake:
       title: "CICD demo (prod)"
+      type: snowflake
+      threads: 2
+      account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
+      user: "{{ env_var('DBT_DB_USER', 'xxxx') }}"
+      password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
+      database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+
+cicd_cloud_prod:
+  target: snowflake
+  outputs:
+    snowflake:
+      title: "CICD demo (cloud prod)"
       type: snowflake
       threads: 2
       account: "{{ env_var('DBT_DB_ACCOUNT', 'xxxx') }}"
