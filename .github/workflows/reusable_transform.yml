@@ -26,6 +26,9 @@ jobs:
       GOODDATA_PROFILES_FILE: "${{ secrets.GOODDATA_PROFILES_FILE }}"
       FR_ARG: ${{ inputs.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
       DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
+      # Must be set for dbt Cloud toolchain, where a data class initiated attr values from env variables
+      ELT_ENVIRONMENT: "${{ vars.ELT_ENVIRONMENT }}"
+      DBT_TARGET: "${{ vars.DBT_TARGET }}"
       # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
       # dbt profiles.yml file in this repo relies on DBT_ prefix.
       # It means that even jobs not running against dbt cloud rely on DBT_ prefix.
