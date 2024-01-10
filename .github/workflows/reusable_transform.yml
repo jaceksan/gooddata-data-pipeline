@@ -48,7 +48,10 @@ jobs:
       DBT_DB_PORT: "${{ vars.DB_PORT }}"
       DBT_DB_NAME: "${{ vars.DB_NAME }}"
       DBT_DB_PASS: "${{ secrets.DB_PASS }}"
+      GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
+      GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
       GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
+      GOODDATA_ENVIRONMENT_ID: "${{ vars.GOODDATA_ENVIRONMENT_ID }}"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
