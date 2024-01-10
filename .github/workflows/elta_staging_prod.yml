@@ -37,3 +37,11 @@ jobs:
     with:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
     secrets: inherit
+
+  elta-cloud:
+    name: ELTA cloud (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
+      DBT_CLOUD: "true"
+    secrets: inherit
