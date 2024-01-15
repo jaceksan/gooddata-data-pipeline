@@ -86,18 +86,24 @@ jobs:
           # TODO - implement notification about perf degradations similarly how it exists in GitLab
           DBT_ALLOWED_DEGRADATION: 20
           DBT_INCREMENTAL_STRATEGY: "merge"
-          # GitHub does not propagate CI_COMMIT_SHA to environment variable in workers
-          # Developers must propagate it manually from ${{ github.event.pull_request.head.sha }} to GOODDATA_GITHUB_SHA
-          # DOC: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
-          # gooddata-dbt plugin accepts GOODDATA_GITHUB_SHA variable as a replacement for GITHUB_SHA
+          # GITHUB_ variables are reserved by GitHub.
+          #   The gooddata-dbt accepts equivalent GOODDATA_ variables
+          # There is no way how to expose these variables AFTER MERGE (on push)
+          #   There is no link between merged commit and original pull request,
+          #   also because someone can push to main branch directly
+          #   TODO: Let's ignore it now and think about it later
           # dbt Cloud checkouts the commit specified by GOODDATA_GITHUB_SHA
           # TODO: what if a pull request is created from a fork?
           GOODDATA_GITHUB_SHA: "${{ github.event.pull_request.head.sha }}"
           # Used to post comments to pull requests
-          # GITHUB_TOKEN variable cannot be set in GitHub UI, because it starts with GITHUB_ prefix
-          GITHUB_TOKEN: "${{ secrets.BOT_GITHUB_TOKEN }}"
+          GOODDATA_GITHUB_TOKEN: "${{ secrets.BOT_GITHUB_TOKEN }}"
+          GOODDATA_GITHUB_PULL_REQUEST_ID: "${{ github.event.pull_request.number }}"
+          GOODDATA_GITHUB_ACTOR: "${{ github.actor }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
+          echo GOODDATA_GITHUB_SHA: ${{ env.GOODDATA_GITHUB_SHA }}
+          echo GOODDATA_GITHUB_PULL_REQUEST_ID: ${{ env.GOODDATA_GITHUB_PULL_REQUEST_ID }}
+          echo GOODDATA_GITHUB_ACTOR: ${{ env.GOODDATA_GITHUB_ACTOR }}
           gooddata-dbt dbt_cloud_run ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
       - name: Generate and Deploy GoodData models from dbt models
         run: |
