@@ -101,9 +101,6 @@ jobs:
           GOODDATA_GITHUB_ACTOR: "${{ github.actor }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
-          echo GOODDATA_GITHUB_SHA: ${{ env.GOODDATA_GITHUB_SHA }}
-          echo GOODDATA_GITHUB_PULL_REQUEST_ID: ${{ env.GOODDATA_GITHUB_PULL_REQUEST_ID }}
-          echo GOODDATA_GITHUB_ACTOR: ${{ env.GOODDATA_GITHUB_ACTOR }}
           gooddata-dbt dbt_cloud_run ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
       - name: Generate and Deploy GoodData models from dbt models
         run: |
