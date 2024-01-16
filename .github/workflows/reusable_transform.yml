@@ -94,7 +94,7 @@ jobs:
           #   TODO: Let's ignore it now and think about it later
           # dbt Cloud checkouts the commit specified by GOODDATA_GITHUB_SHA
           # TODO: what if a pull request is created from a fork?
-          GOODDATA_GITHUB_SHA: "${{ github.event.pull_request.head.sha }}"
+          GOODDATA_GITHUB_SHA: "${{ github.sha }}"
           # Used to post comments to pull requests
           GOODDATA_GITHUB_TOKEN: "${{ secrets.BOT_GITHUB_TOKEN }}"
           GOODDATA_GITHUB_PULL_REQUEST_ID: "${{ github.event.pull_request.number }}"
