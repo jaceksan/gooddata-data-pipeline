@@ -11,6 +11,7 @@ on:
       #   https://github.com/gooddata/gdc-nas/blob/master/.github/workflows/pre-merge-pipeline.yml
       # Shared
       - .github/workflows/elta_staging_prod.yml
+      - .github/workflows/reusable_elta.yml
       # Extract load
       - data_pipeline/meltano.yml
       - data_pipeline/meltano_conf/**/*

@@ -10,6 +10,7 @@ on:
       #   https://github.com/gooddata/gdc-nas/blob/master/.github/workflows/pre-merge-pipeline.yml
       # Shared
       - .github/workflows/elta_dev.yml
+      - .github/workflows/reusable_elta.yml
       # Build custom Meltano image
       - data_pipeline/requirements-meltano.txt
       - data_pipeline/meltano-plugins.yml
