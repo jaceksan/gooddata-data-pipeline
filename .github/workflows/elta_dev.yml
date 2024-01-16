@@ -38,21 +38,21 @@ on:
       - .github/workflows/reusable_analytics.yml
 
 jobs:
-#  build-images:
-#    uses: ./.github/workflows/reusable_builds.yml
-#    secrets: inherit
+  build-images:
+    uses: ./.github/workflows/reusable_builds.yml
+    secrets: inherit
 
   elta:
-#    needs:
-#      - build-images
+    needs:
+      - build-images
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "dev"
     secrets: inherit
 
   elta-cloud:
-#    needs:
-#      - build-images
+    needs:
+      - build-images
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "dev_cloud"
