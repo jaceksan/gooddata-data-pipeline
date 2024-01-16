@@ -2,7 +2,7 @@ name: Extract, Load, Transform, and Analytics (Prod Schedule)
 
 on:
   schedule:
-    - cron: "26 14 * * *"
+    - cron: "00 5 * * *"
 
 jobs:
   elta:

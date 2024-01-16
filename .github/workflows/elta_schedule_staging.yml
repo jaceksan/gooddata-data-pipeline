@@ -2,8 +2,7 @@ name: Extract, Load, Transform, and Analytics (Staging Schedule)
 
 on:
   schedule:
-    # - cron: "00 4 * * *"
-    - cron: "25 14 * * *"
+    - cron: "00 4 * * *"
 
 jobs:
   elta:
