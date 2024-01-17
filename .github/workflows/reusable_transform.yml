@@ -10,19 +10,56 @@ on:
       DBT_CUSTOM_IMAGE:
         required: true
         type: string
+      BRANCH_NAME:
+        type: string
+      DBT_CLOUD:
+        required: false
+        type: string
+        default: "false"
 
 jobs:
   reusable_transform:
+    name: transform
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     container: ${{ inputs.DBT_CUSTOM_IMAGE }}
+    env:
+      GOODDATA_PROFILES_FILE: "${{ secrets.GOODDATA_PROFILES_FILE }}"
+      FR_ARG: ${{ inputs.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
+      DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
+      # Must be set for dbt Cloud toolchain, where a data class initiated attr values from env variables
+      ELT_ENVIRONMENT: "${{ vars.ELT_ENVIRONMENT }}"
+      DBT_TARGET: "${{ vars.DBT_TARGET }}"
+      # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
+      # dbt profiles.yml file in this repo relies on DBT_ prefix.
+      # It means that even jobs not running against dbt cloud rely on DBT_ prefix.
+      # More variables are duplicated later in this file based on what database is used.
+      DBT_OUTPUT_SCHEMA: "${{ vars.OUTPUT_SCHEMA }}"
+      DBT_INPUT_SCHEMA_GITHUB: "${{ vars.INPUT_SCHEMA_GITHUB }}"
+      DBT_INPUT_SCHEMA_FAA: "${{ vars.INPUT_SCHEMA_FAA }}"
+      DBT_INPUT_SCHEMA_EXCHANGERATEHOST: "${{ vars.INPUT_SCHEMA_EXCHANGERATEHOST }}"
+      DBT_INPUT_SCHEMA_ECOMMERCE_DEMO: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
+      DBT_INPUT_SCHEMA_DATA_SCIENCE: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
+      DBT_DB_USER: "${{ vars.DB_USER }}"
+      # TODO: no need to generalize WAREHOUSE/ACCOUNT, they are Snowflake specific
+      DBT_DB_WAREHOUSE: "${{ vars.SNOWFLAKE_WAREHOUSE }}"
+      DBT_DB_ACCOUNT: "${{ vars.SNOWFLAKE_ACCOUNT }}"
+      DBT_DB_HOST: "${{ vars.DB_HOST }}"
+      DBT_DB_PORT: "${{ vars.DB_PORT }}"
+      DBT_DB_NAME: "${{ vars.DB_NAME }}"
+      DBT_DB_PASS: "${{ secrets.DB_PASS }}"
+      GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
+      GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
+      GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
+      GOODDATA_ENVIRONMENT_ID: "${{ vars.GOODDATA_ENVIRONMENT_ID }}"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.BRANCH_NAME }}
 
       - name: Setup Environment
-        env:
-          GOODDATA_PROFILES_FILE: "${{ secrets.GOODDATA_PROFILES_FILE }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
           # dbt packages are installed during build of docker image to workdir
@@ -32,37 +69,42 @@ jobs:
 
       - name: Run Transform
         timeout-minutes: 15
-        env:
-          FR_ARG: ${{ inputs.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
-          DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
-          # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
-          # dbt profiles.yml file in this repo relies on DBT_ prefix.
-          # It means that even jobs not running against dbt cloud rely on DBT_ prefix.
-          # More variables are duplicated later in this file based on what database is used.
-          DBT_OUTPUT_SCHEMA: "${{ vars.OUTPUT_SCHEMA }}"
-          DBT_INPUT_SCHEMA_GITHUB: "${{ vars.INPUT_SCHEMA_GITHUB }}"
-          DBT_INPUT_SCHEMA_FAA: "${{ vars.INPUT_SCHEMA_FAA }}"
-          DBT_INPUT_SCHEMA_EXCHANGERATEHOST: "${{ vars.INPUT_SCHEMA_EXCHANGERATEHOST }}"
-          DBT_INPUT_SCHEMA_ECOMMERCE_DEMO: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
-          DBT_INPUT_SCHEMA_DATA_SCIENCE: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
-          DBT_DB_USER: "${{ vars.DB_USER }}"
-          # TODO: no need to generalize WAREHOUSE/ACCOUNT, they are Snowflake specific
-          DBT_DB_WAREHOUSE: "${{ vars.SNOWFLAKE_WAREHOUSE }}"
-          DBT_DB_ACCOUNT: "${{ vars.SNOWFLAKE_ACCOUNT }}"
-          DBT_DB_HOST: "${{ vars.DB_HOST }}"
-          DBT_DB_PORT: "${{ vars.DB_PORT }}"
-          DBT_DB_NAME: "${{ vars.DB_NAME }}"
-          DBT_DB_PASS: "${{ secrets.DB_PASS }}"
-          # TODO - move it to separate job dedicated to dbt Cloud
-          # Notify by sending comment to the merge request,
-          # if duration of a dbt model exceeds average duration from last X runs by DBT_ALLOWED_DEGRADATION percents
-          DBT_ALLOWED_DEGRADATION: 20
-          DBT_INCREMENTAL_STRATEGY: "merge"
-          GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
+        if: ${{ inputs.DBT_CLOUD == 'false' }}
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
           dbt run --profiles-dir ${{ vars.DBT_PROFILES_DIR }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }} ${{ env.FR_ARG }}
           dbt test --profiles-dir ${{ vars.DBT_PROFILES_DIR }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+
+      - name: Run Transform (dbt Cloud)
+        timeout-minutes: 15
+        if: ${{ inputs.DBT_CLOUD == 'true' }}
+        env:
+          DBT_ACCOUNT_ID: "${{ vars.DBT_ACCOUNT_ID }}"
+          DBT_PROJECT_ID: "${{ vars.DBT_PROJECT_ID }}"
+          DBT_JOB_ID: "${{ vars.DBT_JOB_ID }}"
+          DBT_TOKEN: "${{ secrets.DBT_TOKEN }}"
+          # TODO - implement notification about perf degradations similarly how it exists in GitLab
+          DBT_ALLOWED_DEGRADATION: 20
+          DBT_INCREMENTAL_STRATEGY: "merge"
+          # GITHUB_ variables are reserved by GitHub.
+          #   The gooddata-dbt accepts equivalent GOODDATA_ variables
+          # There is no way how to expose these variables AFTER MERGE (on push)
+          #   There is no link between merged commit and original pull request,
+          #   also because someone can push to main branch directly
+          #   TODO: Let's ignore it now and think about it later
+          # dbt Cloud checkouts the commit specified by GOODDATA_GITHUB_SHA
+          # TODO: what if a pull request is created from a fork?
+          GOODDATA_GITHUB_SHA: "${{ github.event.pull_request.head.sha == '' && github.sha || github.event.pull_request.head.sha }}"
+          # Used to post comments to pull requests
+          GOODDATA_GITHUB_TOKEN: "${{ secrets.BOT_GITHUB_TOKEN }}"
+          GOODDATA_GITHUB_PULL_REQUEST_ID: "${{ github.event.pull_request.number }}"
+          GOODDATA_GITHUB_ACTOR: "${{ github.actor }}"
+        run: |
+          cd ${{ vars.SRC_DATA_PIPELINE }}
+          gooddata-dbt dbt_cloud_run ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+      - name: Generate and Deploy GoodData models from dbt models
+        run: |
+          cd ${{ vars.SRC_DATA_PIPELINE }}
           gooddata-dbt provision_workspaces
           gooddata-dbt register_data_sources ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
           gooddata-dbt deploy_ldm ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}

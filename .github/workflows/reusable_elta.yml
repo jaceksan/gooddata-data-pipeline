@@ -1,0 +1,54 @@
+name: Reusable ELTA
+
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+      BRANCH_NAME:
+        type: string
+      DEPLOY_ANALYTICS:
+        required: false
+        type: string
+        default: "true"
+      DBT_CLOUD:
+        required: false
+        type: string
+        default: "false"
+
+jobs:
+  ####################################
+  # Extract load
+  extract-load:
+    uses: ./.github/workflows/reusable_extract_load.yml
+    with:
+      ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
+      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
+      MELTANO_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}"
+      BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
+    secrets: inherit
+  ####################################
+  # Transform
+  transform:
+    needs:
+      - extract-load
+    uses: ./.github/workflows/reusable_transform.yml
+    with:
+      ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
+      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
+      DBT_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}"
+      BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
+      DBT_CLOUD: "${{ inputs.DBT_CLOUD }}"
+    secrets: inherit
+  ####################################
+  # Analytics
+  analytics:
+    needs:
+      - transform
+    uses: ./.github/workflows/reusable_analytics.yml
+    with:
+      ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
+      GOODDATA_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}"
+      BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
+    secrets: inherit

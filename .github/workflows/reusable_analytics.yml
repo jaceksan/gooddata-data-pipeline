@@ -7,15 +7,25 @@ on:
       GOODDATA_CUSTOM_IMAGE:
         required: true
         type: string
+      BRANCH_NAME:
+        type: string
+      DEPLOY_ANALYTICS:
+        required: false
+        type: string
+        default: "true"
 
 jobs:
   reusable_analytics:
+    name: analytics
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
     container: ${{ inputs.GOODDATA_CUSTOM_IMAGE }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.BRANCH_NAME }}
 
       - name: Setup Environment
         env:
@@ -24,13 +34,26 @@ jobs:
           mkdir -p ~/.gooddata
           echo ${{ env.GOODDATA_PROFILES_FILE }} | base64 --decode > ~/.gooddata/profiles.yaml
 
-      - name: Run Analytics
-        timeout-minutes: 15
+      - name: Deploy Analytics
+        if: ${{ inputs.DEPLOY_ANALYTICS == 'true' }}
         env:
           GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
           GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
           GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
+          GOODDATA_ENVIRONMENT_ID: "${{ vars.GOODDATA_ENVIRONMENT_ID }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
           gooddata-dbt deploy_analytics
+
+      # Test analytics even when deploy is skipped (DEPLOY_ANALYTICS=false)
+      # It is skipped in scheduled runs
+      - name: Test Analytics
+        timeout-minutes: 10
+        env:
+          GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
+          GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
+          GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
+          GOODDATA_ENVIRONMENT_ID: "${{ vars.GOODDATA_ENVIRONMENT_ID }}"
+        run: |
+          cd ${{ vars.SRC_DATA_PIPELINE }}
           gooddata-dbt test_insights

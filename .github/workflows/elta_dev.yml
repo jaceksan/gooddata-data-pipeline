@@ -10,11 +10,14 @@ on:
       #   https://github.com/gooddata/gdc-nas/blob/master/.github/workflows/pre-merge-pipeline.yml
       # Shared
       - .github/workflows/elta_dev.yml
+      - .github/workflows/reusable_elta.yml
       # Build custom Meltano image
       - data_pipeline/requirements-meltano.txt
       - data_pipeline/meltano-plugins.yml
       - data_pipeline/plugins/**/*.lock
       - Dockerfile_meltano
+      - Dockerfile_dbt
+      - Dockerfile_gooddata
       # Extract load
       - data_pipeline/meltano.yml
       - data_pipeline/meltano_conf/**/*
@@ -35,69 +38,23 @@ on:
       - .github/workflows/reusable_analytics.yml
 
 jobs:
-  ####################################
-  # Build docker images
-  build-and-push-custom-meltano-image:
-    uses: ./.github/workflows/reusable_build.yml
-    with:
-      TAGS: |
-        ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}
-      DOCKER_FILE: Dockerfile_meltano
-      BUILD_ARGS: |
-        MELTANO_VERSION=${{ vars.MELTANO_VERSION }}
-        IMAGES_WORKDIR=${{ vars.IMAGES_WORKDIR }}
+  build-images:
+    uses: ./.github/workflows/reusable_builds.yml
     secrets: inherit
-  build-and-push-custom-dbt-image:
-    uses: ./.github/workflows/reusable_build.yml
-    with:
-      TAGS: |
-        ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}
-      DOCKER_FILE: Dockerfile_dbt
-      BUILD_ARGS: |
-        DBT_VERSION=${{ vars.DBT_VERSION }}
-        IMAGES_WORKDIR=${{ vars.IMAGES_WORKDIR }}
-    secrets: inherit
-  build-and-push-custom-gooddata-image:
-    uses: ./.github/workflows/reusable_build.yml
-    with:
-      TAGS: |
-        ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}
-      DOCKER_FILE: Dockerfile_gooddata
-      BUILD_ARGS: |
-        PYTHON_IMAGE=${{ vars.PYTHON_IMAGE }}
-        IMAGES_WORKDIR=${{ vars.IMAGES_WORKDIR }}
-    secrets: inherit
-  ####################################
-  # Extract load
-  extract-load-dev:
+
+  elta:
     needs:
-      - build-and-push-custom-meltano-image
-    uses: ./.github/workflows/reusable_extract_load.yml
+      - build-images
+    uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "dev"
-      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
-      MELTANO_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}"
     secrets: inherit
-  ####################################
-  # Transform
-  transform-dev:
+
+  elta-cloud:
     needs:
-      - extract-load-dev
-      - build-and-push-custom-dbt-image
-    uses: ./.github/workflows/reusable_transform.yml
+      - build-images
+    uses: ./.github/workflows/reusable_elta.yml
     with:
-      ENVIRONMENT: "dev"
-      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
-      DBT_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}"
-    secrets: inherit
-  ####################################
-  # Transform
-  analytics-dev:
-    needs:
-      - transform-dev
-      - build-and-push-custom-gooddata-image
-    uses: ./.github/workflows/reusable_analytics.yml
-    with:
-      ENVIRONMENT: "dev"
-      GOODDATA_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}"
+      ENVIRONMENT: "dev_cloud"
+      DBT_CLOUD: "true"
     secrets: inherit

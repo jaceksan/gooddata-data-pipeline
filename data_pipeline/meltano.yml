@@ -1,11 +1,10 @@
 version: 1
-default_environment: gdp_dev_local
-project_id: gdp-gdp-demo-1
+default_environment: cicd_dev_local
+project_id: cicd-cicd-demo-1
 environments:
-- name: gdp_dev_local
-- name: gdp_dev
-# TODO - add envs for dbt cloud
-- name: gdp_staging
+- name: cicd_dev_local
+- name: cicd_dev
+- name: cicd_staging
   config:
     plugins:
       extractors:
@@ -15,7 +14,7 @@ environments:
       - name: tap-exchangeratehost
         config:
           start_date: '2010-01-01'
-- name: gdp_prod
+- name: cicd_prod
   config:
     plugins:
       extractors:
@@ -25,6 +24,28 @@ environments:
       - name: tap-exchangeratehost
         config:
           start_date: '2010-01-01'
+- name: cicd_cloud_staging
+  config:
+    plugins:
+      extractors:
+        - name: tap-github-repo
+          config:
+            start_date: '2010-01-01'
+        - name: tap-exchangeratehost
+          config:
+            start_date: '2010-01-01'
+# Dedicated for dbt Cloud. We need to separate their state files (they run against different databases)
+- name: cicd_cloud_dev
+- name: cicd_cloud_prod
+  config:
+    plugins:
+      extractors:
+        - name: tap-github-repo
+          config:
+            start_date: '2010-01-01'
+        - name: tap-exchangeratehost
+          config:
+            start_date: '2010-01-01'
 
 include_paths:
   - "./meltano_conf/extractors/github.yml"
@@ -37,7 +58,7 @@ include_paths:
   - "./meltano_conf/loaders/loaders.yml"
 
 state_backend:
-  uri: s3://${MELTANO_STATE_AWS_BUCKET}/gdp_demo_meltano_state
+  uri: s3://${MELTANO_STATE_AWS_BUCKET}/cicd_github_demo_meltano_state
   s3:
     aws_access_key_id: ${MELTANO_STATE_AWS_ACCESS_KEY_ID}
     aws_secret_access_key: ${MELTANO_STATE_AWS_SECRET_ACCESS_KEY}
