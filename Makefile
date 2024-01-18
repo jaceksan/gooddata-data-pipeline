@@ -69,10 +69,10 @@ deploy_models: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
-provision_workspaces: dbt_compile
+provision_workspaces:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR provision_workspaces
 
-register_data_sources: dbt_compile
+register_data_sources:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_ldm: dbt_compile
