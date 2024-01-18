@@ -66,10 +66,10 @@ deploy_models: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
-provision_workspaces:
+provision_workspaces: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR provision_workspaces
 
-register_data_sources:
+register_data_sources: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_ldm: dbt_compile
@@ -80,7 +80,7 @@ deploy_models_cloud:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
-deploy_analytics: dbt_compile
+deploy_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
 
