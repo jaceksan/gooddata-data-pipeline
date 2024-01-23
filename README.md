@@ -73,7 +73,7 @@ docker-compose up bootstrap_origins
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
 # If you use Vertica
-export VERTICA_PASS"<your Vertica password>" 
+export VERTICA_PASS"=<your Vertica password>" 
 # If you use MotherDuck
 export MOTHERDUCK_TOKEN="<your MotherDuck token>" 
 docker-compose up extract_load_github
