@@ -43,6 +43,9 @@ extract_load_ecommerce_demo:
 extract_load_data_science:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_DATA_SCIENCE && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-data-science $$MELTANO_TARGET $$FR
 
+extract_load_jira:
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_JIRA && meltano --environment $$ELT_ENVIRONMENT run tap-jira $$MELTANO_TARGET $$FR
+
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
 #extract_load_exchange:
 #	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_EXCHANGERATEHOST && meltano --environment $$ELT_ENVIRONMENT run tap-exchangeratehost $$MELTANO_TARGET $$FR
