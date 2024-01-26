@@ -1,0 +1,137 @@
+content:
+  filterContextRef:
+    identifier:
+      id: e96aff40-f4dc-4dad-a0d1-ed5e35e129a7
+      type: filterContext
+  layout:
+    sections:
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: ecc6afc8-cdaf-472d-9e70-5b5e37f3e885
+                  type: visualizationObject
+              properties: {}
+              title: Days Spent on Issues
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: c9adab15-e07e-412c-bab9-b6448af0833a
+                  type: visualizationObject
+              properties: {}
+              title: Created Issues
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 5fbbb54d-18ce-454d-9902-5e0d4819f6e2
+                  type: visualizationObject
+              properties: {}
+              title: Issues Missed Due Date
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 473fba46-5b5e-412a-9658-366fdb64b6c6
+                  type: visualizationObject
+              properties: {}
+              title: Bugs
+              type: insight
+        type: IDashboardLayoutSection
+      - items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: closed_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: a5b9267d-6819-4fed-8706-c836a7401fd1
+                  type: visualizationObject
+              properties: {}
+              title: Issues by Type
+              type: insight
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 1a403f85-619c-483c-9e61-369e6b90ee8b
+                  type: visualizationObject
+              properties: {}
+              title: Missed Due Date in History
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: b1b599b2-388e-4cb8-ab97-f02fce480244
+title: Jireaucracy

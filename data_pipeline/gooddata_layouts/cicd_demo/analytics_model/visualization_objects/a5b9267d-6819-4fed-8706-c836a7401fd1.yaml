@@ -1,0 +1,40 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: count
+                filters: []
+                item:
+                  identifier:
+                    id: jira_issue_id
+                    type: attribute
+            format: '#,##0'
+            localIdentifier: 7be29681705541629822d1a71c282bcd
+            title: Count of Jira issue ID
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: jira_issue_type_name
+                type: label
+            localIdentifier: 500a35b9de764789ab06ffac14161166
+      localIdentifier: view
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: 7be29681705541629822d1a71c282bcd
+        operator: TOP
+        value: 10
+  properties:
+    controls:
+      dataLabels:
+        visible: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:donut
+description: ''
+id: a5b9267d-6819-4fed-8706-c836a7401fd1
+title: Issues by Type
