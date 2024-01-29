@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: jira_issues
+    description: "Jira issues"
+    meta:
+      gooddata:
+        model_id: github
+    columns:
+      # Below you can find schema definitions for the above extracted columns:
+      - name: jira_issue_id
+        data_type: "INT"
+        description: "Jira issue ID"
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key
+      - name: jira_issue_number
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: TEXT
+            attribute_column: jira_issue_id
+            default_view: true
+      - name: jira_issue_url
+        description: "Jira issue URL"
+        meta:
+          gooddata:
+            ldm_type: label
+            label_type: HYPERLINK
+            attribute_column: jira_issue_id
+      - name: created_at
+      - name: due_date_at
+      - name: updated_at
+      - name: closed_at
+      - name: jira_assignee_id
+      - name: jira_assignee_name
+      - name: jira_assignee_email
+      - name: jira_creator_id
+      - name: jira_creator_name
+      - name: jira_creator_email
+      - name: jira_issue_type_id
+      - name: jira_issue_type_name
+      - name: jira_priority_id
+      - name: jira_priority_name
+      - name: jira_project_id
+      - name: jira_project_name
+      - name: jira_resolution_id
+      - name: jira_resolution_name
+      - name: jira_status_id
+      - name: jira_status_name
+      - name: jira_status_category_id
+      - name: jira_status_category_key
+      - name: jira_status_category_name
+      - name: jira_days_to_solve
+      - name: jira_days_due_date_exceeded

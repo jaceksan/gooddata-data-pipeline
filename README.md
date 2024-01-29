@@ -25,7 +25,7 @@ Generally, you can change the whole data pipeline and UI apps by a single commit
 
 ## Architecture picture
 
-![Demo architecture](docs/MDS_v2.png "Demo architecture")
+![Demo architecture](docs/MDS.png "Demo architecture")
 
 ## If you need help
 This README is just a brief how-to, it does not contain all details. If you need help, do not hesitate to ask in our [Slack community](https://www.gooddata.com/slack/).
@@ -41,6 +41,8 @@ The following articles are based on this project:
 - [Extending CI/CD data pipeline with Meltano](https://medium.com/gooddata-developers/extending-ci-cd-data-pipeline-with-meltano-7de3bce74f57)
 - [Analytics Inside Virtual Reality: Too Soon?](https://medium.com/gooddata-developers/analytics-inside-virtual-reality-too-soon-41900dac366b)
 - [Streamlit meets Headless BI](https://medium.com/gooddata-developers/streamlit-meets-headless-bi-cb6196b69671)
+- [Ready, set, integrate: GoodData-dbt integration is production-ready!](https://medium.com/gooddata-developers/ready-set-integrate-gooddata-dbt-integration-is-production-ready-f37daa134455)
+- TODO: CICD Data Pipeline Blueprint v1.0
 
 ## Getting Started
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
@@ -73,7 +75,7 @@ docker-compose up bootstrap_origins
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
 # If you use Vertica
-export VERTICA_PASS"<your Vertica password>" 
+export VERTICA_PASS="<your Vertica password>" 
 # If you use MotherDuck
 export MOTHERDUCK_TOKEN="<your MotherDuck token>" 
 docker-compose up extract_load_github
@@ -106,8 +108,9 @@ Move to Gitlab, fork this repository and run the pipeline against your environme
 - Create a public PostgreSQL or Snowflake instance
   - Create required databases (for dev/staging/prod).
  
-You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD):
-- TAP_GITHUB_AUTH_TOKEN
+You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD) or GitHub(section Settings/Secrets) UI:
+- TAP_GITHUB_AUTH_TOKEN - to allow Meltano to crawl data from Github
+- TAP_JIRA_AUTH_USERNAME and TAP_JIRA_AUTH_PASSWORD - to allow Meltano to crawl data from Jira
 - GoodData
   - Single endpoint, host+port 
     - GOODDATA_HOST - host name pointing to the GoodData instance

@@ -1,0 +1,55 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: jira_days_due_date_exceeded
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: e22e1a4f69924a189412433848d2a7e3
+            title: Sum of Jira days due date exceeded
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: created_at.month
+                type: label
+            localIdentifier: 3ac6585932bd4ec99e0d5fc9851d0442
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: jira_issue_type_name
+                type: label
+            localIdentifier: a92e643216bd43bd9312d08f18c76fe2
+      localIdentifier: stack
+  filters:
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: created_at
+            type: dataset
+        from: -1
+        granularity: GDC.time.year
+        to: 1
+    - rankingFilter:
+        attributes:
+          - localIdentifier: a92e643216bd43bd9312d08f18c76fe2
+        measure:
+          localIdentifier: e22e1a4f69924a189412433848d2a7e3
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:column
+description: ''
+id: 1a403f85-619c-483c-9e61-369e6b90ee8b
+title: Missed Due Date in History

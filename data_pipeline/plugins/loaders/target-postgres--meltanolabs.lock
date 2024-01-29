@@ -20,6 +20,13 @@
   ],
   "settings": [
     {
+      "name": "activate_version",
+      "kind": "boolean",
+      "value": true,
+      "label": "Activate Version",
+      "description": "If set to false, the tap will ignore activate version messages. If set to true, add_record_metadata must be set to true as well."
+    },
+    {
       "name": "add_record_metadata",
       "kind": "boolean",
       "value": true,
@@ -63,7 +70,7 @@
       "kind": "boolean",
       "value": false,
       "label": "Hard Delete",
-      "description": "When activate version is sent from a tap this specefies if we should delete the records that don't match, or mark them with a date in the `_sdc_deleted_at` column."
+      "description": "When activate version is sent from a tap this specefies if we should delete the records that don't match, or mark them with a date in the `_sdc_deleted_at` column. This config option is ignored if `activate_version` is set to false."
     },
     {
       "name": "host",
