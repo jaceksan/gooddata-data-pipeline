@@ -1,0 +1,19 @@
+plugins:
+  extractors:
+    - name: tap-jira
+      variant: meltanolabs
+      pip_url: git+https://github.com/jaceksan/tap-jira.git@config_max_results
+      config:
+        domain: gooddata.atlassian.net
+        auth:
+          flow: password
+        start_date: '2024-01-01'
+        flattening_enabled: 'True'
+        flattening_max_depth: 1
+        page_size:
+          issues: 100
+      select:
+        - issues.*
+# TODO - how to exclude customfield columns?
+#      select_filter:
+#        - "!issues.fields.customfield*"

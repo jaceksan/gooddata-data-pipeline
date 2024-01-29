@@ -40,6 +40,7 @@ jobs:
       DBT_INPUT_SCHEMA_EXCHANGERATEHOST: "${{ vars.INPUT_SCHEMA_EXCHANGERATEHOST }}"
       DBT_INPUT_SCHEMA_ECOMMERCE_DEMO: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
       DBT_INPUT_SCHEMA_DATA_SCIENCE: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
+      DBT_INPUT_SCHEMA_JIRA: "${{ vars.INPUT_SCHEMA_JIRA }}"
       DBT_DB_USER: "${{ vars.DB_USER }}"
       # TODO: no need to generalize WAREHOUSE/ACCOUNT, they are Snowflake specific
       DBT_DB_WAREHOUSE: "${{ vars.SNOWFLAKE_WAREHOUSE }}"
@@ -74,6 +75,14 @@ jobs:
           cd ${{ vars.SRC_DATA_PIPELINE }}
           dbt run --profiles-dir ${{ vars.DBT_PROFILES_DIR }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }} ${{ env.FR_ARG }}
           dbt test --profiles-dir ${{ vars.DBT_PROFILES_DIR }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+
+      - name: Archive dbt run
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dbt-run-files-${{ github.sha }}
+          path: |
+            ${{ vars.SRC_DATA_PIPELINE }}/target
 
       - name: Run Transform (dbt Cloud)
         timeout-minutes: 15

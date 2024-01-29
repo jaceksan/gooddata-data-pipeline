@@ -7,77 +7,45 @@ plugins:
     inherit_from: tap-github
     config:
       repositories:
-      - gooddata/gooddata-python-sdk
-      - gooddata/gooddata-ui-sdk
-      - gooddata/gooddata-dashboard-plugins
-      - gooddata/gooddata-public-demos
+        - gooddata/gooddata-python-sdk
+        - gooddata/gooddata-ui-sdk
+        - gooddata/gooddata-dashboard-plugins
+        - gooddata/gooddata-public-demos
       start_date: '2022-01-01'
     select:
-        # Commits
-    - commits.commit_timestamp
-    - commits.sha
-    - commits.html_url
-    - commits.repo_id
-    - commits.author*
-    - commits.commit*
-        # Pull requests
-    - pull_requests.number                       # PR ID
-    - pull_requests.repo_id
-    - pull_requests.html_url
-    - pull_requests.url
-    - pull_requests.title
-    - pull_requests.draft
-    - pull_requests.state
-    - pull_requests.repo_id
-    - pull_requests.updated_at
-    - pull_requests.created_at
-    - pull_requests.merged_at
-    - pull_requests.closed_at
-    - pull_requests.user*
-    - workflow_runs.*
-        # TODO - no way to JOIN reviews with pull requests (so far).
-        # pull_request_url is filled, but no counterpart column in pull_requests
-        # commmit_id works, but no way to join commits and pull_requests
-        # TODO - try to use the wildcard pattern (e.g. pull_requests.user*)
-        # still, the performance is poor, for each PR reviews must be collected
-        # Reviews
-#        - reviews.author_association
-#        - reviews.body
-#        - reviews.commit_id
-#        - reviews.html_url
-#        - reviews.id
-#        - reviews.org
-#        - reviews.pull_number
-#        - reviews.pull_request_url
-#        - reviews.repo
-#        - reviews.repo_id
-#        - reviews.state
-#        - reviews.submitted_at
-#        - reviews.user
+      # Commits
+      - commits.commit_timestamp
+      - commits.sha
+      - commits.html_url
+      - commits.repo_id
+      - commits.author*
+      - commits.commit*
+      # Pull requests
+      - pull_requests.number                       # PR ID
+      - pull_requests.repo_id
+      - pull_requests.html_url
+      - pull_requests.url
+      - pull_requests.title
+      - pull_requests.draft
+      - pull_requests.state
+      - pull_requests.repo_id
+      - pull_requests.updated_at
+      - pull_requests.created_at
+      - pull_requests.merged_at
+      - pull_requests.closed_at
+      - pull_requests.user*
+      - workflow_runs.*
   - name: tap-github-org
     inherit_from: tap-github
     config:
       organizations:
-      - gooddata
+        - gooddata
     select:
-        # Repositories
-    - repositories.id
-    - repositories.html_url
-    - repositories.name
-    - repositories.stargazers_count
-    - repositories.watchers_count
-    - repositories.created_at
-    - repositories.updated_at
-        # Users - we take it from commits. Crawling contributors is very slow (call per repo)
-        #       - TODO - use new Github API?
-#    - contributors.avatar_url
-#    - contributors.contributions
-#    - contributors.gravatar_id
-#    - contributors.html_url
-#    - contributors.id
-#    - contributors.login
-#    - contributors.org
-#    - contributors.repo_id
-#    - contributors.site_admin
-#    - contributors.type
-#    - contributors.url
+      # Repositories
+      - repositories.id
+      - repositories.html_url
+      - repositories.name
+      - repositories.stargazers_count
+      - repositories.watchers_count
+      - repositories.created_at
+      - repositories.updated_at

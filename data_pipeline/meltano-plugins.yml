@@ -12,6 +12,9 @@ plugins:
     - name: tap-exchangeratehost
       variant: anelendata
       pip_url: git+https://github.com/anelendata/tap-exchangeratehost.git
+    - name: tap-jira
+      variant: meltanolabs
+      pip_url: git+https://github.com/jaceksan/tap-jira.git
   loaders:
     - name: target-jsonl
       variant: andyh1203

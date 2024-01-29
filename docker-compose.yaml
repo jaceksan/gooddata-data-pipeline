@@ -131,6 +131,24 @@ services:
       - ./data_pipeline/meltano.yml:/project/meltano.yml
       - ./data_pipeline/meltano_conf:/project/meltano_conf
 
+  extract_load_jira:
+    build:
+      context: .
+      dockerfile: Dockerfile_meltano
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - meltano --environment $$MELTANO_ENV run tap-jira target-postgres
+    environment:
+      <<: [ *postgres-vars, *meltano-vars ]
+      TARGET_SCHEMA: jira_input_stage
+      TAP_JIRA_AUTH_PASSWORD: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
+      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
+    volumes:
+      - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - ./data_pipeline/meltano_conf:/project/meltano_conf
+
 # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
 #  extract_load_exchangeratehost:
 #    build:
@@ -167,6 +185,7 @@ services:
       DBT_INPUT_SCHEMA: cicd_input_stage
       DBT_INPUT_SCHEMA_GITHUB: "github_input_stage"
       DBT_INPUT_SCHEMA_FAA: "faa_input_stage"
+      DBT_INPUT_SCHEMA_JIRA: "jira_input_stage"
       DBT_OUTPUT_SCHEMA: cicd_output_stage
       ELT_ENVIRONMENT: cicd_dev_local
       DBT_TARGET: "postgres"
