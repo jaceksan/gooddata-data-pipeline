@@ -49,6 +49,7 @@ jobs:
       DBT_DB_PORT: "${{ vars.DB_PORT }}"
       DBT_DB_NAME: "${{ vars.DB_NAME }}"
       DBT_DB_PASS: "${{ secrets.DB_PASS }}"
+      MOTHERDUCK_TOKEN: "${{ secrets.MOTHERDUCK_TOKEN }}"
       GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
       GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
       GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"

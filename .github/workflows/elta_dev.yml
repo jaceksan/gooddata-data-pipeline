@@ -58,3 +58,14 @@ jobs:
       ENVIRONMENT: "dev_cloud"
       DBT_CLOUD: "true"
     secrets: inherit
+
+  # Branch for MotherDuck DB.
+  # GoodData now supports MotherDuck only in Labs environment
+  #   because the issue with extensions downloaded in runtime.
+  elta-labs-motherduck:
+    needs:
+      - build-images
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "dev_labs_motherduck"
+    secrets: inherit
