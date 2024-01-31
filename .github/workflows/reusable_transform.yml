@@ -30,7 +30,8 @@ jobs:
       # Must be set for dbt Cloud toolchain, where a data class initiated attr values from env variables
       ELT_ENVIRONMENT: "${{ vars.ELT_ENVIRONMENT }}"
       DBT_TARGET: "${{ vars.DBT_TARGET }}"
-      # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
+      DBT_INCREMENTAL_STRATEGY: "${{ vars.DBT_INCREMENTAL_STRATEGY || 'merge' }}"
+    # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
       # dbt profiles.yml file in this repo relies on DBT_ prefix.
       # It means that even jobs not running against dbt cloud rely on DBT_ prefix.
       # More variables are duplicated later in this file based on what database is used.
@@ -93,8 +94,7 @@ jobs:
           DBT_PROJECT_ID: "${{ vars.DBT_PROJECT_ID }}"
           DBT_JOB_ID: "${{ vars.DBT_JOB_ID }}"
           DBT_TOKEN: "${{ secrets.DBT_TOKEN }}"
-          DBT_ALLOWED_DEGRADATION: 20
-          DBT_INCREMENTAL_STRATEGY: "merge"
+          DBT_ALLOWED_DEGRADATION: "${{ vars.DBT_ALLOWED_DEGRADATION || '20' }}"
           # GITHUB_ variables are reserved by GitHub.
           #   The gooddata-dbt accepts equivalent GOODDATA_ variables
           # There is no way how to expose these variables AFTER MERGE (on push)
