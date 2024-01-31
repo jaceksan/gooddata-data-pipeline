@@ -93,7 +93,6 @@ jobs:
           DBT_PROJECT_ID: "${{ vars.DBT_PROJECT_ID }}"
           DBT_JOB_ID: "${{ vars.DBT_JOB_ID }}"
           DBT_TOKEN: "${{ secrets.DBT_TOKEN }}"
-          # TODO - implement notification about perf degradations similarly how it exists in GitLab
           DBT_ALLOWED_DEGRADATION: 20
           DBT_INCREMENTAL_STRATEGY: "merge"
           # GITHUB_ variables are reserved by GitHub.
