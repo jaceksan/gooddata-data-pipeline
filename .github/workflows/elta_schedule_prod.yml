@@ -11,7 +11,7 @@ jobs:
     with:
       ENVIRONMENT: "prod"
       BRANCH_NAME: "prod"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
     secrets: inherit
 
   elta-cloud:
@@ -20,7 +20,7 @@ jobs:
     with:
       ENVIRONMENT: "prod_cloud"
       BRANCH_NAME: "prod"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
       DBT_CLOUD: "true"
     secrets: inherit
 
@@ -33,5 +33,5 @@ jobs:
     with:
       ENVIRONMENT: "prod_labs_motherduck"
       BRANCH_NAME: "prod"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
     secrets: inherit

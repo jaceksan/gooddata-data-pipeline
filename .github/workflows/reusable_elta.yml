@@ -8,7 +8,7 @@ on:
         type: string
       BRANCH_NAME:
         type: string
-      DEPLOY_ANALYTICS:
+      DEPLOY_GD_MODELS:
         required: false
         type: string
         default: "true"
@@ -40,6 +40,7 @@ jobs:
       DBT_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}"
       BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
       DBT_CLOUD: "${{ inputs.DBT_CLOUD }}"
+      DEPLOY_GD_MODELS: "${{ inputs.DEPLOY_GD_MODELS }}"
     secrets: inherit
   ####################################
   # Analytics
@@ -51,4 +52,5 @@ jobs:
       ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
       GOODDATA_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}"
       BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
+      DEPLOY_GD_MODELS: "${{ inputs.DEPLOY_GD_MODELS }}"
     secrets: inherit
