@@ -35,9 +35,6 @@ jobs:
             TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
           - MELTANO_SOURCE: tap-jira
             TARGET_SCHEMA: "${{ vars.INPUT_SCHEMA_JIRA }}"
-          # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
-          # - MELTANO_SOURCE: tap-exchangeratehost
-          #  TARGET_SCHEMA: "${env.INPUT_SCHEMA_EXCHANGERATEHOST}"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

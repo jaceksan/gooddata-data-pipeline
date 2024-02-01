@@ -80,8 +80,6 @@ export VERTICA_PASS="<your Vertica password>"
 export MOTHERDUCK_TOKEN="<your MotherDuck token>" 
 docker-compose up extract_load_github
 docker-compose up extract_load_faa
-# Uncomment once the tap is fixed
-# docker-compose up extract_load_exchangeratehost
 docker-compose up extract_load_data_science
 docker-compose up extract_load_ecommerce_demo
 

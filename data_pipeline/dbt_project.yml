@@ -44,9 +44,6 @@ models:
       +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
     jira:
       +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
-# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
-#    exchange_rate_host:
-#      +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
 
 vars:
   "dbt_date:time_zone": "UTC"
@@ -55,5 +52,3 @@ vars:
   input_schema_ecommerce_demo: "{{ env_var('DBT_INPUT_SCHEMA_ECOMMERCE_DEMO', 'default_input_stage') }}"
   input_schema_data_science: "{{ env_var('DBT_INPUT_SCHEMA_DATA_SCIENCE', 'default_input_stage') }}"
   input_schema_jira: "{{ env_var('DBT_INPUT_SCHEMA_JIRA', 'default_input_stage') }}"
-  # TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
-#  input_schema_exchangeratehost: "{{ env_var('DBT_INPUT_SCHEMA_EXCHANGERATEHOST', 'default_input_stage') }}"
