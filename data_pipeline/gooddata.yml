@@ -3,25 +3,24 @@ environment_setups:
     environments:
       - id: development
         name: Development
-        elt_environment: cicd_dev
+      - id: development_motherduck
+        name: Development(MotherDuck)
       - id: staging
         name: Staging
-        elt_environment: cicd_staging
       - id: staging_vertica
         name: Staging(Vertica)
-        elt_environment: cicd_staging_vertica
+      - id: staging_motherduck
+        name: Staging(MotherDuck)
       - id: production
         name: Production
-        elt_environment: cicd_prod
+      - id: production_motherduck
+        name: Production(MotherDuck)
       - id: cloud_development
         name: dbt Cloud Development
-        elt_environment: cicd_cloud_dev
       - id: cloud_staging
         name: dbt Cloud Staging
-        elt_environment: cicd_cloud_staging
       - id: cloud_production
         name: dbt Cloud Production
-        elt_environment: cicd_cloud_prod
   - id: simple
     environments:
       - id: development
@@ -38,12 +37,12 @@ environment_setups:
 data_products:
   - id: cicd_demo
     name: CICD demo
-    environment_setup_id: simple
+    environment_setup_id: default
     model_ids:
       - github
   - id: faa
     name: Federal Aviation Administration
-    environment_setup_id: default
+    environment_setup_id: simple
     model_ids:
       - faa
     localization:

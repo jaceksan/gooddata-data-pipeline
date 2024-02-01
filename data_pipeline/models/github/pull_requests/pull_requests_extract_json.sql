@@ -14,13 +14,13 @@
 
 with using_clause as (
   select
-    id,
-    number as pull_request_number,
+    cast(id as bigint) as id,
+    cast(number as bigint) as pull_request_number,
     html_url as pull_request_url,
     title as pull_request_title,
     draft as pull_request_draft,
     state,
-    CAST(repo_id as INT) as repo_id,
+    CAST(repo_id as bigint) as repo_id,
     created_at,
     merged_at,
     closed_at,

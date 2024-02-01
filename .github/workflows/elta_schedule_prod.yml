@@ -11,14 +11,27 @@ jobs:
     with:
       ENVIRONMENT: "prod"
       BRANCH_NAME: "prod"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
     secrets: inherit
-  elta_cloud:
+
+  elta-cloud:
     name: ELTA (prod cloud)
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "prod_cloud"
       BRANCH_NAME: "prod"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
       DBT_CLOUD: "true"
+    secrets: inherit
+
+  # Branch for MotherDuck DB.
+  # GoodData now supports MotherDuck only in Labs environment
+  #   because the issue with extensions downloaded in runtime.
+  elta-labs-motherduck:
+    name: ELTA (prod MotherDuck)
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "prod_labs_motherduck"
+      BRANCH_NAME: "prod"
+      DEPLOY_GD_MODELS: "false"
     secrets: inherit

@@ -9,7 +9,7 @@ on:
         type: string
       BRANCH_NAME:
         type: string
-      DEPLOY_ANALYTICS:
+      DEPLOY_GD_MODELS:
         required: false
         type: string
         default: "true"
@@ -35,7 +35,7 @@ jobs:
           echo ${{ env.GOODDATA_PROFILES_FILE }} | base64 --decode > ~/.gooddata/profiles.yaml
 
       - name: Deploy Analytics
-        if: ${{ inputs.DEPLOY_ANALYTICS == 'true' }}
+        if: ${{ inputs.DEPLOY_GD_MODELS == 'true' }}
         env:
           GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
           GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"

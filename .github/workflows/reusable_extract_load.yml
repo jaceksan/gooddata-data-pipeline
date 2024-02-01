@@ -67,6 +67,7 @@ jobs:
           DB_ACCOUNT: "${{ vars.SNOWFLAKE_ACCOUNT }}"
           DB_NAME: "${{ vars.DB_NAME }}"
           DB_USER: "${{ vars.DB_USER }}"
+          MOTHERDUCK_TOKEN: "${{ secrets.MOTHERDUCK_TOKEN }}"
         run: |
           cd ${{ vars.SRC_DATA_PIPELINE }}
           meltano --environment ${{ vars.ELT_ENVIRONMENT }} run ${{ matrix.MELTANO_SOURCE }} ${{ vars.MELTANO_TARGET }} ${{ env.FR_ARG }}

@@ -18,7 +18,7 @@ cicd_dev_local:
       dbname: "{{ env_var('DBT_DB_NAME', 'demo') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
     vertica:
-      title: "CICD demo (dev local)"
+      title: "CICD demo (dev local vertica)"
       type: vertica
       threads: 2
       host: "{{ env_var('DBT_DB_HOST', 'xxxx') }}"
@@ -27,12 +27,11 @@ cicd_dev_local:
       password: "{{ env_var('DBT_DB_PASS', 'xxxx') }}"
       database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
-# TODO - add support to gooddata-dbt and GoodData in general. dbt run already works.
-#    motherduck:
-#      title: "CICD demo (dev local)"
-#      type: duckdb
-#      path: "md:{{ env_var('DBT_DB_NAME', 'xxxx') }}"
-#      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+    motherduck:
+      title: "CICD demo (dev local motherduck)"
+      type: duckdb
+      path: "md:{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
 # Copy & paste below targets, reasons:
 # 1. the env variables must be shared with Meltano, so we cannot hardcode them here
@@ -49,6 +48,11 @@ cicd_dev:
       password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
       database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+    motherduck:
+      title: "CICD demo (dev motherduck)"
+      type: duckdb
+      path: "md:{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
 cicd_cloud_dev:
@@ -89,6 +93,11 @@ cicd_staging:
       password: "{{ env_var('DBT_DB_PASS', 'xxxx') }}"
       database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+    motherduck:
+      title: "CICD demo (staging motherduck)"
+      type: duckdb
+      path: "md:{{ env_var('DBT_DB_NAME', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
 cicd_cloud_staging:
   target: snowflake
@@ -116,6 +125,11 @@ cicd_prod:
       password: "{{ env_var('DBT_DB_PASS', 'xxxxx') }}"
       database: "{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       warehouse: "{{ env_var('DBT_DB_WAREHOUSE', 'xxxx') }}"
+      schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
+    motherduck:
+      title: "CICD demo (prod motherduck)"
+      type: duckdb
+      path: "md:{{ env_var('DBT_DB_NAME', 'xxxx') }}"
       schema: "{{ env_var('DBT_INPUT_SCHEMA', 'xxxx') }}"
 
 cicd_cloud_prod:
