@@ -52,8 +52,6 @@ jobs:
   #   because the issue with extensions downloaded in runtime.
   elta-labs-motherduck:
     name: ELTA MotherDuck (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
-    needs:
-      - build-images
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}_labs_motherduck"
