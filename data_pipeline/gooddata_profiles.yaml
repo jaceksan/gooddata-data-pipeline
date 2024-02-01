@@ -1,0 +1,9 @@
+local:
+  host: "http://localhost:3000"
+  token: "YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
+
+aio:
+  host: "http://gooddata-cn-ce:3000"
+  token: "YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
+  custom_headers:
+    Host: localhost

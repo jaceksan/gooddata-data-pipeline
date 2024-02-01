@@ -78,9 +78,12 @@ deploy_models_cloud:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
-deploy_analytics:
+deploy_and_test_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
+
+deploy_analytics:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
 
 store_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt store_analytics

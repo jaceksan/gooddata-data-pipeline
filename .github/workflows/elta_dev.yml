@@ -11,6 +11,8 @@ on:
       # Shared
       - .github/workflows/elta_dev.yml
       - .github/workflows/reusable_elta.yml
+      - .env*
+      - Makefile
       # Build custom Meltano image
       - data_pipeline/requirements-meltano.txt
       - data_pipeline/meltano-plugins.yml
@@ -38,24 +40,46 @@ on:
       - .github/workflows/reusable_analytics.yml
 
 jobs:
+  read-env:
+    uses: ./.github/workflows/reusable_read_env.yml
+
   build-images:
+    needs:
+     - read-env
     uses: ./.github/workflows/reusable_builds.yml
+    with:
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      MELTANO_VERSION: "${{ needs.read-env.outputs.MELTANO_VERSION }}"
+      DBT_VERSION: "${{ needs.read-env.outputs.DBT_VERSION }}"
+      GOODDATA_VERSION: "${{ needs.read-env.outputs.GOODDATA_VERSION }}"
+      PYTHON_IMAGE: "${{ needs.read-env.outputs.PYTHON_IMAGE }}"
+      IMAGES_WORKDIR: "${{ needs.read-env.outputs.IMAGES_WORKDIR }}"
     secrets: inherit
 
   elta:
     needs:
+      - read-env
       - build-images
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "dev"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
     secrets: inherit
 
   elta-cloud:
     needs:
+      - read-env
       - build-images
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "dev_cloud"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
       DBT_CLOUD: "true"
     secrets: inherit
 
@@ -64,8 +88,13 @@ jobs:
   #   because the issue with extensions downloaded in runtime.
   elta-labs-motherduck:
     needs:
+      - read-env
       - build-images
     uses: ./.github/workflows/reusable_elta.yml
     with:
-      ENVIRONMENT: "dev_labs_motherduck"
+      ENVIRONMENT: "dev"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      DB_OVERRIDE: "motherduck"
     secrets: inherit

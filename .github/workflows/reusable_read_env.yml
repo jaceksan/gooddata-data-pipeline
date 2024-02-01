@@ -1,0 +1,49 @@
+on:
+  workflow_call:
+    outputs:
+      MELTANO_VERSION:
+        value: ${{ jobs.reusable-read-env.outputs.MELTANO_VERSION }}
+      DBT_VERSION:
+        value: ${{ jobs.reusable-read-env.outputs.DBT_VERSION }}
+      GOODDATA_VERSION:
+        value: ${{ jobs.reusable-read-env.outputs.GOODDATA_VERSION }}
+      PYTHON_IMAGE:
+        value: ${{ jobs.reusable-read-env.outputs.PYTHON_IMAGE }}
+      IMAGES_WORKDIR:
+        value: ${{ jobs.reusable-read-env.outputs.IMAGES_WORKDIR }}
+      MELTANO_CUSTOM_IMAGE:
+        value: ${{ jobs.reusable-read-env.outputs.MELTANO_CUSTOM_IMAGE }}
+      DBT_CUSTOM_IMAGE:
+        value: ${{ jobs.reusable-read-env.outputs.DBT_CUSTOM_IMAGE }}
+      GOODDATA_CUSTOM_IMAGE:
+        value: ${{ jobs.reusable-read-env.outputs.GOODDATA_CUSTOM_IMAGE }}
+
+jobs:
+  reusable-read-env:
+    runs-on: ubuntu-latest
+    outputs:
+      MELTANO_VERSION: ${{ steps.vars.outputs.MELTANO_VERSION }}
+      DBT_VERSION: ${{ steps.vars.outputs.DBT_VERSION }}
+      GOODDATA_VERSION: ${{ steps.vars.outputs.GOODDATA_VERSION }}
+      PYTHON_IMAGE: ${{ steps.vars.outputs.PYTHON_IMAGE }}
+      IMAGES_WORKDIR: ${{ steps.vars.outputs.IMAGES_WORKDIR }}
+      MELTANO_CUSTOM_IMAGE: ${{ steps.vars.outputs.MELTANO_CUSTOM_IMAGE }}
+      DBT_CUSTOM_IMAGE: ${{ steps.vars.outputs.DBT_CUSTOM_IMAGE }}
+      GOODDATA_CUSTOM_IMAGE: ${{ steps.vars.outputs.GOODDATA_CUSTOM_IMAGE }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: vars
+        shell: bash
+        run: |
+          source .env.dev
+          echo "MELTANO_VERSION=$MELTANO_VERSION" >> "$GITHUB_OUTPUT"
+          echo "DBT_VERSION=$DBT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "GOODDATA_VERSION=$GOODDATA_VERSION" >> "$GITHUB_OUTPUT"
+          echo "PYTHON_IMAGE=$PYTHON_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "IMAGES_WORKDIR=$IMAGES_WORKDIR" >> "$GITHUB_OUTPUT"
+          echo "MELTANO_CUSTOM_IMAGE=ghcr.io/${{ github.repository }}/$MELTANO_CUSTOM_IMAGE_BASE:$MELTANO_VERSION" >> "$GITHUB_OUTPUT"
+          echo "DBT_CUSTOM_IMAGE=ghcr.io/${{ github.repository }}/$DBT_CUSTOM_IMAGE_BASE:$DBT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "GOODDATA_CUSTOM_IMAGE=ghcr.io/${{ github.repository }}/$GOODDATA_CLIENT_CUSTOM_IMAGE_BASE:$GOODDATA_VERSION" >> "$GITHUB_OUTPUT"
