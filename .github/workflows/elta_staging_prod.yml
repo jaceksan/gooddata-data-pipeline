@@ -68,7 +68,7 @@ jobs:
     name: ELTA MotherDuck (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
     uses: ./.github/workflows/reusable_elta.yml
     with:
-      ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}_labs_motherduck"
+      ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
       GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
