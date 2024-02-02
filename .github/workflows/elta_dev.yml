@@ -11,7 +11,9 @@ on:
       # Shared
       - .github/workflows/elta_dev.yml
       - .github/workflows/reusable_elta.yml
-      - .env*
+      - .env.base
+      - .env.prefix_dbt_vars
+      - .env.dev*
       - Makefile
       # Build custom Meltano image
       - data_pipeline/requirements-meltano.txt
