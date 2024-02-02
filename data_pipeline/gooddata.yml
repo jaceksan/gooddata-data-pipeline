@@ -76,6 +76,13 @@ organizations:
       - faa
       - ecommerce_demo
       - data_science
+  # For docker-compose deployment - different host in GoodData profiles.yaml must be used inside the Docker network
+  - gooddata_profile: aio
+    data_product_ids:
+      - cicd_demo
+      - faa
+      - ecommerce_demo
+      - data_science
   - gooddata_profile: demo_cicd
     data_product_ids:
       - cicd_demo

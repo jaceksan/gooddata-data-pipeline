@@ -4,6 +4,10 @@ on:
       ENVIRONMENT:
         required: true
         type: string
+      DB_OVERRIDE:
+        required: false
+        type: string
+        default: ""
       FULL_REFRESH:
         required: true
         type: string
@@ -28,37 +32,9 @@ jobs:
     environment: ${{ inputs.ENVIRONMENT }}
     container: ${{ inputs.DBT_CUSTOM_IMAGE }}
     env:
-      GOODDATA_PROFILES_FILE: "${{ secrets.GOODDATA_PROFILES_FILE }}"
       FR_ARG: ${{ inputs.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
-      DBT_PROFILES_DIR: "${{ vars.DBT_PROFILES_DIR }}"
-      # Must be set for dbt Cloud toolchain, where a data class initiated attr values from env variables
-      ELT_ENVIRONMENT: "${{ vars.ELT_ENVIRONMENT }}"
-      DBT_TARGET: "${{ vars.DBT_TARGET }}"
-      DBT_INCREMENTAL_STRATEGY: "${{ vars.DBT_INCREMENTAL_STRATEGY || 'merge' }}"
-    # dbt cloud insist on env variables must contain DBT_ prefix. We have to duplicate them here.
-      # dbt profiles.yml file in this repo relies on DBT_ prefix.
-      # It means that even jobs not running against dbt cloud rely on DBT_ prefix.
-      # More variables are duplicated later in this file based on what database is used.
-      DBT_OUTPUT_SCHEMA: "${{ vars.OUTPUT_SCHEMA }}"
-      DBT_INPUT_SCHEMA_GITHUB: "${{ vars.INPUT_SCHEMA_GITHUB }}"
-      DBT_INPUT_SCHEMA_FAA: "${{ vars.INPUT_SCHEMA_FAA }}"
-      DBT_INPUT_SCHEMA_EXCHANGERATEHOST: "${{ vars.INPUT_SCHEMA_EXCHANGERATEHOST }}"
-      DBT_INPUT_SCHEMA_ECOMMERCE_DEMO: "${{ vars.INPUT_SCHEMA_ECOMMERCE_DEMO }}"
-      DBT_INPUT_SCHEMA_DATA_SCIENCE: "${{ vars.INPUT_SCHEMA_DATA_SCIENCE }}"
-      DBT_INPUT_SCHEMA_JIRA: "${{ vars.INPUT_SCHEMA_JIRA }}"
-      DBT_DB_USER: "${{ vars.DB_USER }}"
-      # TODO: no need to generalize WAREHOUSE/ACCOUNT, they are Snowflake specific
-      DBT_DB_WAREHOUSE: "${{ vars.SNOWFLAKE_WAREHOUSE }}"
-      DBT_DB_ACCOUNT: "${{ vars.SNOWFLAKE_ACCOUNT }}"
-      DBT_DB_HOST: "${{ vars.DB_HOST }}"
-      DBT_DB_PORT: "${{ vars.DB_PORT }}"
-      DBT_DB_NAME: "${{ vars.DB_NAME }}"
       DBT_DB_PASS: "${{ secrets.DB_PASS }}"
       MOTHERDUCK_TOKEN: "${{ secrets.MOTHERDUCK_TOKEN }}"
-      GOODDATA_HOST: "${{ vars.GOODDATA_HOST }}"
-      GOODDATA_TOKEN: "${{ secrets.GOODDATA_TOKEN }}"
-      GOODDATA_PROFILES: "${{ vars.GOODDATA_PROFILES }}"
-      GOODDATA_ENVIRONMENT_ID: "${{ vars.GOODDATA_ENVIRONMENT_ID }}"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -67,36 +43,36 @@ jobs:
           ref: ${{ inputs.BRANCH_NAME }}
 
       - name: Setup Environment
+        shell: bash
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
+          source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
+          cd $SRC_DATA_PIPELINE
           # dbt packages are installed during build of docker image to workdir
-          ln -s ${{ vars.IMAGES_WORKDIR }}/dbt_packages dbt_packages
+          ln -s $IMAGES_WORKDIR/dbt_packages dbt_packages
           mkdir -p ~/.gooddata
-          echo ${{ env.GOODDATA_PROFILES_FILE }} | base64 --decode > ~/.gooddata/profiles.yaml
+          echo ${{ secrets.GOODDATA_PROFILES_FILE }} | base64 --decode > ~/.gooddata/profiles.yaml
 
       - name: Run Transform
+        shell: bash
         timeout-minutes: 15
         if: ${{ inputs.DBT_CLOUD == 'false' }}
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
-          dbt run --profiles-dir ${{ vars.DBT_PROFILES_DIR }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }} ${{ env.FR_ARG }}
-          dbt test --profiles-dir ${{ vars.DBT_PROFILES_DIR }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+          source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
+          make transform
 
       - name: Archive dbt run
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: dbt-run-files-${{ github.sha }}-${{ inputs.ENVIRONMENT }}
+          name: dbt-run-files-${{ github.sha }}-${{ inputs.ENVIRONMENT }}-${{ inputs.DB_OVERRIDE || 'default' }}
           path: |
             ${{ vars.SRC_DATA_PIPELINE }}/target
 
       - name: Run Transform (dbt Cloud)
+        shell: bash
         timeout-minutes: 15
         if: ${{ inputs.DBT_CLOUD == 'true' }}
         env:
-          DBT_ACCOUNT_ID: "${{ vars.DBT_ACCOUNT_ID }}"
-          DBT_PROJECT_ID: "${{ vars.DBT_PROJECT_ID }}"
-          DBT_JOB_ID: "${{ vars.DBT_JOB_ID }}"
           DBT_TOKEN: "${{ secrets.DBT_TOKEN }}"
           DBT_ALLOWED_DEGRADATION: "${{ vars.DBT_ALLOWED_DEGRADATION || '20' }}"
           # GITHUB_ variables are reserved by GitHub.
@@ -113,24 +89,32 @@ jobs:
           GOODDATA_GITHUB_PULL_REQUEST_ID: "${{ github.event.pull_request.number }}"
           GOODDATA_GITHUB_ACTOR: "${{ github.actor }}"
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
-          gooddata-dbt dbt_cloud_run ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+          source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
+          make transform_cloud
+
       - name: Provision GoodData workspaces
+        shell: bash
         if: ${{ inputs.DEPLOY_GD_MODELS == 'true' }}
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
-          gooddata-dbt provision_workspaces
+          source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
+          make provision_workspaces
+
       - name: Register Data Sources in GoodData
+        shell: bash
         if: ${{ inputs.DEPLOY_GD_MODELS == 'true' }}
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
-          gooddata-dbt register_data_sources ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+          source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
+          make register_data_sources
+
       - name: Deploy GoodData LDM
+        shell: bash
         if: ${{ inputs.DEPLOY_GD_MODELS == 'true' }}
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
-          gooddata-dbt deploy_ldm ${{ vars.GOODDATA_UPPER_CASE }} --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+          source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
+          make deploy_ldm
+
       - name: Invalidate GoodData caches
+        shell: bash
         run: |
-          cd ${{ vars.SRC_DATA_PIPELINE }}
-          gooddata-dbt upload_notification --profile ${{ vars.ELT_ENVIRONMENT }} --target ${{ vars.DBT_TARGET }}
+          source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
+          make invalidate_caches

@@ -1,31 +1,45 @@
 version: '3.8'
 
-x-postgres-vars: &postgres-vars
-  DB_HOST: gooddata-cn-ce
-  DB_PORT: 5432
-  DB_USER: demouser
-  DB_PASS: demopass
-  DB_NAME: demo
+x-volumes-meltano: &volumes-meltano
+  volumes:
+    - ./data_pipeline/meltano.yml:/project/data_pipeline/meltano.yml
+    - ./data_pipeline/meltano_conf:/project/data_pipeline/meltano_conf
+    - ./data_pipeline/plugins:/project/data_pipeline/plugins
+    - ./.env.base:/project/.env.base
+    - ./.env.custom.local:/project/.env.custom.local
+    - ./.env.local:/project/.env.local
+    - ./.env.prefix_dbt_vars:/project/.env.prefix_dbt_vars
+    - ./Makefile:/project/Makefile
 
-x-dbt-postgres-vars: &dbt-postgres-vars
-  DBT_DB_HOST: gooddata-cn-ce
-  DBT_DB_PORT: 5432
-  DBT_DB_USER: demouser
-  DBT_DB_PASS: demopass
-  DBT_DB_NAME: demo
+x-volumes-dbt: &volumes-dbt
+  volumes:
+    - ./data_pipeline/macros:/project/data_pipeline/macros
+    - ./data_pipeline/models:/project/data_pipeline/models
+    - ./data_pipeline/profile/profiles.yml:/project/data_pipeline/profile/profiles.yml
+    - ./data_pipeline/dbt_project.yml:/project/data_pipeline/dbt_project.yml
+    - ./data_pipeline/gooddata.yml:/project/data_pipeline/gooddata.yml
+    - ./data_pipeline/gooddata_profiles.yaml:/root/.gooddata/profiles.yaml
+    - ./.env.base:/project/.env.base
+    - ./.env.custom.local:/project/.env.custom.local
+    - ./.env.local:/project/.env.local
+    - ./.env.prefix_dbt_vars:/project/.env.prefix_dbt_vars
+    - ./Makefile:/project/Makefile
 
-x-meltano-vars: &meltano-vars
-  MELTANO_ENV: cicd_dev_local
-  MELTANO_STATE_AWS_ACCESS_KEY_ID: "minio_abcde_k1234567"
-  MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "minio_abcde_k1234567_secret1234567890123"
-  MELTANO_STATE_AWS_BUCKET: "meltano"
-  MELTANO_STATE_AWS_ENDPOINT: "http://minio:9000"
-
+x-volumes-gooddata: &volumes-gooddata
+  volumes:
+    - ./data_pipeline/gooddata_layouts:/project/data_pipeline/gooddata_layouts
+    - ./data_pipeline/gooddata.yml:/project/data_pipeline/gooddata.yml
+    - ./data_pipeline/gooddata_profiles.yaml:/root/.gooddata/profiles.yaml
+    - ./.env.base:/project/.env.base
+    - ./.env.custom.local:/project/.env.custom.local
+    - ./.env.local:/project/.env.local
+    - ./.env.prefix_dbt_vars:/project/.env.prefix_dbt_vars
+    - ./Makefile:/project/Makefile
 
 services:
   gooddata-cn-ce:
     # You can use "dev_latest" tag which points to the latest development version of GD.CN
-    image: gooddata/gooddata-cn-ce:3.0.0
+    image: gooddata/gooddata-cn-ce:3.3.2
     ports:
       - "3000:3000"
       - "5432:5432"
@@ -43,9 +57,12 @@ services:
     entrypoint:
       - /bin/sh
       - -c
+    environment:
+      GOODDATA_TOKEN: "YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz"
+      GOODDATA_ORGANIZATION: default
     command:
       - |
-        curl -v -H "Authorization: Bearer $GOODDATA_TOKEN" -s -H "Content-Type: application/vnd.gooddata.api+json" -H "Host: localhost" -X PATCH \
+        curl -v -H "Authorization: Bearer $$GOODDATA_TOKEN" -s -H "Content-Type: application/vnd.gooddata.api+json" -H "Host: localhost" -X PATCH \
             -d "{
               \"data\": {
                 \"id\": \"$$GOODDATA_ORGANIZATION\",
@@ -56,9 +73,6 @@ services:
               }
             }" \
           gooddata-cn-ce:3000/api/v1/entities/admin/organizations/$$GOODDATA_ORGANIZATION
-    environment:
-      GOODDATA_TOKEN: YWRtaW46Ym9vdHN0cmFwOmFkbWluMTIz
-      GOODDATA_ORGANIZATION: default
 
   extract_load_github:
     build:
@@ -68,14 +82,15 @@ services:
       - /bin/bash
       - -c
     command:
-      - meltano --environment $$MELTANO_ENV run tap-github-repo target-postgres tap-github-org target-postgres
-    environment:
-      <<: [ *postgres-vars, *meltano-vars ]
-      TARGET_SCHEMA: github_input_stage
-      TAP_GITHUB_AUTH_TOKEN: "$TAP_GITHUB_AUTH_TOKEN"
-    volumes:
-      - ./data_pipeline/meltano.yml:/project/meltano.yml
-      - ./data_pipeline/meltano_conf:/project/meltano_conf
+      # We have to link .meltano to data_pipeline folder to be able to utilize make targets
+      # We cannot store .meltano in data_pipeline folder because in the CICD pipeline it would be overriden by git clone
+      # We do the same linking in the CICD jobs too
+      - |
+        source .env.local aio
+        ln -nfs $$IMAGES_WORKDIR/.meltano $$IMAGES_WORKDIR/$$SRC_DATA_PIPELINE/.meltano
+        make extract_load_github
+    <<: *volumes-meltano
+
 
   extract_load_faa:
     build:
@@ -85,15 +100,11 @@ services:
       - /bin/bash
       - -c
     command:
-      - meltano --environment $$MELTANO_ENV run tap-s3-csv target-postgres
-    environment:
-      <<: [ *postgres-vars, *meltano-vars ]
-      TARGET_SCHEMA: faa_input_stage
-      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
-      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
-    volumes:
-      - ./data_pipeline/meltano.yml:/project/meltano.yml
-      - ./data_pipeline/meltano_conf:/project/meltano_conf
+      - |
+        source .env.local aio
+        ln -nfs $$IMAGES_WORKDIR/.meltano $$IMAGES_WORKDIR/$$SRC_DATA_PIPELINE/.meltano
+        make extract_load_faa
+    <<: *volumes-meltano
 
   extract_load_ecommerce_demo:
     build:
@@ -103,15 +114,11 @@ services:
       - /bin/bash
       - -c
     command:
-      - meltano --environment $$MELTANO_ENV run tap-s3-csv-ecommerce-demo target-postgres
-    environment:
-      <<: [ *postgres-vars, *meltano-vars ]
-      TARGET_SCHEMA: ecommerce_demo_input_stage
-      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
-      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
-    volumes:
-      - ./data_pipeline/meltano.yml:/project/meltano.yml
-      - ./data_pipeline/meltano_conf:/project/meltano_conf
+      - |
+        source .env.local aio
+        ln -nfs $$IMAGES_WORKDIR/.meltano $$IMAGES_WORKDIR/$$SRC_DATA_PIPELINE/.meltano
+        make extract_load_ecommerce_demo
+    <<: *volumes-meltano
 
   extract_load_data_science:
     build:
@@ -121,15 +128,11 @@ services:
       - /bin/bash
       - -c
     command:
-      - meltano --environment $$MELTANO_ENV run tap-s3-csv-data-science target-postgres
-    environment:
-      <<: [ *postgres-vars, *meltano-vars ]
-      TARGET_SCHEMA: data_science_input_stage
-      TAP_S3_CSV_AWS_ACCESS_KEY_ID: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
-      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
-    volumes:
-      - ./data_pipeline/meltano.yml:/project/meltano.yml
-      - ./data_pipeline/meltano_conf:/project/meltano_conf
+      - |
+        source .env.local aio
+        ln -nfs $$IMAGES_WORKDIR/.meltano $$IMAGES_WORKDIR/$$SRC_DATA_PIPELINE/.meltano
+        make extract_load_data_science
+    <<: *volumes-meltano
 
   extract_load_jira:
     build:
@@ -139,31 +142,11 @@ services:
       - /bin/bash
       - -c
     command:
-      - meltano --environment $$MELTANO_ENV run tap-jira target-postgres
-    environment:
-      <<: [ *postgres-vars, *meltano-vars ]
-      TARGET_SCHEMA: jira_input_stage
-      TAP_JIRA_AUTH_PASSWORD: "$TAP_S3_CSV_AWS_ACCESS_KEY_ID"
-      TAP_S3_CSV_AWS_SECRET_ACCESS_KEY: "$TAP_S3_CSV_AWS_SECRET_ACCESS_KEY"
-    volumes:
-      - ./data_pipeline/meltano.yml:/project/meltano.yml
-      - ./data_pipeline/meltano_conf:/project/meltano_conf
-
-# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
-#  extract_load_exchangeratehost:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile_meltano
-#    entrypoint:
-#      - /bin/bash
-#      - -c
-#    command:
-#      - meltano --environment $$MELTANO_ENV run tap-exchangeratehost target-postgres
-#    environment:
-#      <<: [ *postgres-vars, *meltano-vars ]
-#      TARGET_SCHEMA: exchangeratehost_input_stage
-#    volumes:
-#      - ./data_pipeline/meltano.yml:/project/meltano.yml
+      - |
+        source .env.local aio
+        ln -nfs $$IMAGES_WORKDIR/.meltano $$IMAGES_WORKDIR/$$SRC_DATA_PIPELINE/.meltano
+        make extract_load_jira
+    <<: *volumes-meltano
 
   transform:
     build:
@@ -173,30 +156,15 @@ services:
       - /bin/bash
       - -c
     command:
+      # We have to link dbt_packages to data_pipeline folder to be able to utilize make targets
+      # We cannot store dbt_packages in data_pipeline folder because in the CICD pipeline it would be overriden by git clone
+      # We do the same linking in the CICD jobs too
       - |
-        dbt run --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
-        dbt test --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
-        gooddata-dbt provision_workspaces
-        gooddata-dbt register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
-        gooddata-dbt deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
-        gooddata-dbt upload_notification --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET
-    environment:
-      <<: [ *dbt-postgres-vars ]
-      DBT_INPUT_SCHEMA: cicd_input_stage
-      DBT_INPUT_SCHEMA_GITHUB: "github_input_stage"
-      DBT_INPUT_SCHEMA_FAA: "faa_input_stage"
-      DBT_INPUT_SCHEMA_JIRA: "jira_input_stage"
-      DBT_OUTPUT_SCHEMA: cicd_output_stage
-      ELT_ENVIRONMENT: cicd_dev_local
-      DBT_TARGET: "postgres"
-      DBT_INCREMENTAL_STRATEGY: "delete+insert"
-      GOODDATA_HOST: "http://gooddata-cn-ce:3000"
-      GOODDATA_OVERRIDE_HOST: "localhost"
-    volumes:
-      - ./data_pipeline/macros:/project/macros
-      - ./data_pipeline/models:/project/models
-      - ./data_pipeline/profile/profiles.yml:/root/.dbt/profiles.yml
-      - ./data_pipeline/gooddata.yml:/project/gooddata.yml
+        source .env.local aio
+        ln -nfs $$IMAGES_WORKDIR/dbt_packages $$IMAGES_WORKDIR/$$SRC_DATA_PIPELINE/dbt_packages
+        make transform
+        make deploy_models
+    <<: *volumes-dbt
 
   analytics:
     build:
@@ -207,14 +175,9 @@ services:
       - -c
     command:
       - |
-        gooddata-dbt deploy_analytics
-        gooddata-dbt test_insights
-    environment:
-      GOODDATA_HOST: "http://gooddata-cn-ce:3000"
-      GOODDATA_OVERRIDE_HOST: "localhost"
-    volumes:
-      - ./data_pipeline/gooddata_layouts:/project/gooddata_layouts
-      - ./data_pipeline/gooddata.yml:/project/gooddata.yml
+        source .env.local aio
+        make deploy_analytics
+    <<: *volumes-gooddata
 
   # Minio serves as AWS S3 state backend for extract_load (Meltano)
   minio:

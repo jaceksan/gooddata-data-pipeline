@@ -9,12 +9,9 @@ plugins:
     - name: tap-s3-csv
       variant: transferwise
       pip_url: git+https://github.com/jaceksan/pipelinewise-tap-s3-csv@aws_unsigned
-    - name: tap-exchangeratehost
-      variant: anelendata
-      pip_url: git+https://github.com/anelendata/tap-exchangeratehost.git
     - name: tap-jira
       variant: meltanolabs
-      pip_url: git+https://github.com/jaceksan/tap-jira.git
+      pip_url: git+https://github.com/MeltanoLabs/tap-jira.git
   loaders:
     - name: target-jsonl
       variant: andyh1203
@@ -29,4 +26,4 @@ plugins:
       pip_url: git+https://github.com/full360/pipelinewise-target-vertica.git
     - name: target-duckdb
       variant: jwills
-      pip_url: git+https://github.com/jwills/target-duckdb.git@refs/pull/26/head
+      pip_url: git+https://github.com/jwills/target-duckdb.git

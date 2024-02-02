@@ -1,7 +1,0 @@
-plugins:
-  extractors:
-  - name: tap-exchangeratehost
-    variant: anelendata
-    pip_url: git+https://github.com/anelendata/tap-exchangeratehost.git
-    config:
-      start_date: 2020-01-01

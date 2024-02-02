@@ -5,20 +5,31 @@ on:
     - cron: "00 5 * * *"
 
 jobs:
+  read-env:
+    uses: ./.github/workflows/reusable_read_env.yml
+
   elta:
+    needs: read-env
     name: ELTA (prod)
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "prod"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       BRANCH_NAME: "prod"
       DEPLOY_GD_MODELS: "false"
     secrets: inherit
 
   elta-cloud:
+    needs: read-env
     name: ELTA (prod cloud)
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "prod_cloud"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       BRANCH_NAME: "prod"
       DEPLOY_GD_MODELS: "false"
       DBT_CLOUD: "true"
@@ -28,10 +39,15 @@ jobs:
   # GoodData now supports MotherDuck only in Labs environment
   #   because the issue with extensions downloaded in runtime.
   elta-labs-motherduck:
+    needs: read-env
     name: ELTA (prod MotherDuck)
     uses: ./.github/workflows/reusable_elta.yml
     with:
-      ENVIRONMENT: "prod_labs_motherduck"
+      ENVIRONMENT: "prod"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
+      DB_OVERRIDE: "motherduck"
       BRANCH_NAME: "prod"
       DEPLOY_GD_MODELS: "false"
     secrets: inherit

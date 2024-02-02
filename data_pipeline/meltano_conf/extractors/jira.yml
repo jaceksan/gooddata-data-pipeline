@@ -2,7 +2,7 @@ plugins:
   extractors:
     - name: tap-jira
       variant: meltanolabs
-      pip_url: git+https://github.com/jaceksan/tap-jira.git@config_max_results
+      pip_url: git+https://github.com/MeltanoLabs/tap-jira.git
       config:
         domain: gooddata.atlassian.net
         auth:

@@ -11,9 +11,6 @@ environments:
       - name: tap-github-repo
         config:
           start_date: '2010-01-01'
-      - name: tap-exchangeratehost
-        config:
-          start_date: '2010-01-01'
       - name: tap-jira
         start_date: '2023-01-01'
 
@@ -24,9 +21,6 @@ environments:
       - name: tap-github-repo
         config:
           start_date: '2010-01-01'
-      - name: tap-exchangeratehost
-        config:
-          start_date: '2010-01-01'
       - name: tap-jira
         start_date: '2023-01-01'
 - name: cicd_cloud_staging
@@ -34,9 +28,6 @@ environments:
     plugins:
       extractors:
         - name: tap-github-repo
-          config:
-            start_date: '2010-01-01'
-        - name: tap-exchangeratehost
           config:
             start_date: '2010-01-01'
         - name: tap-jira
@@ -50,9 +41,6 @@ environments:
         - name: tap-github-repo
           config:
             start_date: '2010-01-01'
-        - name: tap-exchangeratehost
-          config:
-            start_date: '2010-01-01'
         - name: tap-jira
           start_date: '2023-01-01'
 
@@ -63,8 +51,6 @@ include_paths:
   - "./meltano_conf/extractors/ecommerce_demo.yml"
   - "./meltano_conf/extractors/data_science.yml"
   - "./meltano_conf/extractors/jira.yml"
-  - "./meltano_conf/extractors/exchangerate.yml"
-# TODO  - "./meltano_conf/extractors/gitlab.yml"
   - "./meltano_conf/loaders/loaders.yml"
 
 state_backend:
