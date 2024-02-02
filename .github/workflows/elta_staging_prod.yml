@@ -45,7 +45,7 @@ jobs:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
     secrets: inherit
 
   elta-cloud:
@@ -56,7 +56,7 @@ jobs:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}_cloud"
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       DBT_CLOUD: "true"
     secrets: inherit
 
@@ -71,6 +71,6 @@ jobs:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}_labs_motherduck"
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       DB_OVERRIDE: "motherduck"
     secrets: inherit

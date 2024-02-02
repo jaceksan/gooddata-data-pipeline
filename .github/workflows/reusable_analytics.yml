@@ -8,7 +8,7 @@ on:
         required: false
         type: string
         default: ""
-      GOODDATA_CUSTOM_IMAGE:
+      GOODDATA_SDK_CUSTOM_IMAGE:
         required: true
         type: string
       BRANCH_NAME:
@@ -23,7 +23,7 @@ jobs:
     name: analytics
     runs-on: ubuntu-latest
     environment: ${{ inputs.ENVIRONMENT }}
-    container: ${{ inputs.GOODDATA_CUSTOM_IMAGE }}
+    container: ${{ inputs.GOODDATA_SDK_CUSTOM_IMAGE }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

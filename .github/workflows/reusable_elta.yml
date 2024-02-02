@@ -30,7 +30,7 @@ on:
       DBT_CUSTOM_IMAGE:
         required: true
         type: string
-      GOODDATA_CUSTOM_IMAGE:
+      GOODDATA_SDK_CUSTOM_IMAGE:
         required: true
         type: string
 
@@ -70,7 +70,7 @@ jobs:
     with:
       ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
       DB_OVERRIDE: "${{ inputs.DB_OVERRIDE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ inputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ inputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
       DEPLOY_GD_MODELS: "${{ inputs.DEPLOY_GD_MODELS }}"
     secrets: inherit

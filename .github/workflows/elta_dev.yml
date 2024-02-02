@@ -50,10 +50,10 @@ jobs:
     with:
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       MELTANO_VERSION: "${{ needs.read-env.outputs.MELTANO_VERSION }}"
       DBT_VERSION: "${{ needs.read-env.outputs.DBT_VERSION }}"
-      GOODDATA_VERSION: "${{ needs.read-env.outputs.GOODDATA_VERSION }}"
+      GOODDATA_SDK_VERSION: "${{ needs.read-env.outputs.GOODDATA_SDK_VERSION }}"
       PYTHON_IMAGE: "${{ needs.read-env.outputs.PYTHON_IMAGE }}"
       IMAGES_WORKDIR: "${{ needs.read-env.outputs.IMAGES_WORKDIR }}"
     secrets: inherit
@@ -67,7 +67,7 @@ jobs:
       ENVIRONMENT: "dev"
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
     secrets: inherit
 
   elta-cloud:
@@ -79,7 +79,7 @@ jobs:
       ENVIRONMENT: "dev_cloud"
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       DBT_CLOUD: "true"
     secrets: inherit
 
@@ -95,6 +95,6 @@ jobs:
       ENVIRONMENT: "dev"
       MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
-      GOODDATA_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       DB_OVERRIDE: "motherduck"
     secrets: inherit

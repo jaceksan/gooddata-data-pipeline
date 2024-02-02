@@ -9,7 +9,7 @@ on:
       DBT_CUSTOM_IMAGE:
         required: true
         type: string
-      GOODDATA_CUSTOM_IMAGE:
+      GOODDATA_SDK_CUSTOM_IMAGE:
         required: true
         type: string
       MELTANO_VERSION:
@@ -18,7 +18,7 @@ on:
       DBT_VERSION:
         required: true
         type: string
-      GOODDATA_VERSION:
+      GOODDATA_SDK_VERSION:
         required: true
         type: string
       PYTHON_IMAGE:
@@ -56,7 +56,7 @@ jobs:
     with:
       NAME: build-gooddata
       TAGS: |
-        ${{ inputs.GOODDATA_CUSTOM_IMAGE }}
+        ${{ inputs.GOODDATA_SDK_CUSTOM_IMAGE }}
       DOCKER_FILE: Dockerfile_gooddata
       BUILD_ARGS: |
         PYTHON_IMAGE=${{ inputs.PYTHON_IMAGE }}
