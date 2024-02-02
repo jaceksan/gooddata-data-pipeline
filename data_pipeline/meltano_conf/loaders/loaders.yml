@@ -38,7 +38,7 @@ plugins:
       add_metadata_columns: true
   - name: target-duckdb
     variant: jwills
-    pip_url: git+https://github.com/jwills/target-duckdb.git@refs/pull/26/head
+    pip_url: git+https://github.com/jwills/target-duckdb.git
     config:
       path: md:${DB_NAME}
       token: ${MOTHERDUCK_TOKEN}

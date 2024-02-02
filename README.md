@@ -45,6 +45,7 @@ The following articles are based on this project:
 - TODO: CICD Data Pipeline Blueprint v1.0
 
 ## Getting Started
+
 I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
 It utilizes the [GoodData Container Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available in DockerHub.
 Optionally, you can also start [Vertica Community Edition](https://hub.docker.com/r/vertica/vertica-ce).
@@ -57,6 +58,11 @@ If not, please, contact us in our [Slack Community](https://www.gooddata.com/sla
 *Personal note:*
 I was fighting with the above decision for a long time, but finally, I lost. I encourage you to ask for a return of a free Community Edition in the Slack community.
 The more people ask, the more chances we have to get it back.
+
+*Design note:*
+- All env variables for all environments are stored in .env files.
+- All executions (extract_load, transform, analytics) are orchestrated by make targets.
+  - This is valid for docker-compose, local shell and Gitlab/GitHub CI/CD.
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
@@ -74,16 +80,18 @@ docker-compose up bootstrap_origins
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
 export TAP_GITHUB_AUTH_TOKEN="<my github token>"
-# If you use Vertica
+# Jira user/pwd for authenticating with Jira REST API 
+export TAP_JIRA_AUTH_PASSWORD="<token>"
+export TAP_JIRA_AUTH_USERNAME="<user - e-mail>"
+# If you use your own Vertica
 export VERTICA_PASS="<your Vertica password>" 
 # If you use MotherDuck
 export MOTHERDUCK_TOKEN="<your MotherDuck token>" 
 docker-compose up extract_load_github
 docker-compose up extract_load_faa
-# Uncomment once the tap is fixed
-# docker-compose up extract_load_exchangeratehost
 docker-compose up extract_load_data_science
 docker-compose up extract_load_ecommerce_demo
+docker-compose up extract_load_jira
 
 # Transform model to be ready for analytics, with dbt
 # Also, GoodData models are generated from dbt models and pushed to GoodData  
@@ -101,11 +109,11 @@ check corresponding README files in sub-folders each representing a particular a
 
 ## Getting started - cloud
 
-Move to Gitlab, fork this repository and run the pipeline against your environments:
+Move to Gitlab/GitHub, fork this repository and run the pipeline against your environments:
 - Create a public GoodData instance
     - Go to [GoodData trial](https://www.gooddata.com/trial/) page, enter your e-mail,
         and in few tens of seconds you get your own GoodData instance running in our cloud, managed by us.
-- Create a public PostgreSQL or Snowflake instance
+- Create a public PostgreSQL/Vertica/Snowflake/MotherDuck instance
   - Create required databases (for dev/staging/prod).
  
 You have to set the following (sensitive) environment variables in the Gitlab(section Settings/CICD) or GitHub(section Settings/Secrets) UI:
@@ -115,15 +123,12 @@ You have to set the following (sensitive) environment variables in the Gitlab(se
   - Single endpoint, host+port 
     - GOODDATA_HOST - host name pointing to the GoodData instance
     - GOODDATA_TOKEN - admin token to authenticate against the GoodData instance
-  - Multiple endpoints
+  - Multiple endpoints (recommended)
     - Create file ~/.gooddata/profiles.yaml
-    - Check [Example](data_pipeline/gooddata_profiles_example.yaml)
+    - Check [Example](data_pipeline/gooddata_profiles.yaml)
 - MELTANO_STATE_AWS_ACCESS_KEY_ID/MELTANO_STATE_AWS_SECRET_ACCESS_KEY - Meltano stores its state to AWS S3, and needs these credentials
 - GITLAB_TOKEN - to allow Gitlab jobs to send messages to merge requests
-- GITHUB_TOKEN - to allow GitHub jobs to send messages to pull requests
-
-The rest of environment variables (Github repos to be crawled, DB endpoints, ...) can be configured in [.gitlab-ci.yml](.gitlab-ci.yml)(section `variables`).
-The same variables must be set in GitHub variables UI if you want to use GitHub.
+- BOT_GITHUB_TOKEN - to allow GitHub jobs to send messages to pull requests
 
 ## Developer guide
 
@@ -138,6 +143,8 @@ source .venv_el/bin/activate
 source .venv_t/bin/activate
 # You should see e.g. a `(.venv_el)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
 
+# TODO: once my PR https://github.com/meltano/meltano/pull/8302 is merged, we can merge two venvs into one
+
 # Deactivate virtual env once you are done
 deactivate
 ```
@@ -145,6 +152,7 @@ deactivate
 ### Set environment variables
 See [.env.local](.env.local) and similar examples. 
 Add sensitive variables to the corresponding .env.custom.<local|dev|staging|prod> file.
+Some env files support multiple (database) options.
 
 ```bash
 source .env.local

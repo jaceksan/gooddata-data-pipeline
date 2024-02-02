@@ -28,8 +28,7 @@ extract_load:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_FAA && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-faa $$MELTANO_TARGET $$FR
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_ECOMMERCE_DEMO && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-ecommerce-demo $$MELTANO_TARGET $$FR
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_DATA_SCIENCE && meltano --environment $$ELT_ENVIRONMENT run tap-s3-csv-data-science $$MELTANO_TARGET $$FR
-# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
-#	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_EXCHANGERATEHOST && meltano --environment $$ELT_ENVIRONMENT run tap-exchangeratehost $$MELTANO_TARGET $$FR
+	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_JIRA && meltano --environment $$ELT_ENVIRONMENT run tap-jira $$MELTANO_TARGET $$FR
 
 extract_load_github:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_GITHUB && meltano --environment $$ELT_ENVIRONMENT run tap-github-repo $$MELTANO_TARGET tap-github-org $$MELTANO_TARGET $$FR
@@ -45,10 +44,6 @@ extract_load_data_science:
 
 extract_load_jira:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_JIRA && meltano --environment $$ELT_ENVIRONMENT run tap-jira $$MELTANO_TARGET $$FR
-
-# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
-#extract_load_exchange:
-#	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_EXCHANGERATEHOST && meltano --environment $$ELT_ENVIRONMENT run tap-exchangeratehost $$MELTANO_TARGET $$FR
 
 transform:
 	cd $(SRC_DATA_PIPELINE) && dbt run --profiles-dir profile --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$FR
@@ -69,10 +64,10 @@ deploy_models: dbt_compile
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
-provision_workspaces: dbt_compile
+provision_workspaces:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR provision_workspaces
 
-register_data_sources: dbt_compile
+register_data_sources:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
 deploy_ldm: dbt_compile
@@ -83,9 +78,12 @@ deploy_models_cloud:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR register_data_sources --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_ldm --profiles-dir profile_cloud --profile $$ELT_ENVIRONMENT --target $$DBT_TARGET $$GOODDATA_UPPER_CASE
 
-deploy_analytics:
+deploy_and_test_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
+
+deploy_analytics:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
 
 store_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt store_analytics

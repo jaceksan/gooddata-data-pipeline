@@ -25,10 +25,6 @@
         TARGET_SCHEMA: "${INPUT_SCHEMA_ECOMMERCE_DEMO}"
       - MELTANO_SOURCE: tap-s3-csv-data-science
         TARGET_SCHEMA: "${INPUT_SCHEMA_DATA_SCIENCE}"
-# TODO - uncomment once https://github.com/anelendata/tap-exchangeratehost/issues/3 is fixed
-#      - do not forget to move corresponding dbt models from _todo folder back to main folder
-#      - MELTANO_SOURCE: tap-exchangeratehost
-#        TARGET_SCHEMA: "${INPUT_SCHEMA_EXCHANGERATEHOST}"
 # TODO - .meltano is linked to include plugins, artifacts cannot be gathered through links
 #  artifacts:
 #    paths:

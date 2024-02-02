@@ -2,3 +2,4 @@ dbt-postgres==1.7.3
 dbt-snowflake==1.7.1
 dbt-vertica==1.7.3
 dbt-duckdb==1.7.0
+duckdb==0.9.2

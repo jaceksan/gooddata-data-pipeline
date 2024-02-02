@@ -9,13 +9,13 @@
 
 with using_clause as (
   select
-    id as workflow_run_id,
+    cast(id as bigint) as workflow_run_id,
     html_url as workflow_run_url,
     event as workflow_run_event,
     status as workflow_run_status,
     created_at,
     updated_at,
-    repo_id,
+    cast(repo_id as bigint) as repo_id,
     (
       -- If updated_at is empty, use current timestamp (workflow is still running)
         extract(epoch from coalesce(updated_at, {{ current_timestamp() }}))

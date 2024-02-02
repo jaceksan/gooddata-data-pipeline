@@ -12,6 +12,8 @@ on:
       # Shared
       - .github/workflows/elta_staging_prod.yml
       - .github/workflows/reusable_elta.yml
+      - .env*
+      - Makefile
       # Extract load
       - data_pipeline/meltano.yml
       - data_pipeline/meltano_conf/**/*
@@ -32,17 +34,43 @@ on:
       - .github/workflows/reusable_analytics.yml
 
 jobs:
+  read-env:
+    uses: ./.github/workflows/reusable_read_env.yml
+
   elta:
+    needs: read-env
     name: ELTA (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
     secrets: inherit
 
   elta-cloud:
+    needs: read-env
     name: ELTA cloud (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
     uses: ./.github/workflows/reusable_elta.yml
     with:
       ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}_cloud"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       DBT_CLOUD: "true"
+    secrets: inherit
+
+  # Branch for MotherDuck DB.
+  # GoodData now supports MotherDuck only in Labs environment
+  #   because the issue with extensions downloaded in runtime.
+  elta-labs-motherduck:
+    needs: read-env
+    name: ELTA MotherDuck (${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }})
+    uses: ./.github/workflows/reusable_elta.yml
+    with:
+      ENVIRONMENT: "${{ github.ref == 'refs/heads/main' && 'staging' || 'prod' }}"
+      MELTANO_CUSTOM_IMAGE: "${{ needs.read-env.outputs.MELTANO_CUSTOM_IMAGE }}"
+      DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
+      DB_OVERRIDE: "motherduck"
     secrets: inherit

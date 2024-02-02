@@ -8,7 +8,7 @@ on:
         type: string
       BRANCH_NAME:
         type: string
-      DEPLOY_ANALYTICS:
+      DEPLOY_GD_MODELS:
         required: false
         type: string
         default: "true"
@@ -16,6 +16,23 @@ on:
         required: false
         type: string
         default: "false"
+      DB_OVERRIDE:
+        required: false
+        type: string
+        default: ""
+      FULL_REFRESH:
+        required: false
+        type: string
+        default: "false"
+      MELTANO_CUSTOM_IMAGE:
+        required: true
+        type: string
+      DBT_CUSTOM_IMAGE:
+        required: true
+        type: string
+      GOODDATA_SDK_CUSTOM_IMAGE:
+        required: true
+        type: string
 
 jobs:
   ####################################
@@ -24,8 +41,9 @@ jobs:
     uses: ./.github/workflows/reusable_extract_load.yml
     with:
       ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
-      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
-      MELTANO_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.MELTANO_CUSTOM_IMAGE_BASE }}:${{ vars.MELTANO_VERSION }}"
+      DB_OVERRIDE: "${{ inputs.DB_OVERRIDE }}"
+      FULL_REFRESH: "${{ inputs.FULL_REFRESH }}"
+      MELTANO_CUSTOM_IMAGE: "${{ inputs.MELTANO_CUSTOM_IMAGE }}"
       BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
     secrets: inherit
   ####################################
@@ -36,10 +54,12 @@ jobs:
     uses: ./.github/workflows/reusable_transform.yml
     with:
       ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
-      FULL_REFRESH: "false" # TODO: define workflow_dispatch with this parameter and set it here
-      DBT_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.DBT_CUSTOM_IMAGE_BASE }}:${{ vars.DBT_VERSION }}"
+      DB_OVERRIDE: "${{ inputs.DB_OVERRIDE }}"
+      FULL_REFRESH: "${{ inputs.FULL_REFRESH }}"
+      DBT_CUSTOM_IMAGE: "${{ inputs.DBT_CUSTOM_IMAGE }}"
       BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
       DBT_CLOUD: "${{ inputs.DBT_CLOUD }}"
+      DEPLOY_GD_MODELS: "${{ inputs.DEPLOY_GD_MODELS }}"
     secrets: inherit
   ####################################
   # Analytics
@@ -49,6 +69,8 @@ jobs:
     uses: ./.github/workflows/reusable_analytics.yml
     with:
       ENVIRONMENT: "${{ inputs.ENVIRONMENT }}"
-      GOODDATA_CUSTOM_IMAGE: "ghcr.io/${{ github.repository }}/${{ vars.GOODDATA_IMAGE_BASE }}:${{ vars.GOODDATA_VERSION }}"
+      DB_OVERRIDE: "${{ inputs.DB_OVERRIDE }}"
+      GOODDATA_SDK_CUSTOM_IMAGE: "${{ inputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       BRANCH_NAME: "${{ inputs.BRANCH_NAME }}"
+      DEPLOY_GD_MODELS: "${{ inputs.DEPLOY_GD_MODELS }}"
     secrets: inherit

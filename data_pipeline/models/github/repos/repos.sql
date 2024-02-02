@@ -6,11 +6,11 @@ with commits_repo_ids as (
 
 repos as (
     select
-      CAST(id as INT) as repo_id,
+      CAST(id as bigint) as repo_id,
       html_url as repo_url,
       name as repo_name,
-      stargazers_count,
-      watchers_count,
+      cast(stargazers_count as bigint) as stargazers_count,
+      cast(watchers_count as bigint) as watchers_count,
       -- Use a dedicated name (repo prefix) to do not confuse analytics
       -- From business perspective this is different created_at than in the case of commits/pull_requests
       created_at as repo_created_at

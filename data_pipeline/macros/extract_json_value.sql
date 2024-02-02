@@ -11,13 +11,9 @@
 
         CAST((public.MapJSONExtractor("{{ db_entity_name }}"))['{{ field_name }}'] AS {{ data_type }}) AS {{ target_column_name }}
 
-    {%- elif target.type == "postgres" -%}
+    {%- elif target.type in ("postgres", "duckdb") -%}
 
-        CAST(json_extract_path_text(to_json("{{ db_entity_name }}"), '{{ field_name }}') AS {{ data_type }}) AS {{ target_column_name }}
-
-    {%- elif target.type == "duckdb" -%}
-
-        CAST(json_extract_path_text(to_json("{{ db_entity_name }}"), '{{ field_name }}') AS {{ data_type }}) AS {{ target_column_name }}
+        CAST(json_extract_path_text("{{ db_entity_name }}"::JSON, '{{ field_name }}') AS {{ data_type }}) AS {{ target_column_name }}
 
     {%- else -%}
 
