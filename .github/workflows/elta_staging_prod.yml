@@ -12,7 +12,10 @@ on:
       # Shared
       - .github/workflows/elta_staging_prod.yml
       - .github/workflows/reusable_elta.yml
-      - .env*
+      - .env.base
+      - .env.prefix_dbt_vars
+      - .env.staging*
+      - .env.prod*
       - Makefile
       # Extract load
       - data_pipeline/meltano.yml
