@@ -18,7 +18,7 @@ jobs:
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
       GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       BRANCH_NAME: "main"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
     secrets: inherit
 
   elta-cloud:
@@ -31,7 +31,7 @@ jobs:
       DBT_CUSTOM_IMAGE: "${{ needs.read-env.outputs.DBT_CUSTOM_IMAGE }}"
       GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       BRANCH_NAME: "main"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
       DBT_CLOUD: "true"
     secrets: inherit
 
@@ -49,5 +49,5 @@ jobs:
       GOODDATA_SDK_CUSTOM_IMAGE: "${{ needs.read-env.outputs.GOODDATA_SDK_CUSTOM_IMAGE }}"
       DB_OVERRIDE: "motherduck"
       BRANCH_NAME: "main"
-      DEPLOY_ANALYTICS: "false"
+      DEPLOY_GD_MODELS: "false"
     secrets: inherit
