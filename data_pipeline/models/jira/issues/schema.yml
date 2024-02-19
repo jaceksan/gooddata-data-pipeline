@@ -31,6 +31,7 @@ models:
             label_type: HYPERLINK
             attribute_column: jira_issue_id
       - name: summary
+      - name: labels
       - name: created_at
       - name: due_date_at
       - name: updated_at

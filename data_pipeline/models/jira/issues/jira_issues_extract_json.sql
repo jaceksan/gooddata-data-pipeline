@@ -17,6 +17,7 @@ with using_clause as (
     key as jira_issue_number,
     self as jira_issue_url,
     fields__summary as summary,
+    fields__labels as labels,
     -- TODO: substr may not be supported by all DBs. I did not find an official macro for this.
     --  Worst case scenario is that I will have to write a custom macro for this.
     cast(substr(fields__created, 1, 10) as date) as created_at,
