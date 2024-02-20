@@ -26,4 +26,5 @@ plugins:
       pip_url: git+https://github.com/full360/pipelinewise-target-vertica.git
     - name: target-duckdb
       variant: jwills
-      pip_url: git+https://github.com/jwills/target-duckdb.git
+      # TODO - remove the freeze of duckdb once MotherDuck upgrades to 0.10.0
+      pip_url: target-duckdb duckdb==0.9.2

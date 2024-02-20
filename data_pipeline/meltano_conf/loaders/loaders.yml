@@ -38,7 +38,8 @@ plugins:
       add_metadata_columns: true
   - name: target-duckdb
     variant: jwills
-    pip_url: git+https://github.com/jwills/target-duckdb.git
+    # TODO - remove the freeze of duckdb once MotherDuck upgrades to 0.10.0
+    pip_url: target-duckdb duckdb==0.9.2
     config:
       path: md:${DB_NAME}
       token: ${MOTHERDUCK_TOKEN}
