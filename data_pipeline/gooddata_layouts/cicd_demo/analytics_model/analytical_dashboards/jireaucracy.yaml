@@ -33,6 +33,28 @@ content:
                 gridWidth: 3
             type: IDashboardLayoutItem
             widget:
+              configuration:
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: created_at
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: days_waiting_in_todo
+                  type: visualizationObject
+              properties: {}
+              title: Days Waiting in TODO
+              type: insight
+          - size:
+              xl:
+                gridHeight: 11
+                gridWidth: 2
+            type: IDashboardLayoutItem
+            widget:
               dateDataSet:
                 identifier:
                   id: created_at
@@ -50,7 +72,7 @@ content:
           - size:
               xl:
                 gridHeight: 11
-                gridWidth: 3
+                gridWidth: 2
             type: IDashboardLayoutItem
             widget:
               dateDataSet:
@@ -70,7 +92,7 @@ content:
           - size:
               xl:
                 gridHeight: 11
-                gridWidth: 3
+                gridWidth: 2
             type: IDashboardLayoutItem
             widget:
               configuration:
@@ -133,5 +155,5 @@ content:
     type: IDashboardLayout
   version: '2'
 description: ''
-id: b1b599b2-388e-4cb8-ab97-f02fce480244
+id: jireaucracy
 title: Jireaucracy

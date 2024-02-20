@@ -1,0 +1,63 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              previousPeriodMeasure:
+                dateDataSets:
+                  - dataSet:
+                      identifier:
+                        id: created_at
+                        type: dataset
+                    periodsAgo: 1
+                measureIdentifier: b8fd28f41b8e437f95bcad7bfffe91dc
+            localIdentifier: b8fd28f41b8e437f95bcad7bfffe91dc_previous_period
+      localIdentifier: measures
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: jira_days_to_solve
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: b8fd28f41b8e437f95bcad7bfffe91dc
+            title: Sum of Jira days to solve
+      localIdentifier: secondary_measures
+  filters:
+    - positiveAttributeFilter:
+        displayForm:
+          identifier:
+            id: jira_status_category_name
+            type: label
+        in:
+          values:
+            - To Do
+    - relativeDateFilter:
+        dataSet:
+          identifier:
+            id: created_at
+            type: dataset
+        from: -29
+        granularity: GDC.time.date
+        to: 0
+  properties:
+    controls:
+      comparison:
+        colorConfig:
+          negative:
+            type: guid
+            value: positive
+          positive:
+            type: guid
+            value: negative
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+description: ''
+id: days_waiting_in_todo
+title: Days Waiting in TODO
