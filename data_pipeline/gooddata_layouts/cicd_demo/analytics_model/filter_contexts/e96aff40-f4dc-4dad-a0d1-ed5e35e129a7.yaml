@@ -1,8 +1,8 @@
 content:
   filters:
     - dateFilter:
-        from: 0
-        granularity: GDC.time.month
+        from: -29
+        granularity: GDC.time.date
         to: 0
         type: relative
   version: '2'
