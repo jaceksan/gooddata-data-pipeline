@@ -13,7 +13,7 @@ Currently, these data warehouse engines are supported:
 - PostgreSQL
 - Vertica
 - Snowflake
-- MotherDuck (partially, TODO)
+- MotherDuck
 
 Delivery into dev/staging/prod environments is orchestrated by [GitHub](https://github.com/) or [Gitlab](https://gitlab.com/) (except the data apps).
 
@@ -42,7 +42,8 @@ The following articles are based on this project:
 - [Analytics Inside Virtual Reality: Too Soon?](https://medium.com/gooddata-developers/analytics-inside-virtual-reality-too-soon-41900dac366b)
 - [Streamlit meets Headless BI](https://medium.com/gooddata-developers/streamlit-meets-headless-bi-cb6196b69671)
 - [Ready, set, integrate: GoodData-dbt integration is production-ready!](https://medium.com/gooddata-developers/ready-set-integrate-gooddata-dbt-integration-is-production-ready-f37daa134455)
-- TODO: CICD Data Pipeline Blueprint v1.0
+- [Data Pipeline as Code: Journey of our Blueprint](https://medium.com/gooddata-developers/data-pipeline-as-code-journey-of-our-blueprint-99912b1485d2)
+- TODO: Data apps on top of GoodData + MotherDuck
 
 ## Getting Started
 
@@ -300,6 +301,9 @@ Applications are stored in [apps](apps/) folder. They are not delivered by the G
 
 ### Streamlit demo
 [README](apps/streamlit/)
+
+### How to use GoodData SDK in notebooks
+[README](apps/jupyter/)
 
 ---
 
