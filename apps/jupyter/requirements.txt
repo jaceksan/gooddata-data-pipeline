@@ -1,0 +1,4 @@
+jupyter==1.0.0
+gooddata-pandas==1.14.0
+matplotlib==3.8.3
+
