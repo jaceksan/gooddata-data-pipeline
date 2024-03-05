@@ -16,8 +16,6 @@ pip install -r requirements.txt
 
 ## Run the notebook
 
-```bash
-
 Execute the notebook e.g. this way:
 ```bash
 jupyter notebook report_execution.ipynb
