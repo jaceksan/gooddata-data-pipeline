@@ -11,6 +11,7 @@ dbt_compile:
 
 dev:
 	# Create virtualenv
+	# Freeze to 3.10 because higher versions are not yet supported by underlying tools
 	python3.10 -m venv .venv_el --upgrade-deps
 	# Install Meltano and required plugins
 	.venv_el/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-meltano.txt
