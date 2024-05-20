@@ -11,6 +11,7 @@ dbt_compile:
 
 dev:
 	# Create virtualenv
+	# Freeze to 3.10 because higher versions are not yet supported by underlying tools
 	python3.10 -m venv .venv_el --upgrade-deps
 	# Install Meltano and required plugins
 	.venv_el/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-meltano.txt
@@ -80,7 +81,7 @@ deploy_models_cloud:
 
 deploy_and_test_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_visualizations
 
 deploy_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
@@ -88,5 +89,5 @@ deploy_analytics:
 store_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt store_analytics
 
-test_insights:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
+test_visualizations:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_visualizations

@@ -39,7 +39,7 @@ x-volumes-gooddata: &volumes-gooddata
 services:
   gooddata-cn-ce:
     # You can use "dev_latest" tag which points to the latest development version of GD.CN
-    image: gooddata/gooddata-cn-ce:3.3.2
+    image: gooddata/gooddata-cn-ce:3.9.0
     ports:
       - "3000:3000"
       - "5432:5432"

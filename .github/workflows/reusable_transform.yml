@@ -50,7 +50,7 @@ jobs:
           # dbt packages are installed during build of docker image to workdir
           ln -s $IMAGES_WORKDIR/dbt_packages dbt_packages
           mkdir -p ~/.gooddata
-          echo ${{ secrets.GOODDATA_PROFILES_FILE }} | base64 --decode > ~/.gooddata/profiles.yaml
+          echo "${{ secrets.GOODDATA_PROFILES_FILE }}" > ~/.gooddata/profiles.yaml
 
       - name: Run Transform
         shell: bash
