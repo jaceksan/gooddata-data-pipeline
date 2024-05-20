@@ -81,7 +81,7 @@ deploy_models_cloud:
 
 deploy_and_test_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_visualizations
 
 deploy_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR deploy_analytics $$GOODDATA_UPPER_CASE
@@ -89,5 +89,5 @@ deploy_analytics:
 store_analytics:
 	cd $(SRC_DATA_PIPELINE) && gooddata-dbt store_analytics
 
-test_insights:
-	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_insights
+test_visualizations:
+	cd $(SRC_DATA_PIPELINE) && gooddata-dbt $$DR test_visualizations

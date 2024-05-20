@@ -50,4 +50,4 @@ jobs:
         timeout-minutes: 10
         run: |
           source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
-          make test_insights
+          make test_visualizations
