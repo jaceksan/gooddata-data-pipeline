@@ -45,13 +45,15 @@ data_products:
     environment_setup_id: simple
     model_ids:
       - faa
-    localization:
-      from_language: en
-      to:
-        - locale: fr-FR
-          language: fr
-        - locale: zh-Hans
-          language: "chinese (simplified)"
+# TODO - this poor man localization is deprecated in favor of the new localization feature
+#  implement a new localization feature in the Python SDK and use it here
+#    localization:
+#      from_language: en
+#      to:
+#        - locale: fr-FR
+#          language: fr
+#        - locale: zh-Hans
+#          language: "chinese (simplified)"
   - id: ecommerce_demo
     name: Ecommerce demo
     environment_setup_id: simple
@@ -83,23 +85,22 @@ organizations:
       - faa
       - ecommerce_demo
       - data_science
+  - gooddata_profile: demo_cicd_dev
+    data_product_ids:
+      - cicd_demo
+      - faa
+      - ecommerce_demo
+      - data_science
+  - gooddata_profile: demo_cicd_staging
+    data_product_ids:
+      - cicd_demo
+      - faa
+      - ecommerce_demo
+      - data_science
   - gooddata_profile: demo_cicd
     data_product_ids:
       - cicd_demo
       - faa
-  - gooddata_profile: closed_beta
-    data_product_ids:
-      - cicd_demo
-      - ecommerce_demo
-      - data_science
-  - gooddata_profile: closed_beta_se
-    data_product_ids:
-      - cicd_demo
-      - ecommerce_demo
-      - data_science
-  - gooddata_profile: labs_se
-    data_product_ids:
-      - cicd_demo
       - ecommerce_demo
       - data_science
 global_properties:

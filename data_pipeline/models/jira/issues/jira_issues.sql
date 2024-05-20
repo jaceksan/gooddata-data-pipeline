@@ -39,14 +39,14 @@ final as (
       j.*,
       (
         -- closed_at or now(not yet closed)
-        extract(epoch from coalesce(j.closed_at, {{ current_timestamp() }}))
+        extract(epoch from coalesce(j.closed_at, {{ current_timestamp() }}::date))
           - extract(epoch from j.created_at)
       ) / 3600 / 24 as jira_days_to_solve,
       (
         -- if due_date_at is set, calculate if we met it
         case
           when j.due_date_at is not null then
-            extract(epoch from coalesce(j.closed_at, {{ current_timestamp() }}))
+            extract(epoch from coalesce(j.closed_at, {{ current_timestamp() }}::date))
               - extract(epoch from j.due_date_at)
           end
       ) / 3600 / 24 as jira_days_due_date_exceeded

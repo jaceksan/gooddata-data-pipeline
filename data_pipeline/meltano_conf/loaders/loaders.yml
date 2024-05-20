@@ -38,8 +38,8 @@ plugins:
       add_metadata_columns: true
   - name: target-duckdb
     variant: jwills
-    # TODO - remove the freeze of duckdb once MotherDuck upgrades to 0.10.0
-    pip_url: target-duckdb duckdb==0.9.2
+    # TODO - remove the commit hash when JWills does a release
+    pip_url: git+https://github.com/jwills/target-duckdb.git@1b6b8575d0728b4c0b67378c0196b9524307ed87
     config:
       path: md:${DB_NAME}
       token: ${MOTHERDUCK_TOKEN}

@@ -13,7 +13,7 @@ Currently, these data warehouse engines are supported:
 - PostgreSQL
 - Vertica
 - Snowflake
-- MotherDuck (partially, TODO)
+- MotherDuck
 
 Delivery into dev/staging/prod environments is orchestrated by [GitHub](https://github.com/) or [Gitlab](https://gitlab.com/) (except the data apps).
 
@@ -42,11 +42,12 @@ The following articles are based on this project:
 - [Analytics Inside Virtual Reality: Too Soon?](https://medium.com/gooddata-developers/analytics-inside-virtual-reality-too-soon-41900dac366b)
 - [Streamlit meets Headless BI](https://medium.com/gooddata-developers/streamlit-meets-headless-bi-cb6196b69671)
 - [Ready, set, integrate: GoodData-dbt integration is production-ready!](https://medium.com/gooddata-developers/ready-set-integrate-gooddata-dbt-integration-is-production-ready-f37daa134455)
-- TODO: CICD Data Pipeline Blueprint v1.0
+- [Data Pipeline as Code: Journey of our Blueprint](https://medium.com/gooddata-developers/data-pipeline-as-code-journey-of-our-blueprint-99912b1485d2)
+- TODO: Data apps on top of GoodData + MotherDuck
 
 ## Getting Started
 
-I recommend to begin on your localhost, starting the whole ecosystem using [docker-compose.yaml](docker-compose.yaml) file.
+I recommend to begin on your localhost, starting the whole ecosystem using [docker compose.yaml](docker compose.yaml) file.
 It utilizes the [GoodData Container Edition](https://hub.docker.com/r/gooddata/gooddata-cn-ce) available in DockerHub.
 Optionally, you can also start [Vertica Community Edition](https://hub.docker.com/r/vertica/vertica-ce).
 
@@ -62,20 +63,20 @@ The more people ask, the more chances we have to get it back.
 *Design note:*
 - All env variables for all environments are stored in .env files.
 - All executions (extract_load, transform, analytics) are orchestrated by make targets.
-  - This is valid for docker-compose, local shell and Gitlab/GitHub CI/CD.
+  - This is valid for docker compose, local shell and Gitlab/GitHub CI/CD.
 
 ```bash
 # Build custom images based on Meltano, dbt and GoodData artefacts
-docker-compose build
+docker compose build
 # Start GoodData, and Minio(AWS S3 Meltano state backend)
-docker-compose up -d gooddata-cn-ce minio minio-bootstrap
+docker compose up -d gooddata-cn-ce minio minio-bootstrap
 # Wait 1-2 minutes to services successfully start
 # Optionally, start Vertica
-docker-compose up -d vertica
+docker compose up -d vertica
 
 # Allow https://localhost:8443 in CORS
 # This enables testing of locally started UI apps based on UI.SDK (examples in /apps folder) 
-docker-compose up bootstrap_origins
+docker compose up bootstrap_origins
 
 # Extract/load pipeline based on Meltano
 # Github token for authenticating with Github REST API 
@@ -87,18 +88,18 @@ export TAP_JIRA_AUTH_USERNAME="<user - e-mail>"
 export VERTICA_PASS="<your Vertica password>" 
 # If you use MotherDuck
 export MOTHERDUCK_TOKEN="<your MotherDuck token>" 
-docker-compose up extract_load_github
-docker-compose up extract_load_faa
-docker-compose up extract_load_data_science
-docker-compose up extract_load_ecommerce_demo
-docker-compose up extract_load_jira
+docker compose up extract_load_github
+docker compose up extract_load_faa
+docker compose up extract_load_data_science
+docker compose up extract_load_ecommerce_demo
+docker compose up extract_load_jira
 
 # Transform model to be ready for analytics, with dbt
 # Also, GoodData models are generated from dbt models and pushed to GoodData  
-docker-compose up transform  
+docker compose up transform  
 
 # Deliver analytics artefacts(metrics, visualizations, dashboards, ...) into GoodData
-docker-compose up analytics
+docker compose up analytics
 ```
 
 Once everything finishes successfully, you can go to [http://localhost:3000](http://localhost:3000), 
@@ -206,7 +207,7 @@ make deploy_models
 FR="--dry-run" make deploy_models
 ```
 
-For Vertica, we have to customize VERTICA_HOST variable, because Vertica is running inside the docker-compose network.
+For Vertica, we have to customize VERTICA_HOST variable, because Vertica is running inside the docker compose network.
 When you run e.g. Meltano from localhost, you connect to localhost.
 When GoodData is connecting to Vertica inside the docker network, it must connect to docker hostname of Vertica, which is `vertica`.
 ```bash
@@ -300,6 +301,9 @@ Applications are stored in [apps](apps/) folder. They are not delivered by the G
 
 ### Streamlit demo
 [README](apps/streamlit/)
+
+### How to use GoodData SDK in notebooks
+[README](apps/jupyter/)
 
 ---
 
