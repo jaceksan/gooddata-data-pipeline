@@ -305,6 +305,9 @@ Applications are stored in [apps](apps/) folder. They are not delivered by the G
 ### How to use GoodData SDK in notebooks
 [README](apps/jupyter/)
 
+### GoodData UI(Javascript) SDK example
+[README](apps/ui_sdk/jireaucracy/)
+
 ---
 
 If you want to learn more about the stack described in the document, do not hesitate to contact us.
