@@ -47,6 +47,7 @@ export const App: React.FC = () => {
                 <div className="app">
                     <figure className="app-figure">
                         <Execute seriesBy={[MdFAA.FlightCount]} slicesBy={[MdFAA.FaaRegionOrigin, MdFAA.FaaRegionDestination]}>
+                        {/* <Execute seriesBy={[MdFAA.FlightCount]} slicesBy={[MdFAA.Manufacturer, MdFAA.Nickname]}> */}
                             {CustomVisualization}
                         </Execute>
                     </figure>
