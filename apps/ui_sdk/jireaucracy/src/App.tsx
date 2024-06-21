@@ -45,8 +45,14 @@ export const App: React.FC = () => {
             </WorkspaceProvider>
             <WorkspaceProvider workspace={workspaceIdFAA}>
                 <div className="app">
+                    <pre className="app-preformatted">
+                        <div>
+                            Federal Aviation Administration - traffic density
+                        </div>
+                    </pre>
                     <figure className="app-figure">
                         <Execute seriesBy={[MdFAA.FlightCount]} slicesBy={[MdFAA.FaaRegionOrigin, MdFAA.FaaRegionDestination]}>
+                        {/*<Execute seriesBy={[MdFAA.FlightCount]} slicesBy={[MdFAA.Manufacturer, MdFAA.Nickname]}>*/}
                             {CustomVisualization}
                         </Execute>
                     </figure>

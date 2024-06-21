@@ -8,9 +8,9 @@
     "exports": "./esm/index.js",
     "types": "./esm/index.d.ts",
     "gooddata": {
-        "hostname": "https://demo-cicd-dev.cloud.gooddata.com",
-        "workspaceIdCICD": "cicd_demo_development_motherduck",
-        "workspaceIdFAA": "faa_development",
+        "hostname": "https://demo-cicd.cloud.gooddata.com",
+        "workspaceIdCICD": "cicd_demo_production_motherduck",
+        "workspaceIdFAA": "faa_production",
         "backend": "tiger",
         "catalogOutput": "src/catalog.ts"
     },
