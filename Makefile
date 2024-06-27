@@ -23,6 +23,11 @@ dev:
 	.venv_t/bin/dbt deps --project-dir $(SRC_DATA_PIPELINE) --profiles-dir $(SRC_DATA_PIPELINE)/profile
 	# Install dbt-gooddata plugin and related dependencies
 	.venv_t/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-gooddata.txt
+	# Real-time demo
+	python3.10 -m venv .venv_rt --upgrade-deps
+	# Install Meltano and required plugins
+	.venv_el/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-real-time.txt
+
 
 extract_load:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_GITHUB && meltano --environment $$ELT_ENVIRONMENT run tap-github-repo $$MELTANO_TARGET tap-github-org $$MELTANO_TARGET $$FR
