@@ -23,10 +23,9 @@ dev:
 	.venv_t/bin/dbt deps --project-dir $(SRC_DATA_PIPELINE) --profiles-dir $(SRC_DATA_PIPELINE)/profile
 	# Install dbt-gooddata plugin and related dependencies
 	.venv_t/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-gooddata.txt
-	# Real-time demo
-	python3.10 -m venv .venv_rt --upgrade-deps
-	# Install Meltano and required plugins
-	.venv_el/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-real-time.txt
+	# Data generator for real-time or other demos
+	python3.11 -m venv custom_tools/data_generator/.venv --upgrade-deps
+	custom_tools/data_generator/.venv/bin/pip3 install -r custom_tools/data_generator/requirements.txt
 
 
 extract_load:
