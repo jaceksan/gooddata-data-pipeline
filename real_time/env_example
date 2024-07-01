@@ -1,0 +1,3 @@
+export REDSHIFT_USER="xxxx"
+export REDSHIFT_PASSWORD="xxx"
+export REDSHIFT_IAM_ROLE="arn:aws:iam::xxxxxxx"

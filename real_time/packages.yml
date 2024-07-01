@@ -1,0 +1,7 @@
+packages:
+  - package: Snowflake-Labs/dbt_constraints
+    version: 0.6.1
+  - package: dbt-labs/codegen
+    version: 0.10.0
+  - package: calogica/dbt_date
+    version: 0.9.1
