@@ -25,8 +25,10 @@ m_random = Random()
 BATCH_SIZE = 10_000
 FACT_TO_DIM_RATIO = 100
 DIM_RECORDS_PER_MB = 370  # 1MB of parquet data
+PATH_TO_WRITE = Path('generated_data') / 'tables'
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('MyLogger')
+TABLES = ['dim_customer', 'dim_product', 'fact_sales', 'fact_inventory']
 
 
 @attr.s(auto_attribs=True, kw_only=False)
@@ -38,7 +40,7 @@ class FactParams:
     big_quantity: np.ndarray
     amount: list[float]
     discount: list[float]
-    seconds: list[int]
+    seconds: np.ndarray
     start_time: datetime
 
 
@@ -71,7 +73,7 @@ async def generate_dim_customer(num_entries: int) -> pd.DataFrame:
                   'Country': address.country(),
                   'Age': random.randint(18, 70),
                   'Gender': random.choice(['Male', 'Female', 'Other']),
-                  'MembershipStatus': random.choice(['Silver', 'Gold', 'Platinum'])}
+                  'MembershipStatus': random.choice(['Silver', 'Gold', 'Platinum', 'Platimun'])}
                  for i in range(num_entries)]
     return pd.DataFrame(customers)
 
@@ -79,7 +81,7 @@ async def generate_dim_customer(num_entries: int) -> pd.DataFrame:
 async def generate_dim_product(num_entries: int) -> pd.DataFrame:
     products = [{'ProductID': i,
                  'ProductName': text.word(),
-                 'ProductCategory': random.choice(['Electronics', 'Clothing', 'Home', 'Garden']),
+                 'ProductCategory': random.choice(['Electronics', 'Clothing', 'Home', 'Garden', 'Gardem']),
                  'ProductSubcategory': text.word(),
                  'Manufacturer': finance.company(),
                  'SupplierID': m_random.randint(a=1, b=100),
@@ -94,40 +96,28 @@ async def generate_dim_product(num_entries: int) -> pd.DataFrame:
 
 
 async def generate_fact_sales(fact_params: FactParams) -> pd.DataFrame:
-    records = []
-    for i in range(0, fact_params.fact_records, BATCH_SIZE):
-        batch = [
-            {
-                'SalesID': j,
-                'CustomerID': fact_params.customer_ids[j % len(fact_params.customer_ids)],
-                'ProductID': fact_params.product_ids[j % len(fact_params.product_ids)],
-                'TransactionDate': fact_params.start_time + timedelta(seconds=fact_params.seconds[j]),
-                'Quantity': fact_params.small_quantity[j % len(fact_params.small_quantity)],
-                'SalesAmount': fact_params.amount[j % len(fact_params.amount)],
-                'Discount': fact_params.discount[j % len(fact_params.discount)],
-                'SalesChannel': random.choice(['Online', 'In-store'])
-             } for j in range(i, min(i + BATCH_SIZE, fact_params.fact_records))
-        ]
-        records.extend(batch)
-        await asyncio.sleep(0)  # Yield control to allow other tasks
+    records = [{
+        'SalesID': i,
+        'CustomerID': fact_params.customer_ids[i],
+        'ProductID': fact_params.product_ids[i],
+        'TransactionDate': fact_params.start_time + timedelta(seconds=int(fact_params.seconds[i])),
+        'Quantity': fact_params.small_quantity[i],
+        'SalesAmount': fact_params.amount[i],
+        'Discount': fact_params.discount[i],
+        'SalesChannel': random.choice(['Online', 'In-store'])
+     } for i in range(1, fact_params.fact_records)]
     return pd.DataFrame(records)
 
 
 async def generate_fact_inventory(fact_params: FactParams) -> pd.DataFrame:
-    records = []
-    for i in range(0, fact_params.fact_records, BATCH_SIZE):
-        batch = [
-            {
-                'InventoryID': j,
-                'ProductID': fact_params.product_ids[j % len(fact_params.product_ids)],
-                'TransactionDate': fact_params.start_time + timedelta(seconds=fact_params.seconds[j]),
-                'MovementType': random.choice(['Incoming', 'Outgoing']),
-                'Quantity': fact_params.big_quantity[j % len(fact_params.big_quantity)],
-                'Location': random.choice(['Warehouse', 'Store'])
-            } for j in range(i, min(i + BATCH_SIZE, fact_params.fact_records))
-        ]
-        records.extend(batch)
-        await asyncio.sleep(0)  # Yield control to allow other tasks
+    records = [{
+        'InventoryID': i,
+        'ProductID': fact_params.product_ids[i],
+        'TransactionDate': fact_params.start_time + timedelta(seconds=int(fact_params.seconds[i])),
+        'MovementType': random.choice(['Incoming', 'Outgoing']),
+        'Quantity': fact_params.big_quantity[i],
+        'Location': random.choice(['Warehouse', 'Store'])
+    } for i in range(1, fact_params.fact_records)]
     return pd.DataFrame(records)
 
 
@@ -153,15 +143,31 @@ async def write_data_to_parquet(
     dim_product_df: pd.DataFrame,
     fact_sales_df: pd.DataFrame,
     fact_inventory_df: pd.DataFrame,
+    start_time: datetime,
 ):
-    # Save DataFrames to Parquet files
-    target_folder = Path('/tmp') / 'generated_data'
-    os.makedirs(target_folder, exist_ok=True)
+    for table in TABLES:
+        os.makedirs(PATH_TO_WRITE / table, exist_ok=True)
     # No need to parallelize saving to Parquet as it is already fast
-    dim_customer_df.to_parquet(target_folder / 'dim_customer.parquet', engine='pyarrow')
-    dim_product_df.to_parquet(target_folder / 'dim_product.parquet', engine='pyarrow')
-    fact_sales_df.to_parquet(target_folder / 'fact_sales.parquet', engine='pyarrow')
-    fact_inventory_df.to_parquet(target_folder / 'fact_inventory.parquet', engine='pyarrow')
+    dim_customer_df.to_parquet(PATH_TO_WRITE / 'dim_customer' / 'dim_customer.parquet', engine='pyarrow')
+    dim_product_df.to_parquet(PATH_TO_WRITE / 'dim_product' / 'dim_product.parquet', engine='pyarrow')
+    # TODO - include start_time into generated files
+    start_time_str = start_time.strftime('%Y_%m_%d_%H_%M_%S')
+    fact_sales_df.to_parquet(PATH_TO_WRITE / 'fact_sales' / f'fact_sales_{start_time_str}.parquet', engine='pyarrow')
+    fact_inventory_df.to_parquet(
+        PATH_TO_WRITE / 'fact_inventory' / f'fact_inventory_{start_time_str}.parquet', engine='pyarrow'
+    )
+
+
+def get_dim_ids(dim_df: pd.DataFrame, id_column: str, fact_values: int) -> np.ndarray:
+    return np.random.choice(dim_df[id_column], size=fact_values, replace=True)
+
+
+def get_random_integers(list_size: int, low: int, high: int) -> np.ndarray:
+    return np.random.randint(low, high, list_size)
+
+
+def get_random_floats(list_size: int, low: float, high: float, precision: int) -> list[float]:
+    return [round(x, precision) for x in np.random.uniform(low, high, list_size)]
 
 
 async def main():
@@ -179,14 +185,14 @@ async def main():
     start_time = datetime.now()
     fact_params = FactParams(
         fact_records=fact_records,
-        customer_ids=np.random.randint(1, dim_customer_df.size + 1, dim_customer_df.size),
-        product_ids=np.random.randint(1, dim_product_df.size + 1, dim_product_df.size),
-        small_quantity=np.random.randint(1, 10, fact_records),
-        big_quantity=np.random.randint(10, 100, fact_records),
-        amount=[round(x, 2) for x in np.random.uniform(100, 1000, fact_records)],
-        discount=[round(x, 2) for x in np.random.uniform(0, 0.3, fact_records)],
+        customer_ids=get_dim_ids(dim_customer_df, "CustomerID", fact_records),
+        product_ids=get_dim_ids(dim_product_df, "ProductID", fact_records),
+        small_quantity=get_random_integers(fact_records, 1, 10),
+        big_quantity=get_random_integers(fact_records, 10, 100),
+        amount=get_random_floats(fact_records, 100, 1000, 2),
+        discount=get_random_floats(fact_records, 0, 0.3, 2),
         start_time=start_time,
-        seconds=[np.random.randint(0, 120) for _ in range(fact_records)]
+        seconds=get_random_integers(fact_records, 0, 120),
     )
     logger.info("Generating fact tables...")
     fact_sales_df, fact_inventory_df = await asyncio.gather(
@@ -195,7 +201,9 @@ async def main():
     )
 
     await asyncio.gather(preview_data(dim_customer_df, dim_product_df, fact_sales_df, fact_inventory_df))
-    await asyncio.gather(write_data_to_parquet(dim_customer_df, dim_product_df, fact_sales_df, fact_inventory_df))
+    await asyncio.gather(
+        write_data_to_parquet(dim_customer_df, dim_product_df, fact_sales_df, fact_inventory_df, start_time)
+    )
 
 # Run the main function
 start = time()

@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Customer"
+    meta:
+      gooddata:
+        model_id: mark43
+    columns:
+      - name: CustomerID
+        description: "Customer ID"
+        data_tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key:
+              severity: ERROR
+
+      - name: FirstName
+        description: "First name"
+
+      - name: LastName
+        description: "Last name"
+
+      - name: Email
+        description: "Email"
+# Generator generates duplicate emails. Later on we can implement a logic removing such duplicates.
+#        data_tests:
+#          - unique
+#          - not_null
+
+      - name: Phone
+        description: "Phone"
+
+      - name: Address
+        description: "Address"
+
+      - name: City
+        description: "City"
+
+      - name: State
+        description: "State"
+
+      - name: ZipCode
+        description: "Zip code"
+
+      - name: Country
+        description: "Country"
+
+      - name: Age
+        description: "Age"
+
+      - name: Gender
+        description: "Gender"
+
+      - name: MembershipStatus
+        description: "Membership"
+        data_tests:
+          - accepted_values:
+              values: ['Platinum', 'Gold', 'Silver']

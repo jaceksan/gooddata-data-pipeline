@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: fact_inventory
+    description: "Inventory"
+    meta:
+      gooddata:
+        model_id: mark43
+    columns:
+      - name: InventoryID
+        description: "Inventory ID"
+        data_tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key:
+              severity: ERROR
+
+      - name: ProductID
+        description: "Product ID"
+        data_tests:
+          - not_null
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('dim_product')
+              pk_column_name: ProductID
+
+      - name: TransactionDate
+        description: "Date"
+
+      - name: MovementType
+        description: "Type"
+        data_tests:
+          - accepted_values:
+              values: ['Incoming', 'Outgoing']
+
+      - name: Quantity
+        description: "Quantity"
+
+      - name: Location
+        description: "Location"
+        data_tests:
+          - accepted_values:
+              values: ['Warehouse', 'Store']

@@ -1,0 +1,1 @@
+gooddata-dbt==1.21.1.dev2

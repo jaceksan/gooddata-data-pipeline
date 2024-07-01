@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: dim_product
+    description: "Product"
+    meta:
+      gooddata:
+        model_id: mark43
+    columns:
+      - name: ProductID
+        description: "Product ID"
+        data_tests:
+          - unique
+          - not_null
+          - dbt_constraints.primary_key:
+              severity: ERROR
+
+      - name: ProductName
+        description: "Name"
+
+      - name: ProductCategory
+        description: "Category"
+
+      - name: ProductSubcategory
+        description: "Subcategory"
+
+      - name: Manufacturer
+        description: "Manufacturer"
+
+      - name: SupplierID
+        description: "Supplier ID"
+        data_tests:
+          - not_null
+
+      - name: UnitPrice
+        description: "Price"
+
+      - name: Cost
+        description: "Cost"
+
+      - name: ProductDescription
+        description: "Description"
+
+      - name: Size
+        description: "Size"
+
+      - name: Weight
+        description: "Weight"
+
+      - name: Color
+        description: "Color"
