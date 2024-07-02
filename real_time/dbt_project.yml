@@ -33,9 +33,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   +materialized: table
   real_time:
-    +schema: "{{ env_var('DBT_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
+    +schema: "{{ env_var('DB_OUTPUT_SCHEMA', 'cicd_output_stage') }}"
     +incremental_strategy: "{{ env_var('DBT_INCREMENTAL_STRATEGY', 'delete+insert') }}"
 
 vars:
   "dbt_date:time_zone": "UTC"
-  input_schema: "{{ env_var('DBT_INPUT_SCHEMA', 'cicd_input_stage') }}"
+  input_schema: "{{ env_var('DB_INPUT_SCHEMA', 'cicd_input_stage') }}"
