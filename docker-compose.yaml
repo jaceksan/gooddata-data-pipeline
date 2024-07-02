@@ -207,7 +207,7 @@ services:
       /usr/bin/mc mb my_minio/meltano;
       /usr/bin/mc policy set public my_minio/meltano;
       /usr/bin/mc mb my_minio/gdc-tiger-test-data;
-      /usr/bin/mc policy set public my_minio/gdc-tiger-test-data;
+      /usr/bin/mc policy set public my_minio/gdc-jacek-test-redshift;
       exit 0;
       "
 
