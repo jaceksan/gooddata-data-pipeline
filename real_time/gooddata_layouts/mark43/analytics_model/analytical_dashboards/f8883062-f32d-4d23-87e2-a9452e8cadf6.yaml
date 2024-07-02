@@ -1,0 +1,42 @@
+content:
+  filterContextRef:
+    identifier:
+      id: f030c67e-1218-4bf5-afa0-8bb080e5438b
+      type: filterContext
+  layout:
+    sections:
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              dateDataSet:
+                identifier:
+                  id: transactiondate
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: d4b8c449-d937-4ba6-8600-c107a34a0c72
+                  type: visualizationObject
+              title: Sales amount by Color and Manufacturer
+              type: insight
+        type: IDashboardLayoutSection
+    type: IDashboardLayout
+  version: '2'
+description: ''
+id: f8883062-f32d-4d23-87e2-a9452e8cadf6
+permissions:
+  - assigneeRule:
+      type: allWorkspaceUsers
+    name: VIEW
+  - assignee:
+      id: technical.user
+      type: user
+    name: EDIT
+title: Sales
