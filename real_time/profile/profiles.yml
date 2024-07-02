@@ -43,4 +43,5 @@ rt_dev:
       port: 5439
       user: "{{ env_var('REDSHIFT_USER') }}"
       password: "{{ env_var('REDSHIFT_PASSWORD') }}"
-      dbname: "{{ env_var('REDSHIFT_DATABASE') }}"
+      dbname: "{{ env_var('REDSHIFT_DB_NAME') }}"
+      schema: "{{ env_var('DB_INPUT_SCHEMA') }}"

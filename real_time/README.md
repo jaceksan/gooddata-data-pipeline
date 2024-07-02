@@ -17,7 +17,11 @@ make dev
 Create a new .env file. You can use the template [env_example](env_example).
 Set up the environment:
 ```bash
-source .env
+# For local env
+source .env local
+# For cloud env with Redshift
+source .env cloud
+# Local and cloud must be separated because some variables are in conflict (e.g. AWS_ACCESS_KEY_ID)
 ```
 
 Then check the [Makefile](Makefile) for available commands.

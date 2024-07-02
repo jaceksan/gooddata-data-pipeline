@@ -14,6 +14,9 @@ models:
           - not_null
           - dbt_constraints.primary_key:
               severity: ERROR
+        meta:
+          gooddata:
+            ldm_type: primary_key
 
       - name: ProductID
         description: "Product ID"
@@ -22,6 +25,10 @@ models:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('dim_product')
               pk_column_name: ProductID
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: dim_product
 
       - name: TransactionDate
         description: "Date"
@@ -34,6 +41,9 @@ models:
 
       - name: Quantity
         description: "Quantity"
+        meta:
+          gooddata:
+            id: inventory.quantity
 
       - name: Location
         description: "Location"

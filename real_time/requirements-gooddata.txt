@@ -1,1 +1,1 @@
-gooddata-dbt==1.21.1.dev2
+gooddata-dbt==1.21.1.dev3

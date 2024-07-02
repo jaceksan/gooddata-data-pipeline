@@ -14,6 +14,9 @@ models:
           - not_null
           - dbt_constraints.primary_key:
               severity: ERROR
+        meta:
+          gooddata:
+            ldm_type: primary_key
 
       - name: CustomerID
         description: "Customer ID"
@@ -22,6 +25,10 @@ models:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('dim_customer')
               pk_column_name: CustomerID
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: dim_customer
 
       - name: ProductID
         description: "Product ID"
@@ -30,12 +37,19 @@ models:
           - dbt_constraints.foreign_key:
               pk_table_name: ref('dim_product')
               pk_column_name: ProductID
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: dim_product
 
       - name: TransactionDate
         description: "Date"
 
       - name: Quantity
         description: "Quantity"
+        meta:
+          gooddata:
+            id: sales.quantity
 
       - name: SalesAmount
         description: "Amount"

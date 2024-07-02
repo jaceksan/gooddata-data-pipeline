@@ -206,7 +206,7 @@ services:
       /usr/bin/mc alias set my_minio http://minio:9000 minio_abcde_k1234567 minio_abcde_k1234567_secret1234567890123;
       /usr/bin/mc mb my_minio/meltano;
       /usr/bin/mc policy set public my_minio/meltano;
-      /usr/bin/mc mb my_minio/gdc-tiger-test-data;
+      /usr/bin/mc mb my_minio/gdc-jacek-test-redshift;
       /usr/bin/mc policy set public my_minio/gdc-jacek-test-redshift;
       exit 0;
       "
