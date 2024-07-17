@@ -15,7 +15,7 @@ import numpy as np
 import attr
 import argparse
 import logging
-
+import json
 
 person = Person()
 address = Address()
@@ -25,9 +25,11 @@ m_random = Random()
 BATCH_SIZE = 10_000
 FACT_TO_DIM_RATIO = 100
 DIM_RECORDS_PER_MB = 370  # 1MB of parquet data
-PATH_TO_WRITE = Path('generated_data') / 'tables'
+PATH_GENERATED_DATA = Path(os.getenv("PATH_GENERATED_DATA"))
+PATH_TO_WRITE = PATH_GENERATED_DATA / 'tables'
+STATUS_FILE = "generate.status"
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger('MyLogger')
+logger = logging.getLogger('GenerateLogger')
 TABLES = ['dim_customer', 'dim_product', 'fact_sales', 'fact_inventory']
 
 
@@ -42,6 +44,8 @@ class FactParams:
     discount: list[float]
     seconds: np.ndarray
     start_time: datetime
+    max_fact_sales_id: int
+    max_fact_inventory_id: int
 
 
 def parse_args():
@@ -97,7 +101,7 @@ async def generate_dim_product(num_entries: int) -> pd.DataFrame:
 
 async def generate_fact_sales(fact_params: FactParams) -> pd.DataFrame:
     records = [{
-        'SalesID': i,
+        'SalesID': i + fact_params.max_fact_sales_id,
         'CustomerID': fact_params.customer_ids[i],
         'ProductID': fact_params.product_ids[i],
         'TransactionDate': fact_params.start_time + timedelta(seconds=int(fact_params.seconds[i])),
@@ -111,7 +115,7 @@ async def generate_fact_sales(fact_params: FactParams) -> pd.DataFrame:
 
 async def generate_fact_inventory(fact_params: FactParams) -> pd.DataFrame:
     records = [{
-        'InventoryID': i,
+        'InventoryID': i + fact_params.max_fact_inventory_id,
         'ProductID': fact_params.product_ids[i],
         'TransactionDate': fact_params.start_time + timedelta(seconds=int(fact_params.seconds[i])),
         'MovementType': random.choice(['Incoming', 'Outgoing']),
@@ -170,8 +174,26 @@ def get_random_floats(list_size: int, low: float, high: float, precision: int) -
     return [round(x, precision) for x in np.random.uniform(low, high, list_size)]
 
 
+def read_status_file() -> dict:
+    file_path = PATH_GENERATED_DATA / STATUS_FILE
+    if os.path.isfile(file_path):
+        with open(file_path, "r") as fp:
+            return json.load(fp)
+    else:
+        return {'max_fact_sales_id': 0, 'max_fact_inventory_id': 0}
+
+
+def write_status_file(max_fact_sales_id: int, max_fact_inventory_id: int) -> None:
+    with open(PATH_GENERATED_DATA / STATUS_FILE, "w") as fp:
+        json.dump({
+            'max_fact_sales_id': max_fact_sales_id,
+            'max_fact_inventory_id': max_fact_inventory_id,
+        }, fp)
+
+
 async def main():
     args = parse_args()
+    os.makedirs(PATH_TO_WRITE, exist_ok=True)
     dim_records = DIM_RECORDS_PER_MB * args.scale_factor
     fact_records = dim_records * FACT_TO_DIM_RATIO
     # Using asyncio.gather to run tasks concurrently
@@ -183,6 +205,7 @@ async def main():
     # After dimension tables are ready, generate fact tables
     logger.info("Generating random numbers...")
     start_time = datetime.now()
+    max_ids = read_status_file()
     fact_params = FactParams(
         fact_records=fact_records,
         customer_ids=get_dim_ids(dim_customer_df, "CustomerID", fact_records),
@@ -193,12 +216,17 @@ async def main():
         discount=get_random_floats(fact_records, 0, 0.3, 2),
         start_time=start_time,
         seconds=get_random_integers(fact_records, 0, 120),
+        max_fact_sales_id=max_ids['max_fact_sales_id'],
+        max_fact_inventory_id=max_ids['max_fact_inventory_id'],
     )
     logger.info("Generating fact tables...")
     fact_sales_df, fact_inventory_df = await asyncio.gather(
         generate_fact_sales(fact_params),
         generate_fact_inventory(fact_params)
     )
+    max_fact_sales_id = int(fact_sales_df['SalesID'].max())
+    max_fact_inventory_id = int(fact_inventory_df['InventoryID'].max())
+    write_status_file(max_fact_sales_id, max_fact_inventory_id)
 
     await asyncio.gather(preview_data(dim_customer_df, dim_product_df, fact_sales_df, fact_inventory_df))
     await asyncio.gather(

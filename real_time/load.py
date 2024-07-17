@@ -26,7 +26,7 @@ MOTHERDUCK_DB_NAME = os.getenv("MOTHERDUCK_DB_NAME")
 DB_INPUT_SCHEMA = os.getenv("DB_INPUT_SCHEMA")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger('MyLogger')
+logger = logging.getLogger('LoadLogger')
 
 
 def duration(start_time):
