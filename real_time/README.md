@@ -13,6 +13,11 @@ Install Python dependencies:
 make dev
 ```
 
+# Activate the virtual environment:
+```bash
+source .venv/bin/activate
+```
+
 ## Quick start
 Create a new .env file. You can use the template [env_example](env_example).
 Set up the environment:

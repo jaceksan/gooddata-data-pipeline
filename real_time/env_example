@@ -8,12 +8,18 @@ if [ "$1" == "local" ]; then
 elif [ "$1" == "cloud" ]; then
     export REDSHIFT_HOST="xxx.us-east-1.redshift-serverless.amazonaws.com"
     export REDSHIFT_DB_NAME="dev"
-    export AWS_ACCESS_KEY_ID="xxx"
-    export AWS_SECRET_ACCESS_KEY="xxx"
-    export AWS_SESSION_TOKEN="xxx"
     export REDSHIFT_USER="xxx"
     export REDSHIFT_PASSWORD="xxx"
     export REDSHIFT_IAM_ROLE="arn:aws:iam::xxx:role/xxx"
+    if [ "$2" == "temp" ]; then
+        export AWS_ACCESS_KEY_ID="xxx"
+        export AWS_SECRET_ACCESS_KEY="xxx"
+        export AWS_SESSION_TOKEN="xxx"
+    else
+        # Define aws-dev profile in ~/.aws/config
+        # Then you can use aws sso login instead of setting the above variables
+        export AWS_PROFILE="aws-dev"
+    fi
 else
     echo "ERROR: Please provide either 'local' or 'cloud' as an argument"
     # Do not exit, `source .env` command would close the terminal
