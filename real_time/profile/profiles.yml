@@ -19,7 +19,7 @@ rt_dev_local:
         s3_url_style: 'path'
 
 rt_dev:
-  target: motherduck
+  target: redshift
   outputs:
     motherduck:
       threads: 4
