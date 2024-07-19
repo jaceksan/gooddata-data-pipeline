@@ -9,10 +9,14 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import re
 import os
-from datetime import datetime, timezone
+from datetime import datetime
+import attr
+import argparse
 
 DUCKDB_DB_FILE = os.getenv("DUCKDB_DB_FILE")
+PATH_IN_BUCKET = os.getenv("PATH_IN_BUCKET")
 PATH_GENERATED_DATA = Path(os.getenv("PATH_GENERATED_DATA"))
+PATH_TO_TABLES = Path(os.getenv("PATH_TO_TABLES"))
 MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT")
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
@@ -22,11 +26,34 @@ REDSHIFT_HOST = os.getenv("REDSHIFT_HOST")
 REDSHIFT_USER = os.getenv("REDSHIFT_USER")
 REDSHIFT_PASSWORD = os.getenv("REDSHIFT_PASSWORD")
 REDSHIFT_DB_NAME = os.getenv("REDSHIFT_DB_NAME")
+REDSHIFT_IAM_ROLE = os.getenv('REDSHIFT_IAM_ROLE')
 MOTHERDUCK_DB_NAME = os.getenv("MOTHERDUCK_DB_NAME")
 DB_INPUT_SCHEMA = os.getenv("DB_INPUT_SCHEMA")
+DATE_FORMAT = os.getenv("DATE_FORMAT")
+DATETIME_FORMAT = os.getenv("DATETIME_FORMAT")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('LoadLogger')
+
+
+@attr.s(auto_attribs=True, kw_only=True)
+class FileToLoad:
+    file_path: str
+    file_datetime: str
+    incremental: bool
+
+
+@attr.s(auto_attribs=True, kw_only=True)
+class TableToLoad:
+    table_name: str
+    files: list[FileToLoad]
+    incremental: bool = False
+
+
+@attr.s(auto_attribs=True, kw_only=True)
+class TablesToLoad:
+    tables: list[TableToLoad]
+    max_file_datetime: str
 
 
 def duration(start_time):
@@ -62,8 +89,8 @@ def connect_to_s3(db_type) -> boto3.client:
         )
 
 
-def connect_to_duckdb(is_motherduck: bool):
-    if is_motherduck:
+def connect_to_duckdb(database: str):
+    if database == "motherduck":
         con = duckdb.connect(f"md:{MOTHERDUCK_DB_NAME}")
     else:
         con = duckdb.connect(DUCKDB_DB_FILE)
@@ -100,46 +127,78 @@ def connect_to_redshift():
     return cur
 
 
-def read_status_file(db_type: str) -> datetime:
+def connect_to_database(database: str):
+    if database == "redshift":
+        return connect_to_redshift()
+    else:
+        return connect_to_duckdb(database)
+
+
+def read_status_file(db_type: str) -> str:
     file_path = PATH_GENERATED_DATA / f"load_{db_type}.status"
     if os.path.isfile(file_path):
         with open(file_path, "r") as f:
-            return datetime.strptime(f.read(), "%Y_%m_%d_%H_%M_%S").replace(tzinfo=timezone.utc)
+            return f.read()
     else:
-        return datetime(1970, 1, 1, tzinfo=timezone.utc)
+        return "19700101-000000000"
 
 
-def write_status_file(start_time, db_type: str):
+def write_status_file(start_time: str, db_type: str):
     with open(PATH_GENERATED_DATA / f"load_{db_type}.status", "w") as f:
-        f.write(datetime.strftime(start_time, "%Y_%m_%d_%H_%M_%S"))
+        f.write(start_time)
 
 
-def get_files(db_type: str):
-    last_load_time = read_status_file(db_type)
-    logging.info(f"Last load time for {db_type}: {last_load_time}")
+def exists_table(tables: TablesToLoad, table_name: str) -> bool:
+    for table in tables.tables:
+        if table.table_name == table_name:
+            return True
+    return False
+
+
+def get_files_to_load(args) -> TablesToLoad:
+    db_type = args.database
+    re_file_time = re.compile(r'^(\d{8}-\d{9,12})\.parquet$')
+    last_max_file_datetime = read_status_file(db_type)
+    tables_to_load = TablesToLoad(tables=[], max_file_datetime=last_max_file_datetime)
+    logging.info(f"Last load time for {db_type}: {last_max_file_datetime}")
     s3_client = connect_to_s3(db_type)
     s3_objects = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME)
-    return [
-        f for f in s3_objects['Contents']
-        if last_load_time < f['LastModified'] and f['Key'].startswith('real_time/tables')
-    ]
-
-
-def load_from_minio_to_duckdb(files, is_motherduck: bool):
-    con = connect_to_duckdb(is_motherduck)
-    for s3_file in files:
-        start_file = time()
-        file_path = s3_file['Key']
-        logging.info(f"Loading file {file_path} into DuckDB")
-        table_name = file_path.split('/')[-2]
-        logging.info(f"Loading file {file_path} into DuckDB table {table_name}")
-        sql_statement = f"""
-        CREATE OR REPLACE TABLE {DB_INPUT_SCHEMA}.{table_name} AS
-        SELECT * FROM read_parquet('s3://{S3_BUCKET_NAME}/{file_path}');
-        """
-        logging.debug(f"SQL statement: \n{sql_statement}")
-        con.execute(sql_statement)
-        logging.info(f"Loaded file {file_path} into DuckDB table {table_name} duration={duration(start_file)}ms")
+    for s3_object in s3_objects['Contents']:
+        file_path = s3_object['Key']
+        parts = file_path.split('/')
+        if len(parts) > 2:
+            table_name = str(parts[2])
+            file_name = parts[-1]
+            match = re_file_time.match(file_name)
+            if match:
+                file_datetime = match.group(1)
+                if file_datetime > last_max_file_datetime or args.full_refresh:
+                    if file_datetime > tables_to_load.max_file_datetime:
+                        tables_to_load.max_file_datetime = file_datetime
+                    incremental = False
+                    if len(parts) == 5:
+                        incremental = True
+                    file_to_upload = FileToLoad(
+                        file_path=file_path,
+                        file_datetime=file_datetime,
+                        incremental=incremental
+                    )
+                    if exists_table(tables_to_load, table_name):
+                        for table in tables_to_load.tables:
+                            if table.table_name == table_name:
+                                table.files.append(file_to_upload)
+                                if incremental:
+                                    # There are incremental files for this table,
+                                    # so the table can be loaded incrementally
+                                    # Still --full-refresh can override it
+                                    table.incremental = True
+                    else:
+                        tables_to_load.tables.append(
+                            TableToLoad(table_name=table_name, files=[file_to_upload], incremental=incremental)
+                        )
+            else:
+                logging.warning(f"File {file_name} does not match the pattern")
+    return tables_to_load
 
 
 def redshift_ddl(cur):
@@ -158,76 +217,121 @@ def redshift_ddl(cur):
                 cur.execute(query)
 
 
-def load_from_s3_to_redshift(files):
-    cur = connect_to_redshift()
-    redshift_ddl(cur)
-    iam_role = os.getenv('REDSHIFT_IAM_ROLE')
-    for s3_file in files:
+def load_file_from_minio_to_duckdb(con, table_name: str, file_to_load: FileToLoad):
+    sql_statement = f"""
+    CREATE OR REPLACE TABLE {DB_INPUT_SCHEMA}.{table_name} AS
+    SELECT * FROM read_parquet('s3://{S3_BUCKET_NAME}/{file_to_load.file_path}');
+    """
+    logging.debug(f"SQL statement: \n{sql_statement}")
+    con.execute(sql_statement)
+
+
+def load_file_from_s3_to_redshift(cur, table_name: str, file_to_upload: FileToLoad):
+    sql_statement = f"""
+    COPY {table_name} 
+    FROM 's3://{S3_BUCKET_NAME}/{file_to_upload.file_path}'
+    FORMAT AS PARQUET
+    IAM_ROLE '{REDSHIFT_IAM_ROLE}'
+    """
+    logging.debug(f"SQL statement: \n{sql_statement}")
+    cur.execute(sql_statement)
+
+
+def find_newest_file(files: list[FileToLoad]) -> FileToLoad:
+    newest_file = files[0]
+    for file in files:
+        if file.file_datetime > newest_file.file_datetime:
+            newest_file = file
+    return newest_file
+
+
+def load_files(con, table_name: str, files_to_upload: list[FileToLoad], database: str) -> None:
+    for file_to_load in files_to_upload:
         start_file = time()
-        file_path = s3_file['Key']
-        table_name = file_path.split('/')[-2]
-        logging.info(f"Loading file {file_path} into Redshift table {table_name}")
-        sql_statement = f"""
-        COPY {table_name} 
-        FROM 's3://{S3_BUCKET_NAME}/{file_path}'
-        FORMAT AS PARQUET
-        IAM_ROLE '{iam_role}'
-        """
-        logging.debug(f"SQL statement: \n{sql_statement}")
-        cur.execute(sql_statement)
-        logging.info(f"Loaded Redshift table {table_name} duration={duration(start_file)}ms")
+        file_path = file_to_load.file_path
+        logging.info(f"Loading file {file_path} into {database} table {table_name}")
+
+        if database == "redshift":
+            load_file_from_s3_to_redshift(con, table_name, file_to_load)
+        else:
+            load_file_from_minio_to_duckdb(con, table_name, file_to_load)
+
+        logging.info(f"Loaded file {file_path} into {database} table {table_name} duration={duration(start_file)}ms")
 
 
-def load_to_duckdb(is_motherduck: bool):
-    start_load = time()
-    logging.info("Loading to DuckDB...")
-    files = get_files("duckdb")
-    if len(files) == 0:
-        logging.info("No new files to load")
+def prepare_tables(con, tables_to_load: TablesToLoad, args):
+    # Drop tables if full refresh is requested
+    if args.full_refresh:
+        for table_to_load in tables_to_load.tables:
+            con.execute(f"DROP TABLE IF EXISTS {table_to_load.table_name} CASCADE;")
+
+    # Init tables. Some database can derive from PARQUET, some need static DDL.
+    if args.database == "redshift":
+        # Redshift cannot derive DDL from PARQUET
+        redshift_ddl(con)
+    elif args.database in ["duckdb", "motherduck"]:
+        for table_to_load in tables_to_load.tables:
+            # DuckDB can derive DDL from PARQUET
+            first_file = table_to_load.files[0]
+            sql_statement = f"""
+                CREATE TABLE IF NOT EXISTS {DB_INPUT_SCHEMA}.{table_to_load.table_name} AS
+                SELECT * FROM read_parquet('s3://{S3_BUCKET_NAME}/{first_file.file_path}') WHERE 1=0;
+                """
+            logging.debug(f"SQL statement: \n{sql_statement}")
+            con.execute(sql_statement)
     else:
-        load_from_minio_to_duckdb(files, is_motherduck)
-        write_status_file(datetime.now(tz=timezone.utc), "duckdb")
-    logging.info(f"Load to DuckDB finished duration={duration(start_load)}ms")
+        raise ValueError(f"Unsupported database: {args.database}")
 
 
-def load_to_redshift():
-    start_load = time()
-    logging.info("Loading to Redshift...")
-    files = get_files("redshift")
-    if len(files) == 0:
-        logging.info("No new files to load")
-    else:
-        load_from_s3_to_redshift(files)
-        write_status_file(datetime.now(tz=timezone.utc), "redshift")
-    logging.info(f"Load to Redshift finished duration={duration(start_load)}ms")
+def load_tables(tables_to_load: TablesToLoad, args):
+    database = args.database
+    con = connect_to_database(database)
+    prepare_tables(con, tables_to_load, args)
+
+    for table_to_load in tables_to_load.tables:
+        table_name = table_to_load.table_name
+        # There can be more files for non-incremental tables
+        # Always load only the last one
+        if not table_to_load.incremental:
+            files_to_upload = [find_newest_file(table_to_load.files)]
+        else:
+            if args.full_refresh:
+                files_to_upload = [f for f in table_to_load.files if not f.incremental]
+            else:
+                files_to_upload = [f for f in table_to_load.files if f.incremental]
+
+        load_files(con, table_name, files_to_upload, database)
 
 
 def parse_args():
-    import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--duckdb", action="store_true", default=False, help="Load to DuckDB")
-    parser.add_argument("--motherduck", action="store_true", default=False, help="Load to MotherDuck")
-    parser.add_argument("--redshift", action="store_true", default=False, help="Load to Redshift")
+    parser.add_argument(
+        "-d", "--database", choices=["duckdb", "motherduck", "redshift"], default="duckdb",
+        help="Database to load to"
+    )
+    default_profile_dir = os.getenv("DBT_PROFILES_DIR", "~/.dbt")
     parser.add_argument(
         "-pd",
         "--profiles-dir",
-        help="Directory where dbt profiles.yml is stored",
-        default=os.getenv("DBT_PROFILES_DIR", "~/.dbt"),
+        help=f"Directory where dbt profiles.yml is stored. Default={default_profile_dir}",
+        default=default_profile_dir,
     )
+    parser.add_argument("-f", "--full-refresh", action="store_true", default=False, help="Full refresh")
     return parser.parse_args()
 
 
-logging.info(f"Load started")
-args = parse_args()
-if not args.duckdb and not args.redshift:
-    logging.warning("No database selected, doing nothing")
-else:
+def main():
     start = time()
-    if args.duckdb:
-        load_to_duckdb(False)
-    if args.motherduck:
-        load_to_duckdb(True)
-    if args.redshift:
-        load_to_redshift()
+    args = parse_args()
+    logging.info(f"Load to {args.database} started")
+    tables_to_load = get_files_to_load(args)
+    if len(tables_to_load.tables) == 0:
+        logging.info("No new files to load")
+    else:
+        load_tables(tables_to_load, args)
+        write_status_file(tables_to_load.max_file_datetime, "duckdb")
+    logging.info(f"Load to {args.database} completed. duration={duration(start)}ms")
 
-    logging.info(f"Load complete. duration={duration(start)}ms")
+
+if __name__ == "__main__":
+    main()
