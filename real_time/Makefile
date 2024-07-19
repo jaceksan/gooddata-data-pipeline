@@ -15,21 +15,21 @@ dev:
 	.venv/bin/pip3 install -r requirements-gooddata.txt
 
 elt_local:
-	python generate.py -sf $${SCALE_FACTOR:-1}
+	python generate.py -sf $${SCALE_FACTOR:-1} $$FR
 	time ./upload_to_minio.sh
-	python load.py --duckdb
+	python load.py -d duckdb $$FR
 	dbt run --profiles-dir profile --profile rt_dev_local --target duckdb $$FR
 	dbt test --profiles-dir profile --profile rt_dev_local --target duckdb
 
 elt_cloud:
-	python generate.py -sf $${SCALE_FACTOR:-1}
+	python generate.py -sf $${SCALE_FACTOR:-1} $$FR
 	time ./upload_to_s3.sh
-	python load.py --redshift
+	python load.py -d redshift $$FR
 	export DBT_INCREMENTAL_STRATEGY="merge" && dbt run --profiles-dir profile --profile rt_dev --target redshift $$FR
 	dbt test --profiles-dir profile --profile rt_dev --target redshift
 
 generate_data:
-	python generate.py -sf $${SCALE_FACTOR:-1}
+	python generate.py -sf $${SCALE_FACTOR:-1} $$FR
 
 upload_data_local:
 	time ./upload_to_minio.sh
@@ -38,10 +38,10 @@ upload_data_s3:
 	time ./upload_to_s3.sh
 
 load_local:
-	python load.py --duckdb
+	python load.py -d duckdb $$FR
 
 load_cloud:
-	python load.py --redshift
+	python load.py -d redshift $$FR
 
 transform_local:
 	dbt run --profiles-dir profile --profile rt_dev_local --target duckdb $$FR
