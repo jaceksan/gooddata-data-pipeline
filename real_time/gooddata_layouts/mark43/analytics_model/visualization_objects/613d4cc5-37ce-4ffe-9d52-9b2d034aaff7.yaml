@@ -1,0 +1,29 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: revenue
+                    type: metric
+            localIdentifier: 95ff6700976d4bc08531b0c48f1e62ca
+            title: Revenue
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      comparison:
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+createdAt: 2024-07-19 13:42
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: 613d4cc5-37ce-4ffe-9d52-9b2d034aaff7
+title: Revenue

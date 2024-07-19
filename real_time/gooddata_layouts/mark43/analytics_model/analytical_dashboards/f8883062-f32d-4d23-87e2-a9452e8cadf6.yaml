@@ -9,6 +9,111 @@ content:
         items:
           - size:
               xl:
+                gridHeight: 8
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 613d4cc5-37ce-4ffe-9d52-9b2d034aaff7
+                  type: visualizationObject
+              properties: {}
+              title: Revenue
+              type: insight
+          - size:
+              xl:
+                gridHeight: 8
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: transactiondate
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: cb459742-ff10-41ee-84f0-3d92da8299dc
+                  type: visualizationObject
+              properties: {}
+              title: Customers
+              type: insight
+          - size:
+              xl:
+                gridHeight: 8
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: 5f34259a-bcbf-40fd-9320-ea3c7f55359f
+                  type: visualizationObject
+              properties: {}
+              title: Avg Product Cost
+              type: insight
+          - size:
+              xl:
+                gridHeight: 8
+                gridWidth: 3
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: transactiondate
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: af6b2284-a7fb-4eb0-89d2-91b9abfca558
+                  type: visualizationObject
+              properties: {}
+              title: Units Sold
+              type: insight
+        type: IDashboardLayoutSection
+      - header: {}
+        items:
+          - size:
+              xl:
+                gridHeight: 22
+                gridWidth: 6
+            type: IDashboardLayoutItem
+            widget:
+              configuration:
+                hideTitle: false
+              dateDataSet:
+                identifier:
+                  id: transactiondate
+                  type: dataset
+              description: ''
+              drills: []
+              ignoreDashboardFilters: []
+              insight:
+                identifier:
+                  id: dd663acb-1b2c-4f3c-bc4a-bbbc4d5d6845
+                  type: visualizationObject
+              properties: {}
+              title: TOP 25 Manufacturers
+              type: insight
+          - size:
+              xl:
                 gridHeight: 22
                 gridWidth: 6
             type: IDashboardLayoutItem
@@ -24,19 +129,20 @@ content:
                 identifier:
                   id: d4b8c449-d937-4ba6-8600-c107a34a0c72
                   type: visualizationObject
+              properties: {}
               title: Sales amount by Color and Manufacturer
               type: insight
         type: IDashboardLayoutSection
     type: IDashboardLayout
   version: '2'
+createdAt: 2024-07-19 13:33
+createdBy:
+  id: tomas.gabik
+  type: user
 description: ''
 id: f8883062-f32d-4d23-87e2-a9452e8cadf6
-permissions:
-  - assigneeRule:
-      type: allWorkspaceUsers
-    name: VIEW
-  - assignee:
-      id: technical.user
-      type: user
-    name: EDIT
+modifiedAt: 2024-07-19 13:44
+modifiedBy:
+  id: tomas.gabik
+  type: user
 title: Sales

@@ -1,0 +1,10 @@
+content:
+  format: '#,##0'
+  maql: SELECT SUM({fact/salesamount})
+createdAt: 2024-07-19 13:40
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: sales_volume
+title: Sales Volume
