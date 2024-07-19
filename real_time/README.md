@@ -33,6 +33,9 @@ source .env cloud
 source .env cloud temp
 ```
 
+`WARNING:` I strongly recommend to update variables `PATH_IN_BUCKET`, `DB_INPUT_SCHEMA`, and `DB_OUTPUT_SCHEMA`.
+Otherwise, multiple users can overwrite each other's data or generate duplicate values.
+
 Start Minio in root folder if you want to test it locally with DucKDB:
 ```shell
 docker compose up -d minio minio-bootstrap
