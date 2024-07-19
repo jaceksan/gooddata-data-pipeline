@@ -22,11 +22,15 @@ source .venv/bin/activate
 Create a new .env file. You can use the template [env_example](env_example).
 Set up the environment:
 ```bash
-# For local env
+### For local env
 source .env local
-# For cloud env with Redshift
-source .env cloud
+### For cloud env with Redshift
 # Local and cloud must be separated because some variables are in conflict (e.g. AWS_ACCESS_KEY_ID)
+# Use "temp" for activating AWS credentials.
+# If you don't use it, you have to run:
+aws sso login
+source .env cloud temp
+source .env cloud
 ```
 
 Then check the [Makefile](Makefile) for available commands.

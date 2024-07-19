@@ -8,7 +8,7 @@ if [ "$1" == "local" ]; then
 elif [ "$1" == "cloud" ]; then
     export REDSHIFT_HOST="xxx.us-east-1.redshift-serverless.amazonaws.com"
     export REDSHIFT_DB_NAME="dev"
-    export REDSHIFT_USER="xxx"
+    export REDSHIFT_USER="admin"
     export REDSHIFT_PASSWORD="xxx"
     export REDSHIFT_IAM_ROLE="arn:aws:iam::xxx:role/xxx"
     if [ "$2" == "temp" ]; then
@@ -16,8 +16,6 @@ elif [ "$1" == "cloud" ]; then
         export AWS_SECRET_ACCESS_KEY="xxx"
         export AWS_SESSION_TOKEN="xxx"
     else
-        # Define aws-dev profile in ~/.aws/config
-        # Then you can use aws sso login instead of setting the above variables
         export AWS_PROFILE="aws-dev"
     fi
 else
@@ -28,12 +26,12 @@ fi
 export DBT_PROFILES_DIR="profile"
 export GOODDATA_PROFILES="demo_cicd_dev"
 export PATH_GENERATED_DATA="generated_data"
+export PATH_TO_TABLES="tables"
 export PATH_IN_BUCKET="real_time"
-export S3_BUCKET_NAME="gdc-jacek-test-redshift"
+export S3_BUCKET_NAME="xxx"
 export DB_INPUT_SCHEMA="input_stage_real_time"
 # Now separated from the rest of the blueprint, but we may merge them in the future
 export DB_OUTPUT_SCHEMA="cicd_output_stage_real_time"
 export S3_REGION="us-east-1"
-
-# TODO
-#export MOTHERDUCK_DB_NAME="gdp_dev"
+export DATE_FORMAT="%Y%m%d"
+export DATETIME_FORMAT="%Y%m%d-%H%M%S%f"
