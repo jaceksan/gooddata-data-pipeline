@@ -1,6 +1,5 @@
 import asyncio
 from pathlib import Path
-
 import pandas as pd
 from mimesis import Person
 from mimesis import Address
@@ -26,11 +25,14 @@ BATCH_SIZE = 10_000
 FACT_TO_DIM_RATIO = 100
 DIM_RECORDS_PER_MB = 370  # 1MB of parquet data
 PATH_GENERATED_DATA = Path(os.getenv("PATH_GENERATED_DATA"))
-PATH_TO_WRITE = PATH_GENERATED_DATA / 'tables'
+PATH_TO_WRITE = PATH_GENERATED_DATA / os.getenv("PATH_TO_TABLES")
 STATUS_FILE = "generate.status"
+TABLES = ['dim_customer', 'dim_product', 'fact_sales', 'fact_inventory']
+DATE_FORMAT = os.getenv("DATE_FORMAT")
+DATETIME_FORMAT = os.getenv("DATETIME_FORMAT")
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('GenerateLogger')
-TABLES = ['dim_customer', 'dim_product', 'fact_sales', 'fact_inventory']
 
 
 @attr.s(auto_attribs=True, kw_only=False)
@@ -49,18 +51,11 @@ class FactParams:
 
 
 def parse_args():
-    # Create the ArgumentParser object
     parser = argparse.ArgumentParser(description="Generate synthetic data.")
-
-    # Add the scale-factor argument
-    # The `type=int` ensures that the input is validated as an integer
-    parser.add_argument('-sf', '--scale-factor', type=int, required=True,
-                        help='Scale factor - Megabytes of data to generate.')
-
-    # Parse the arguments
-    args = parser.parse_args()
-
-    return args
+    parser.add_argument('-sf', '--scale-factor', type=int, default=1,
+                        help='Scale factor - Megabytes of data to generate. Default=1MB.')
+    parser.add_argument("-f", "--full-refresh", action="store_true", default=False, help="Full refresh")
+    return parser.parse_args()
 
 
 # Function to generate dimension and fact tables
@@ -143,6 +138,7 @@ async def preview_data(
 
 
 async def write_data_to_parquet(
+    args,
     dim_customer_df: pd.DataFrame,
     dim_product_df: pd.DataFrame,
     fact_sales_df: pd.DataFrame,
@@ -152,14 +148,31 @@ async def write_data_to_parquet(
     for table in TABLES:
         os.makedirs(PATH_TO_WRITE / table, exist_ok=True)
     # No need to parallelize saving to Parquet as it is already fast
-    dim_customer_df.to_parquet(PATH_TO_WRITE / 'dim_customer' / 'dim_customer.parquet', engine='pyarrow')
-    dim_product_df.to_parquet(PATH_TO_WRITE / 'dim_product' / 'dim_product.parquet', engine='pyarrow')
-    # TODO - include start_time into generated files
-    start_time_str = start_time.strftime('%Y_%m_%d_%H_%M_%S')
-    fact_sales_df.to_parquet(PATH_TO_WRITE / 'fact_sales' / f'fact_sales_{start_time_str}.parquet', engine='pyarrow')
-    fact_inventory_df.to_parquet(
-        PATH_TO_WRITE / 'fact_inventory' / f'fact_inventory_{start_time_str}.parquet', engine='pyarrow'
-    )
+    start_date_str = start_time.strftime(DATE_FORMAT)
+    start_time_str = start_time.strftime(DATETIME_FORMAT)
+    dim_customer_df.to_parquet(PATH_TO_WRITE / 'dim_customer' / f'{start_time_str}.parquet', engine='pyarrow')
+    dim_product_df.to_parquet(PATH_TO_WRITE / 'dim_product' / f'{start_time_str}.parquet', engine='pyarrow')
+
+    for table in TABLES:
+        os.makedirs(PATH_TO_WRITE / table / start_date_str, exist_ok=True)
+    if args.full_refresh:
+        fact_sales_df.to_parquet(
+            PATH_TO_WRITE / 'fact_sales' / f'{start_time_str}.parquet',
+            engine='pyarrow'
+        )
+        fact_inventory_df.to_parquet(
+            PATH_TO_WRITE / 'fact_inventory' / f'{start_time_str}.parquet',
+            engine='pyarrow'
+        )
+    else:
+        fact_sales_df.to_parquet(
+            PATH_TO_WRITE / 'fact_sales' / start_date_str / f'{start_time_str}.parquet',
+            engine='pyarrow'
+        )
+        fact_inventory_df.to_parquet(
+            PATH_TO_WRITE / 'fact_inventory' / start_date_str / f'{start_time_str}.parquet',
+            engine='pyarrow'
+        )
 
 
 def get_dim_ids(dim_df: pd.DataFrame, id_column: str, fact_values: int) -> np.ndarray:
@@ -230,7 +243,7 @@ async def main():
 
     await asyncio.gather(preview_data(dim_customer_df, dim_product_df, fact_sales_df, fact_inventory_df))
     await asyncio.gather(
-        write_data_to_parquet(dim_customer_df, dim_product_df, fact_sales_df, fact_inventory_df, start_time)
+        write_data_to_parquet(args, dim_customer_df, dim_product_df, fact_sales_df, fact_inventory_df, start_time)
     )
 
 # Run the main function
