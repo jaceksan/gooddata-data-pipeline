@@ -1,0 +1,29 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: count_of_customers
+                    type: metric
+            localIdentifier: 23ee1979ba4946be90dbf4aeef2a8447
+            title: Count of Customers
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      comparison:
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+createdAt: 2024-07-19 13:43
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: cb459742-ff10-41ee-84f0-3d92da8299dc
+title: Customers

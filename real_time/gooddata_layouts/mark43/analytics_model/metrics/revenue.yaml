@@ -1,0 +1,10 @@
+content:
+  format: $#,##0.00
+  maql: SELECT SUM({fact/unitprice}) - SUM({fact/cost})
+createdAt: 2024-07-19 13:40
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: revenue
+title: Revenue

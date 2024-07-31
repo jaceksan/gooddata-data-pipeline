@@ -1,0 +1,29 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: sales_volume
+                    type: metric
+            localIdentifier: d357d270e1654ae4be18b420ef686ddd
+            title: Sales Volume
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      comparison:
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+createdAt: 2024-07-19 13:44
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: af6b2284-a7fb-4eb0-89d2-91b9abfca558
+title: Units Sold

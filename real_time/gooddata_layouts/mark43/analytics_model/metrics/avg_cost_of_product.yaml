@@ -1,0 +1,10 @@
+content:
+  format: '#,##0.00'
+  maql: SELECT AVG({fact/cost}) by {label/productid}
+createdAt: 2024-07-19 13:41
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: avg_cost_of_product
+title: Avg Cost of product
