@@ -39,7 +39,7 @@ x-volumes-gooddata: &volumes-gooddata
 services:
   gooddata-cn-ce:
     # You can use "dev_latest" tag which points to the latest development version of GD.CN
-    image: gooddata/gooddata-cn-ce:3.9.0
+    image: gooddata/gooddata-cn-ce:3.14.0
     ports:
       - "3000:3000"
       - "5432:5432"
@@ -51,6 +51,7 @@ services:
       GDC_FEATURES_VALUES_ENABLE_METRIC_SQL_AND_DATA_EXPLAIN: 'ENABLED'
       LIMIT_MAX_RESULT_XTAB_DIMENSION: 200000
       GDC_FEATURES_VALUES_ENABLE_PDM_REMOVAL_DEPRECATION_PHASE: "true"
+      METADATA_API_JAVA_OPTS: "-Xmx1024m -Xms512m"
 
   bootstrap_origins:
     image: alpine/curl
