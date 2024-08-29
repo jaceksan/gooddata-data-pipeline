@@ -45,6 +45,7 @@ services:
       - "5432:5432"
     volumes:
       - gooddata-data-pipeline:/data
+      - ./pg_bha.conf.custom:/etc/postgresql/13/main/pg_hba.conf
     environment:
       GDCN_LICENSE_KEY: "${GDCN_LICENSE_KEY}"
       APP_LOGLEVEL: "INFO"
