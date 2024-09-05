@@ -16,7 +16,7 @@ plugins:
       dialect+driver: postgresql+psycopg2
   - name: target-snowflake
     variant: transferwise
-    pip_url: pipelinewise-target-snowflake
+    pip_url: pipelinewise-target-snowflake numpy<2.0
     config:
       account: ${DB_ACCOUNT}
       dbname: ${DB_NAME}
