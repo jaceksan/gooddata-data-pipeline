@@ -13,7 +13,5 @@ plugins:
         page_size:
           issues: 100
       select:
-        - issues.*
-# TODO - how to exclude customfield columns?
-#      select_filter:
-#        - "!issues.fields.customfield*"
+        - issues.*  # Include all main fields
+        - '!issues.fields.customfield_*'  # Exclude all custom fields

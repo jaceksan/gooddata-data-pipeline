@@ -1,0 +1,47 @@
+rt_dev_local:
+  target: duckdb
+  outputs:
+    duckdb:
+      threads: 4
+      title: "Real-time demo (local)"
+      type: duckdb
+      path: "{{ env_var('DUCKDB_DB_FILE') }}"
+      extensions:
+        - httpfs
+        - parquet
+      settings:
+        # Local Minio
+        s3_region: "{{ env_var('S3_REGION') }}"
+        s3_endpoint: "{{ env_var('MINIO_ENDPOINT') }}"
+        s3_access_key_id: "{{ env_var('MINIO_ACCESS_KEY') }}"
+        s3_secret_access_key: "{{ env_var('MINIO_SECRET_KEY') }}"
+        s3_use_ssl: false
+        s3_url_style: 'path'
+
+rt_dev:
+  target: redshift
+  outputs:
+    motherduck:
+      threads: 4
+      title: "Real-time demo (MotherDuck)"
+      type: duckdb
+      path: "md:{{ env_var('MOTHERDUCK_DB_NAME') }}"
+# Can't use INSERT from S3, don't have AKEY/SKEY from our Infra :-(
+#      extensions:
+#        - httpfs
+#        - parquet
+#      settings:
+        # Standard AWS S3
+#        s3_region: "{{ env_var('S3_REGION') }}"
+#        s3_access_key_id: "{{ env_var('S3_ACCESS_KEY_ID') }}"
+#        s3_secret_access_key: "{{ env_var('S3_SECRET_ACCESS_KEY') }}"
+    redshift:
+      threads: 2
+      title: "Real-time demo (Redshift)"
+      type: redshift
+      host: "{{ env_var('REDSHIFT_HOST') }}"
+      port: 5439
+      user: "{{ env_var('REDSHIFT_USER') }}"
+      password: "{{ env_var('REDSHIFT_PASSWORD') }}"
+      dbname: "{{ env_var('REDSHIFT_DB_NAME') }}"
+      schema: "{{ env_var('DB_INPUT_SCHEMA') }}"

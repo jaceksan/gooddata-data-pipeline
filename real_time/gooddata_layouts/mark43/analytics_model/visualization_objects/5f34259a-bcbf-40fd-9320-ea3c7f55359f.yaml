@@ -1,0 +1,29 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                filters: []
+                item:
+                  identifier:
+                    id: avg_cost_of_product
+                    type: metric
+            localIdentifier: 150e055da7e04ff6919ee8c405b7788a
+            title: Avg Cost of product
+      localIdentifier: measures
+  filters: []
+  properties:
+    controls:
+      comparison:
+        enabled: true
+  sorts: []
+  version: '2'
+  visualizationUrl: local:headline
+createdAt: 2024-07-19 13:43
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: 5f34259a-bcbf-40fd-9320-ea3c7f55359f
+title: Avg Product Cost

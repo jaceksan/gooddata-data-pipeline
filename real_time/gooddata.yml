@@ -1,0 +1,36 @@
+environment_setups:
+  - id: default
+    environments:
+      - id: development
+        name: Development
+      - id: staging
+        name: Staging
+      - id: production
+        name: Production
+
+data_products:
+  - id: mark43
+    name: Mark43
+    environment_setup_id: default
+    model_ids:
+      - mark43
+
+organizations:
+  - gooddata_profile: local
+    data_product_ids:
+      - mark43
+  - gooddata_profile: stg11
+    data_product_ids:
+      - mark43
+  - gooddata_profile: demo_cicd_dev
+    data_product_ids:
+      - mark43
+  - gooddata_profile: demo_cicd_staging
+    data_product_ids:
+      - mark43
+  - gooddata_profile: demo_cicd
+    data_product_ids:
+      - mark43
+
+global_properties:
+  test_insights_parallelism: 4

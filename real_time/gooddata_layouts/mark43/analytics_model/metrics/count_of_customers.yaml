@@ -1,0 +1,10 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({label/customerid})
+createdAt: 2024-07-19 13:41
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: count_of_customers
+title: Count of Customers

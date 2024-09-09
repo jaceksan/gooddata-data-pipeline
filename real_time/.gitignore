@@ -1,0 +1,8 @@
+generated_data
+.venv
+*.iml
+package-lock.yml
+local_databases
+.env
+target
+dbt_packages

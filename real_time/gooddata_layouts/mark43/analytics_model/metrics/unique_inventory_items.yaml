@@ -1,0 +1,10 @@
+content:
+  format: '#,##0'
+  maql: SELECT COUNT({label/inventoryid})
+createdAt: 2024-07-19 13:42
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: unique_inventory_items
+title: Unique Inventory Items

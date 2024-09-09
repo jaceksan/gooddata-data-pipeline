@@ -1,0 +1,59 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: salesamount
+                    type: fact
+            format: '[>=1000000000000]$#,,,,.0 T;
+
+              [>=1000000000]$#,,,.0 B;
+
+              [>=1000000]$#,,.0 M;
+
+              [>=1000]$#,.0 K;
+
+              [>=0]$#,##0;
+
+              [<=-1000000000000]-$#,,,,.0 T;
+
+              [<=-1000000000]-$#,,,.0 B;
+
+              [<=-1000000]-$#,,.0 M;
+
+              [<=-1000]-$#,.0 K;
+
+              [<0]-$#,##0'
+            localIdentifier: 9c8b41277054461dab0fd778e5794708
+            title: Sum of Amount
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: manufacturer
+                type: label
+            localIdentifier: 48c3ef74b51644e784fd5fdfbdd0c1ed
+      localIdentifier: view
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: 9c8b41277054461dab0fd778e5794708
+        operator: TOP
+        value: 25
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:bar
+createdAt: 2024-07-19 13:34
+createdBy:
+  id: tomas.gabik
+  type: user
+description: ''
+id: dd663acb-1b2c-4f3c-bc4a-bbbc4d5d6845
+title: TOP 25 Manufacturers

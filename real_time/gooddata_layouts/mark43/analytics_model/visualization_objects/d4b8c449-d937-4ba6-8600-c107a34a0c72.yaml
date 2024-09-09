@@ -1,0 +1,45 @@
+content:
+  buckets:
+    - items:
+        - measure:
+            definition:
+              measureDefinition:
+                aggregation: sum
+                filters: []
+                item:
+                  identifier:
+                    id: salesamount
+                    type: fact
+            format: '#,##0.00'
+            localIdentifier: 6213b591eecc4e79a99f05e44efadcfc
+            title: Sum of Amount
+      localIdentifier: measures
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: color
+                type: label
+            localIdentifier: 1f5e2c3f44f54a538b5647e919295d82
+      localIdentifier: view
+    - items:
+        - attribute:
+            displayForm:
+              identifier:
+                id: manufacturer
+                type: label
+            localIdentifier: 3ca2a27cfd194f2985a7aeb7c643bef0
+      localIdentifier: segment
+  filters:
+    - rankingFilter:
+        measure:
+          localIdentifier: 6213b591eecc4e79a99f05e44efadcfc
+        operator: TOP
+        value: 10
+  properties: {}
+  sorts: []
+  version: '2'
+  visualizationUrl: local:treemap
+description: ''
+id: d4b8c449-d937-4ba6-8600-c107a34a0c72
+title: Sales amount by Color and Manufacturer
