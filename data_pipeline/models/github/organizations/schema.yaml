@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: organizations
+    description: "Organizations"
+    meta:
+      gooddata:
+        model_id: github
+    columns:
+      - name: org_name
+        data_type: "STRING"
+        description: "Organization Name"
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key

@@ -11,6 +11,9 @@ plugins:
         - gooddata/gooddata-ui-sdk
         - gooddata/gooddata-dashboard-plugins
         - gooddata/gooddata-public-demos
+        - MeltanoLabs/tap-github
+        - MeltanoLabs/tap-jira
+        - MeltanoLabs/target-snowflake
       start_date: '2022-01-01'
     select:
       # Commits
@@ -40,6 +43,7 @@ plugins:
     config:
       organizations:
         - gooddata
+        - MeltanoLabs
     select:
       # Repositories
       - repositories.id

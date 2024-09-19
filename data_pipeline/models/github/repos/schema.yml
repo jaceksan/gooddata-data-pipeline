@@ -29,6 +29,17 @@ models:
         meta:
           gooddata:
             ldm_type: attribute
+      - name: org_name
+        data_type: "STRING"
+        description: "Organization Name"
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('organizations')
+              pk_column_name: org_name
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: organizations
       - name: stargazers_count
         data_type: "INT"
         description: "Stargazers count"

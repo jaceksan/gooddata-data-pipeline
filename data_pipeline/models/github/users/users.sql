@@ -14,7 +14,9 @@ with using_clause as (
     login,
     user_avatar_url,
     user_url,
-    last_updated
+    last_updated,
+    user_org_name,
+    user_org_id
   from (
     select
       user_id,
@@ -23,7 +25,9 @@ with using_clause as (
       user_url,
       created_at,
       max(created_at) over (partition by user_id) as last_updated,
-      row_number() over (partition by user_id order by created_at desc) as rn
+      commit_org_name as user_org_name,
+      commit_org_name || '/' || login as user_org_id,
+      row_number() over (partition by user_id, commit_org_name order by created_at desc) as rn
     from {{ var("input_schema_github") }}.commits_extract_json
     -- Remove records with empty user ID
     where user_id is not null
