@@ -39,7 +39,8 @@ plugins:
   - name: target-duckdb
     variant: jwills
     # TODO - remove the commit hash when JWills does a release
-    pip_url: git+https://github.com/jwills/target-duckdb.git@1b6b8575d0728b4c0b67378c0196b9524307ed87
+    pip_url: git+https://github.com/jwills/target-duckdb.git@93d23e019e4e2621dea3657e94e89a1dcd02abbd
+    
     config:
       path: md:${DB_NAME}
       token: ${MOTHERDUCK_TOKEN}

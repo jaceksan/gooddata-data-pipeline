@@ -50,6 +50,14 @@ models:
             referenced_table: repos
             # TODO is this needed? We do not support multi-column grains/references yet
             # referenced_column_name: repo_id
+      - name: pr_org_name
+        data_type: "STRING"
+        description: "Organization Name"
+        tests:
+          - not_null
+        meta:
+          gooddata:
+            ldm_type: fact
       - name: pull_request_url
         data_type: "STRING"
         description: "Pull request URL"

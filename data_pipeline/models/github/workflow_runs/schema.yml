@@ -28,6 +28,14 @@ models:
             ldm_type: label
             label_type: HYPERLINK
             attribute_column: workflow_run_id
+      - name: run_org_name
+        data_type: "STRING"
+        description: "Organization Name"
+        tests:
+          - not_null
+        meta:
+          gooddata:
+            ldm_type: fact
       - name: workflow_run_event
       - name: workflow_run_status
       - name: created_at

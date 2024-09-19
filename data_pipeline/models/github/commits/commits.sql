@@ -47,6 +47,7 @@ final as (
       c.comment_count,
       c.created_at,
       c.repo_id,
+      c.commit_org_name,
       users.user_id
     from (
       select * from inserts

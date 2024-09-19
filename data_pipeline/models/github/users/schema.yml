@@ -10,11 +10,6 @@ models:
       - name: user_id
         data_type: "INT"
         description: "User ID"
-        tests:
-          - dbt_constraints.primary_key
-        meta:
-          gooddata:
-            ldm_type: primary_key
       - name: user_url
         data_type: "STRING"
         description: "User URL"
@@ -31,3 +26,20 @@ models:
             ldm_type: label
             label_type: TEXT
             attribute_column: user_id
+      - name: user_org_name
+        description: "Organization Name"
+        tests:
+          - dbt_constraints.foreign_key:
+              pk_table_name: ref('organizations')
+              pk_column_name: org_name
+        meta:
+          gooddata:
+            ldm_type: reference
+            referenced_table: organizations
+      - name : user_org_id
+        description: "User Organization ID"
+        tests:
+          - dbt_constraints.primary_key
+        meta:
+          gooddata:
+            ldm_type: primary_key

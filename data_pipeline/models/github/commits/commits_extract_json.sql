@@ -3,7 +3,8 @@
   indexes=[
     {'columns': ['commit_id'], 'unique': true},
     {'columns': ['user_id'], 'unique': false},
-    {'columns': ['repo_id'], 'unique': false}
+    {'columns': ['repo_id'], 'unique': false},
+    {'columns': ['commit_org_name'], 'unique': false}
   ],
   materialized='incremental',
   unique_key='commit_id'
@@ -22,6 +23,7 @@ with using_clause as (
     {{ extract_json_value('author', 'login', 'login', 'VARCHAR') }},
     {{ extract_json_value('author', 'avatar_url', 'user_avatar_url', 'VARCHAR') }},
     {{ extract_json_value('author', 'html_url', 'user_url', 'VARCHAR') }},
+    {{ extract_org_name('html_url') }} as commit_org_name,
     CAST(repo_id as INT) as repo_id
   from {{ var("input_schema_github") }}.commits
   {% if is_incremental() %}

@@ -52,6 +52,7 @@ final as (
       id,
       -- replace useless internal PR ID with something meaningful
       repos.repo_name || '/' || p.pull_request_number as pull_request_id,
+      {{ extract_org_name("p.pull_request_url") }} AS pr_org_name,
       p.pull_request_number,
       p.pull_request_url,
       p.pull_request_title,

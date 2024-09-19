@@ -15,6 +15,7 @@ with using_clause as (
     status as workflow_run_status,
     created_at,
     updated_at,
+    {{ extract_org_name('html_url') }} as run_org_name,
     cast(repo_id as bigint) as repo_id,
     (
       -- If updated_at is empty, use current timestamp (workflow is still running)

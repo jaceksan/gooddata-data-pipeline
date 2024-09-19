@@ -13,7 +13,8 @@ repos as (
       cast(watchers_count as bigint) as watchers_count,
       -- Use a dedicated name (repo prefix) to do not confuse analytics
       -- From business perspective this is different created_at than in the case of commits/pull_requests
-      created_at as repo_created_at
+      created_at as repo_created_at,
+      {{ extract_org_name("html_url") }} AS org_name
     from {{ var("input_schema_github") }}.repositories
 ),
 

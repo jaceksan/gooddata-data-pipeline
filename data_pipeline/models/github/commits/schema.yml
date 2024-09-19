@@ -57,6 +57,14 @@ models:
         meta:
           gooddata:
             ldm_type: fact
+      - name: commit_org_name
+        description: "Organization Name"
+        data_type: "STRING"
+        tests:
+          - not_null
+        meta:
+          gooddata:
+            ldm_type: fact
 
 # TODO - remove it. dbt metrics are going to be deprecated by dbt, we deprecated it in dbt-gooddata too
 # metrics:
