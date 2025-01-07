@@ -17,7 +17,7 @@ dev:
 	.venv_el/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-meltano.txt
 	.venv_el/bin/meltano --cwd $(SRC_DATA_PIPELINE) install
 	# dbt must be installed to separate venv, there are conflicts with what Meltano needs
-	python3.10 -m venv .venv_t --upgrade-deps
+	python3.12 -m venv .venv_t --upgrade-deps
 	# Install dbt and required plugins
 	.venv_t/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-dbt.txt
 	.venv_t/bin/dbt deps --project-dir $(SRC_DATA_PIPELINE) --profiles-dir $(SRC_DATA_PIPELINE)/profile
