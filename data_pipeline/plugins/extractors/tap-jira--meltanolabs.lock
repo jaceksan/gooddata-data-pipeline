@@ -34,38 +34,11 @@
   ],
   "settings": [
     {
-      "name": "auth.flow",
+      "name": "api_token",
       "kind": "string",
-      "label": "Auth Flow",
-      "description": "The authentication type to use.",
-      "options": [
-        {
-          "label": "OAuth",
-          "value": "oauth"
-        },
-        {
-          "label": "Password",
-          "value": "password"
-        }
-      ]
-    },
-    {
-      "name": "auth.access_token",
-      "kind": "password",
-      "label": "Auth Access Token",
-      "description": "The Jira API access token if using OAuth auth flow."
-    },
-    {
-      "name": "auth.username",
-      "kind": "string",
-      "label": "Auth Username",
-      "description": "The Jira username if using the user/pass auth flow."
-    },
-    {
-      "name": "auth.password",
-      "kind": "password",
-      "label": "Auth Password",
-      "description": "The Jira password if using the user/pass auth flow."
+      "label": "API Token",
+      "description": "Jira API Token.",
+      "sensitive": true
     },
     {
       "name": "batch_config.encoding.compression",
@@ -74,7 +47,7 @@
       "description": "Compression format to use for batch files.",
       "options": [
         {
-          "label": "Gzip",
+          "label": "GZIP",
           "value": "gzip"
         },
         {
@@ -90,8 +63,12 @@
       "description": "Format to use for batch files.",
       "options": [
         {
-          "label": "Jsonl",
+          "label": "JSONL",
           "value": "jsonl"
+        },
+        {
+          "label": "Parquet",
+          "value": "parquet"
         }
       ]
     },
@@ -111,7 +88,13 @@
       "name": "domain",
       "kind": "string",
       "label": "Domain",
-      "description": "Site URL"
+      "description": "The Domain for your Jira account, e.g. meltano. Atlassian. Net"
+    },
+    {
+      "name": "email",
+      "kind": "string",
+      "label": "Email",
+      "description": "The user email for your Jira account."
     },
     {
       "name": "end_date",
@@ -130,6 +113,13 @@
       "kind": "integer",
       "label": "Flattening Max Depth",
       "description": "The max depth to flatten schemas."
+    },
+    {
+      "name": "page_size.issues",
+      "kind": "integer",
+      "value": 100,
+      "label": "Page Size Issues",
+      "description": "Page size for issues stream"
     },
     {
       "name": "start_date",

@@ -138,13 +138,9 @@ Bootstrap developer environment:
 # Creates virtualenv and installs all dependencies
 make dev
 
-# Activate virtualenv for extract_load part or for transform/analytics parts
-source .venv_el/bin/activate
-# Activate virtualenv for transform and analytics parts
-source .venv_t/bin/activate
-# You should see e.g. a `(.venv_el)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
-
-# TODO: once my PR https://github.com/meltano/meltano/pull/8302 is merged, we can merge two venvs into one
+# Activate virtualenv
+source .venv/bin/activate
+# You should see a `(.venv)` appear at the beginning of your terminal prompt indicating that you are working inside the `virtualenv`.
 
 # Deactivate virtual env once you are done
 deactivate
