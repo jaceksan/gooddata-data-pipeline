@@ -43,7 +43,7 @@ jobs:
 
       - name: Run Extract and Load
         shell: bash
-        timeout-minutes: 15
+        timeout-minutes: 30
         env:
           FR: ${{ inputs.FULL_REFRESH == 'true' && '--full-refresh' || '' }}
           DB_PASS: "${{ secrets.DB_PASS }}"
