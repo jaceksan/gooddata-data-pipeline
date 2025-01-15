@@ -13,13 +13,11 @@ plugins:
       database: ${DB_NAME}
       default_target_schema: ${TARGET_SCHEMA}
       add_metadata_columns: true
-      dialect+driver: postgresql+psycopg2
   - name: target-snowflake
-    variant: transferwise
-    pip_url: pipelinewise-target-snowflake numpy<2.0
+    variant: meltanolabs
     config:
       account: ${DB_ACCOUNT}
-      dbname: ${DB_NAME}
+      database: ${DB_NAME}
       user: ${DB_USER}
       password: ${DB_PASS}
       warehouse: ${DB_WAREHOUSE}

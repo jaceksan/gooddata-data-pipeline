@@ -11,7 +11,7 @@
   "description": "Data Warehouse and Unified Analytics Platform",
   "logo_url": "https://hub.meltano.com/assets/logos/loaders/vertica.png",
   "capabilities": [
-    "record-flattening"
+    "schema-flattening"
   ],
   "settings_group_validation": [
     [
@@ -98,9 +98,10 @@
     },
     {
       "name": "password",
-      "kind": "password",
+      "kind": "string",
       "label": "Password",
-      "description": "Vertica password"
+      "description": "Vertica password",
+      "sensitive": true
     },
     {
       "name": "port",

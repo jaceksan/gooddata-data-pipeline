@@ -5,9 +5,7 @@ plugins:
       pip_url: git+https://github.com/MeltanoLabs/tap-jira.git
       config:
         domain: gooddata.atlassian.net
-        auth:
-          flow: password
-        start_date: '2024-01-01'
+        start_date: '2024-12-01'
         flattening_enabled: 'True'
         flattening_max_depth: 1
         page_size:

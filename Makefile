@@ -11,18 +11,15 @@ dbt_compile:
 
 dev:
 	# Create virtualenv
-	# Freeze to 3.10 because higher versions are not yet supported by underlying tools
-	python3.10 -m venv .venv_el --upgrade-deps
+	python3.12 -m venv .venv --upgrade-deps
 	# Install Meltano and required plugins
-	.venv_el/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-meltano.txt
-	.venv_el/bin/meltano --cwd $(SRC_DATA_PIPELINE) install
-	# dbt must be installed to separate venv, there are conflicts with what Meltano needs
-	python3.10 -m venv .venv_t --upgrade-deps
+	.venv/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-meltano.txt
+	.venv/bin/meltano --cwd $(SRC_DATA_PIPELINE) install
 	# Install dbt and required plugins
-	.venv_t/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-dbt.txt
-	.venv_t/bin/dbt deps --project-dir $(SRC_DATA_PIPELINE) --profiles-dir $(SRC_DATA_PIPELINE)/profile
+	.venv/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-dbt.txt
+	.venv/bin/dbt deps --project-dir $(SRC_DATA_PIPELINE) --profiles-dir $(SRC_DATA_PIPELINE)/profile
 	# Install dbt-gooddata plugin and related dependencies
-	.venv_t/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-gooddata.txt
+	.venv/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-gooddata.txt
 
 extract_load:
 	cd $(SRC_DATA_PIPELINE) && export TARGET_SCHEMA=$$INPUT_SCHEMA_GITHUB && meltano --environment $$ELT_ENVIRONMENT run tap-github-repo $$MELTANO_TARGET tap-github-org $$MELTANO_TARGET $$FR
