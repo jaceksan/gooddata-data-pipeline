@@ -19,8 +19,7 @@ plugins:
     - name: target-postgres
       variant: meltanolabs
     - name: target-snowflake
-      variant: transferwise
-      pip_url: pipelinewise-target-snowflake numpy<2.0
+      variant: meltanolabs
     - name: target-vertica
       variant: full360
       pip_url: git+https://github.com/full360/pipelinewise-target-vertica.git

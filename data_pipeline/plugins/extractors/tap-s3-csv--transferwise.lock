@@ -10,29 +10,55 @@
   "description": "Extract CSV files from S3",
   "logo_url": "https://hub.meltano.com/assets/logos/extractors/s3-csv.png",
   "capabilities": [
-    "properties",
     "discover",
+    "properties",
     "state"
   ],
   "settings_group_validation": [
     [
       "bucket",
-      "tables",
-      "start_date"
+      "start_date",
+      "tables"
     ]
   ],
   "settings": [
     {
       "name": "aws_access_key_id",
-      "kind": "password",
+      "kind": "string",
       "label": "AWS S3 Access Key ID",
-      "description": "S3 Access Key Id. If not provided, aws_profile or AWS_ACCESS_KEY_ID environment variable will be used."
+      "description": "S3 Access Key Id. If not provided, aws_profile or AWS_ACCESS_KEY_ID environment variable will be used.",
+      "sensitive": true
+    },
+    {
+      "name": "aws_endpoint_url",
+      "kind": "string",
+      "label": "AWS Endpoint URL",
+      "description": "The AWS endpoint URL.",
+      "sensitive": true
+    },
+    {
+      "name": "aws_profile",
+      "label": "AWS profile name",
+      "description": "Optional - AWS profile name for profile based authentication. If not provided, AWS_PROFILE environment variable will be used."
     },
     {
       "name": "aws_secret_access_key",
-      "kind": "password",
+      "kind": "string",
       "label": "AWS S3 Secret Access Key",
-      "description": "S3 Secret Access Key. If not provided, aws_profile or AWS_ACCESS_KEY_ID environment variable will be used."
+      "description": "S3 Secret Access Key. If not provided, aws_profile or AWS_ACCESS_KEY_ID environment variable will be used.",
+      "sensitive": true
+    },
+    {
+      "name": "aws_session_token",
+      "kind": "string",
+      "label": "AWS S3 Session Token",
+      "description": "Optional - S3 AWS STS token for temporary credentials. If not provided, AWS_SESSION_TOKEN environment variable will be used.",
+      "sensitive": true
+    },
+    {
+      "name": "bucket",
+      "label": "Bucket",
+      "description": "AWS S3 bucket name"
     },
     {
       "name": "start_date",
@@ -41,32 +67,10 @@
       "description": "Determines how much historical data will be extracted. Please be aware that the larger the time period and amount of data, the longer the initial extraction can be expected to take."
     },
     {
-      "name": "bucket",
-      "label": "Bucket",
-      "description": "AWS S3 bucket name"
-    },
-    {
       "name": "tables",
       "kind": "array",
       "label": "Tables",
       "description": "An array that consists of one or more objects that describe how to find files and emit records. Required - `table_name` and `search_pattern`. Optional - `key_properties`, `search_prefix`, `date_overrides`, `delimiter`."
-    },
-    {
-      "name": "aws_endpoint_url",
-      "kind": "password",
-      "label": "AWS Endpoint URL",
-      "description": "The AWS endpoint URL."
-    },
-    {
-      "name": "aws_profile",
-      "label": "AWS profile name",
-      "description": "Optional - AWS profile name for profile based authentication. If not provided, AWS_PROFILE environment variable will be used."
-    },
-    {
-      "name": "aws_session_token",
-      "kind": "password",
-      "label": "AWS S3 Session Token",
-      "description": "Optional - S3 AWS STS token for temporary credentials. If not provided, AWS_SESSION_TOKEN environment variable will be used."
     }
   ]
 }

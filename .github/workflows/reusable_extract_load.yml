@@ -50,8 +50,8 @@ jobs:
           MELTANO_STATE_AWS_ACCESS_KEY_ID: "${{ secrets.MELTANO_STATE_AWS_ACCESS_KEY_ID }}"
           MELTANO_STATE_AWS_SECRET_ACCESS_KEY: "${{ secrets.MELTANO_STATE_AWS_SECRET_ACCESS_KEY }}"
           TAP_GITHUB_AUTH_TOKEN: "${{ secrets.TAP_GITHUB_AUTH_TOKEN }}"
-          TAP_JIRA_AUTH_USERNAME: "${{ secrets.TAP_JIRA_AUTH_USERNAME }}"
-          TAP_JIRA_AUTH_PASSWORD: "${{ secrets.TAP_JIRA_AUTH_PASSWORD }}"
+          TAP_JIRA_EMAIL: "${{ secrets.TAP_JIRA_EMAIL }}"
+          TAP_JIRA_API_TOKEN: "${{ secrets.TAP_JIRA_API_TOKEN }}"
           MOTHERDUCK_TOKEN: "${{ secrets.MOTHERDUCK_TOKEN }}"
         run: |
           source .env.${{ inputs.ENVIRONMENT }} ${{ inputs.DB_OVERRIDE }}
