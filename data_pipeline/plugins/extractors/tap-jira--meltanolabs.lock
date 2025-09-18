@@ -12,6 +12,7 @@
   "logo_url": "https://hub.meltano.com/assets/logos/extractors/jira.png",
   "capabilities": [
     "about",
+    "activate-version",
     "batch",
     "catalog",
     "discover",
@@ -43,7 +44,7 @@
     {
       "name": "batch_config.encoding.compression",
       "kind": "options",
-      "label": "Batch Config Encoding Compression",
+      "label": "Batch Compression Format",
       "description": "Compression format to use for batch files.",
       "options": [
         {
@@ -59,7 +60,7 @@
     {
       "name": "batch_config.encoding.format",
       "kind": "options",
-      "label": "Batch Config Encoding Format",
+      "label": "Batch Encoding Format",
       "description": "Format to use for batch files.",
       "options": [
         {
@@ -75,13 +76,13 @@
     {
       "name": "batch_config.storage.prefix",
       "kind": "string",
-      "label": "Batch Config Storage Prefix",
+      "label": "Batch Storage Prefix",
       "description": "Prefix to use when writing batch files."
     },
     {
       "name": "batch_config.storage.root",
       "kind": "string",
-      "label": "Batch Config Storage Root",
+      "label": "Batch Storage Root",
       "description": "Root path to use when writing batch files."
     },
     {
@@ -103,16 +104,35 @@
       "description": "Latest record date to sync"
     },
     {
+      "name": "faker_config.locale",
+      "kind": "array",
+      "label": "Faker Locale",
+      "description": "One or more LCID locale strings to produce localized output for: https://faker.readthedocs.io/en/master/#localization"
+    },
+    {
+      "name": "faker_config.seed",
+      "kind": "string",
+      "label": "Faker Seed",
+      "description": "Value to seed the Faker generator for deterministic output: https://faker.readthedocs.io/en/master/#seeding-the-generator"
+    },
+    {
       "name": "flattening_enabled",
       "kind": "boolean",
-      "label": "Flattening Enabled",
+      "label": "Enable Schema Flattening",
       "description": "'True' to enable schema flattening and automatically expand nested properties."
     },
     {
       "name": "flattening_max_depth",
       "kind": "integer",
-      "label": "Flattening Max Depth",
+      "label": "Max Flattening Depth",
       "description": "The max depth to flatten schemas."
+    },
+    {
+      "name": "include_audit_logs",
+      "kind": "boolean",
+      "value": false,
+      "label": "Include Audit Logs",
+      "description": "Include the audit logs stream"
     },
     {
       "name": "page_size.issues",
@@ -130,7 +150,7 @@
     {
       "name": "stream_map_config",
       "kind": "object",
-      "label": "Stream Map Config",
+      "label": "User Stream Map Configuration",
       "description": "User-defined config values to be used within map expressions."
     },
     {
@@ -138,6 +158,20 @@
       "kind": "object",
       "label": "Stream Maps",
       "description": "Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html)."
+    },
+    {
+      "name": "stream_options.issues.fields",
+      "kind": "string",
+      "value": "*all",
+      "label": "Fields",
+      "description": "A comma-separated list of fields to include"
+    },
+    {
+      "name": "stream_options.issues.jql",
+      "kind": "string",
+      "value": "id != null",
+      "label": "JQL Query",
+      "description": "A JQL query to filter issues"
     }
   ]
 }

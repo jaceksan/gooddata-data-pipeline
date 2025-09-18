@@ -4,3 +4,4 @@ logs/
 .meltano
 .env
 output/
+package-lock.yml

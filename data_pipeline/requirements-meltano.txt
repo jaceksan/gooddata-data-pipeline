@@ -1,2 +1,2 @@
-meltano==3.6.0
+meltano==3.9.1
 meltano[s3]
