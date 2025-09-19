@@ -11,7 +11,7 @@ dbt_compile:
 
 dev:
 	# Create virtualenv
-	python3.12 -m venv .venv --upgrade-deps
+	python3.13 -m venv .venv --upgrade-deps
 	# Install Meltano and required plugins
 	.venv/bin/pip3 install -r $(SRC_DATA_PIPELINE)/requirements-meltano.txt
 	.venv/bin/meltano --cwd $(SRC_DATA_PIPELINE) install

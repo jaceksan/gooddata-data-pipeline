@@ -26,4 +26,6 @@ plugins:
     - name: target-duckdb
       variant: jwills
       # TODO - remove the commit hash when JWills does a release
-      pip_url: git+https://github.com/jwills/target-duckdb.git@36c8ce68a0b2584c4bbb07325482968b1edc0c40
+      pip_url: >-
+        git+https://github.com/jwills/target-duckdb.git@36c8ce68a0b2584c4bbb07325482968b1edc0c40
+        duckdb==1.3.2
