@@ -13,7 +13,7 @@ environments:
           start_date: '2010-01-01'
       - name: tap-jira
         config:
-          start_date: '2024-01-01'
+          start_date: '2025-01-01'
 
 - name: cicd_prod
   config:
@@ -24,7 +24,7 @@ environments:
           start_date: '2010-01-01'
       - name: tap-jira
         config:
-          start_date: '2024-01-01'
+          start_date: '2025-01-01'
 - name: cicd_cloud_staging
   config:
     plugins:
@@ -34,7 +34,7 @@ environments:
             start_date: '2010-01-01'
         - name: tap-jira
           config:
-            start_date: '2024-01-01'
+            start_date: '2025-01-01'
 # Dedicated for dbt Cloud. We need to separate their state files (they run against different databases)
 - name: cicd_cloud_dev
 - name: cicd_cloud_prod
@@ -46,7 +46,7 @@ environments:
             start_date: '2010-01-01'
         - name: tap-jira
           config:
-            start_date: '2024-01-01'
+            start_date: '2025-01-01'
 
 include_paths:
   - "./meltano_conf/extractors/github.yml"
